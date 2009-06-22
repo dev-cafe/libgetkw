@@ -10,9 +10,7 @@
 using namespace std;
 #include <iostream>
 #include <fstream>
-#include <cstring>
 
-#include "macros.h"
 #include "Getkw.h"
 
 Getkw::Getkw(string file) {

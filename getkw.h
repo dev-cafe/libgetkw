@@ -8,7 +8,7 @@
 #ifndef GETKW_H
 #define GETKW_H
 
-#include <infomsg.h>
+#include "infomsg.h"
 
 #ifdef NOEXTMOD
 

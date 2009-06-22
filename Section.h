@@ -23,12 +23,24 @@ public:
 	virtual ~Section();
 	static Section *readSection(ifstream &fis);
 protected:
+	struct strCmp {
+		bool operator()(string s1, string s2) const {
+			return s1.compare(s2) == 0;
+		}
+	};
 	string name;
 	int isset;
 	int nkeys;
 	int nsect;
-	Section *sect;
-	Keyword *kw;
+	map<string, Section, strCmp> sects;
+	map<string, Keyword, strCmp> keys;
+	struct Bin {
+		enum KwType {Key, Sect, TagSect};
+		int type;
+		Keyword *key;
+		Section *sect;
+		map<string,Section> tsect;
+	};
 };
 
 #endif /* SECTION_H_ */

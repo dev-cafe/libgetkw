@@ -17,7 +17,7 @@ template<class T>
 class Keyvec: public Keyval<T> {
 public:
 	Keyvec(const string name, bool set, vector<T> xarg) :
-		arg(xarg), Keyval<T>(name, set) {};
+		Keyval<T>(name, set), arg(xarg) {};
 	virtual ~Keyvec();
 	virtual bool get(vector<T> &t) {t=arg; return this->isset;};
 	virtual void set(vector<T> &t) {arg=t; this->isset=true;};

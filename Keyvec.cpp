@@ -16,7 +16,7 @@ Keyvec<T>::~Keyvec() {
 template <class T>
 ostream& Keyvec<T>::print(ostream& o) {
 	o << this->name << ":" << endl;
-	for (int i = 0; i < arg.size(); i++) {
+	for (unsigned int i = 0; i < arg.size(); i++) {
 		o << "  " << arg[i] <<endl;
 	}
 	return o << " (" << this->isset << ")";

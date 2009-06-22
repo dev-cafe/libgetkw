@@ -10,14 +10,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <getkw.h>
+#include "getkw.h"
 
 #define MAX_PATH 256
 #define MAX_BUF 1001
 #define MAX_KEYLEN 33
 
 #define ASSERT_KEY(x,p) if (x == NULL ) { if (strict) { \
-	printf("Error: Key not found: %s\n", p); abort(); } else { return 0; } } 
+	printf("Error: Key not found: %s\n", p); abort(); } else { return 0; } }
 #define ASSERT_TYPE(a,b,path) if (a->type != b) { \
 	printf("Error: Invalid type for %s, expected %d got %d\n", path, b,\
 	a->type); if (strict) abort(); return 0; }
@@ -42,19 +42,19 @@ static Keyword_t *new_keyword(const char *name, int type, int len)
 	self->len=len;
 
 	switch(type) {
-		case INT: 
-		case DBL: 
+		case INT:
+		case DBL:
 		case BOOL:
 		case STR:
 			if (len != 1) {
 				MSG_WARN("not an array");
 			}
 			break;
-		case INT_ARRAY: 
+		case INT_ARRAY:
 			self->val.iarray=(int *) calloc(len, sizeof(int));
 			ASSERT_MEM(self->val.iarray);
 			break;
-		case DBL_ARRAY: 
+		case DBL_ARRAY:
 			self->val.darray=(double *) calloc(len, sizeof(double));
 			ASSERT_MEM(self->val.darray);
 			break;
@@ -79,17 +79,17 @@ static void del_keyword(Keyword_t *self)
 	int i;
 
 	switch(self->type) {
-		case INT: 
-		case DBL: 
+		case INT:
+		case DBL:
 		case BOOL:
 			break;
 		case STR:
 			free(self->val.str);
 			break;
-		case INT_ARRAY: 
+		case INT_ARRAY:
 			free(self->val.iarray);
 			break;
-		case DBL_ARRAY: 
+		case DBL_ARRAY:
 			free(self->val.darray);
 			break;
 		case BOOL_ARRAY:
@@ -112,7 +112,7 @@ static void del_keyword(Keyword_t *self)
 
 /* Very simple implementation, since we know everything we need beforehand,
  * no need for elaborate linked lists or anything like that. */
-static Section_t *new_section(const char *name, 
+static Section_t *new_section(const char *name,
 		int nkeys, int nsect)
 {
 	Section_t *self;
@@ -124,7 +124,7 @@ static Section_t *new_section(const char *name,
 	self->name=(char *) calloc(strln+1,sizeof(char));
 	ASSERT_MEM(self->name);
 	strncpy(self->name, name, strln);
-	
+
 	if (nkeys > 0) {
 		self->kw=(Keyword_t **) calloc(nkeys,sizeof(Keyword_t *));
 		ASSERT_MEM(self->kw);
@@ -226,7 +226,7 @@ static Keyword_t *findkw(Section_t *self, const char *path)
 	int i;
 	const char *name;
 	Section_t *sect;
-	
+
 	name=rindex(path, '.');
 	if (name == NULL) {
 		name=path;
@@ -299,7 +299,7 @@ static char *scan_line(FILE *fd)
 }
 
 
-static Keyword_t *read_key(FILE *fd) 
+static Keyword_t *read_key(FILE *fd)
 {
 	Keyword_t *kw;
 	char name[MAX_KEYLEN];
@@ -312,28 +312,28 @@ static Keyword_t *read_key(FILE *fd)
 
 	typ=conv_type(type);
 	kw=new_keyword(name, typ, len);
-	
+
 	kw->set=conv_bool(set[0]);
 
 	for (i=0; i < kw->len; i++) {
 		switch(kw->type) {
-			case INT: 
+			case INT:
 				n=fscanf(fd, "%d\n", &kw->val.ival);
 				break;
-			case DBL: 
+			case DBL:
 				n=fscanf(fd, "%lf\n", &kw->val.dval);
 				break;
 			case BOOL:
-				n=fscanf(fd, "%s\n", set); 
+				n=fscanf(fd, "%s\n", set);
 				kw->val.lval=conv_bool(set[0]);
 				break;
 			case STR:
 				kw->val.str=scan_line(fd);
 				break;
-			case INT_ARRAY: 
+			case INT_ARRAY:
 				n=fscanf(fd, "%d\n", &kw->val.iarray[i]);
 				break;
-			case DBL_ARRAY: 
+			case DBL_ARRAY:
 				n=fscanf(fd, "%lf\n", &kw->val.darray[i]);
 				break;
 			case BOOL_ARRAY:
@@ -352,7 +352,7 @@ static Keyword_t *read_key(FILE *fd)
 	return kw;
 }
 
-static Section_t *read_sect(FILE *fd) 
+static Section_t *read_sect(FILE *fd)
 {
 	Section_t *sect;
 	char name[MAX_KEYLEN];
@@ -366,7 +366,7 @@ static Section_t *read_sect(FILE *fd)
 /*    printf("SECT: %s %c %d %d %c \n", name, tag[0], nsect, nkeys, set[0]);*/
 	if (tag[0] == 'T') {
 		i=fscanf(fd, "%s\n", tag);
-		sprintf(tagname, "%s(%s)", name, tag);	
+		sprintf(tagname, "%s(%s)", name, tag);
 /*        printf("TAG: %s -> %s\n", tag, tagname);*/
 		sect=new_section(tagname, nkeys, nsect);
 	} else {
@@ -400,10 +400,10 @@ static void print_key(Keyword_t *kw)
 	printf("TYPE(%d) %s %d %d\n", kw->type, kw->name, kw->len, kw->set);
 	for (i=0; i < kw->len; i++) {
 		switch(kw->type) {
-			case INT: 
+			case INT:
 				printf("%d\n", kw->val.ival);
 				break;
-			case DBL: 
+			case DBL:
 				printf("%lf\n", kw->val.dval);
 				break;
 			case BOOL:
@@ -412,10 +412,10 @@ static void print_key(Keyword_t *kw)
 			case STR:
 				printf("%s\n", kw->val.str);
 				break;
-			case INT_ARRAY: 
+			case INT_ARRAY:
 				printf("%d\n", kw->val.iarray[i]);
 				break;
-			case DBL_ARRAY: 
+			case DBL_ARRAY:
 				printf("%lf\n", kw->val.darray[i]);
 				break;
 			case BOOL_ARRAY:
@@ -436,7 +436,7 @@ void kw_PrintSection(Section_t *self)
 {
 	int i;
 
-	printf("SECT: %s sects=%d keys=%d set=%d\n", self->name, self->nsect, 
+	printf("SECT: %s sects=%d keys=%d set=%d\n", self->name, self->nsect,
 			self->nkeys, self->set);
 	for (i=0; i < self->nkeys; i++)
 	{
@@ -520,7 +520,7 @@ void kw_DelGetkw(Getkw_t *self)
 	free(self);
 }
 
-/** Get 'long' keyword 
+/** Get 'long' keyword
  *
  * @param self Getkw_t Object handle
  * @param path Path name of keyword to return
@@ -528,7 +528,7 @@ void kw_DelGetkw(Getkw_t *self)
  * @return 1 on succes, 0 on failure
  */
 int kw_GetLong(Getkw_t *self, const char *path, long *result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -539,7 +539,7 @@ int kw_GetLong(Getkw_t *self, const char *path, long *result)
 }
 
 int kw_GetLongArray(Getkw_t *self, const char *path, long **result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -549,7 +549,7 @@ int kw_GetLongArray(Getkw_t *self, const char *path, long **result)
 	return key->len;
 }
 
-/** Get 'int' keyword 
+/** Get 'int' keyword
  *
  * Note that Python stores ints as longs, the return value is thus cast to int
  *
@@ -559,7 +559,7 @@ int kw_GetLongArray(Getkw_t *self, const char *path, long **result)
  * @return 1 on succes, 0 on failure
  */
 int kw_GetInt(Getkw_t *self, const char *path, int *result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -570,7 +570,7 @@ int kw_GetInt(Getkw_t *self, const char *path, int *result)
 }
 
 int kw_GetIntRef(Getkw_t *self, const char *path, int **result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -580,7 +580,7 @@ int kw_GetIntRef(Getkw_t *self, const char *path, int **result)
 	return key->len;
 }
 
-/** Get 'int array' keyword 
+/** Get 'int array' keyword
  *
  * @param self Getkw_t Object handle
  * @param path Path name of keyword to return
@@ -588,7 +588,7 @@ int kw_GetIntRef(Getkw_t *self, const char *path, int **result)
  * @return number of elements in array on succes, 0 on failure
  */
 int kw_GetIntArray(Getkw_t *self, const char *path, int **result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -598,7 +598,7 @@ int kw_GetIntArray(Getkw_t *self, const char *path, int **result)
 	return key->len;
 }
 
-/** Get 'bool' keyword 
+/** Get 'bool' keyword
  *
  * @param self Getkw_t Object handle
  * @param path Path name of keyword to return
@@ -606,7 +606,7 @@ int kw_GetIntArray(Getkw_t *self, const char *path, int **result)
  * @return 1 on succes, 0 on failure
  */
 int kw_GetBool(Getkw_t *self, const char *path, int *result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -616,7 +616,7 @@ int kw_GetBool(Getkw_t *self, const char *path, int *result)
 	return key->len;
 }
 
-/** Get 'bool array' keyword 
+/** Get 'bool array' keyword
  *
  * @param self Getkw_t Object handle
  * @param path Path name of keyword to return
@@ -624,7 +624,7 @@ int kw_GetBool(Getkw_t *self, const char *path, int *result)
  * @return number of elements in array on succes, 0 on failure
  */
 int kw_GetBoolArray(Getkw_t *self, const char *path, int **result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -634,7 +634,7 @@ int kw_GetBoolArray(Getkw_t *self, const char *path, int **result)
 	return key->len;
 }
 
-/** Get 'double' keyword 
+/** Get 'double' keyword
  *
  * @param self Getkw_t Object handle
  * @param path Path name of keyword to return
@@ -642,7 +642,7 @@ int kw_GetBoolArray(Getkw_t *self, const char *path, int **result)
  * @return 1 on succes, 0 on failure
  */
 int kw_GetDouble(Getkw_t *self, const char *path, double *result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -653,7 +653,7 @@ int kw_GetDouble(Getkw_t *self, const char *path, double *result)
 }
 
 int kw_GetDoubleRef(Getkw_t *self, const char *path, double **result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -663,7 +663,7 @@ int kw_GetDoubleRef(Getkw_t *self, const char *path, double **result)
 	return key->len;
 }
 
-/** Get 'double array' keyword 
+/** Get 'double array' keyword
  *
  * @param self Getkw_t Object handle
  * @param path Path name of keyword to return
@@ -671,7 +671,7 @@ int kw_GetDoubleRef(Getkw_t *self, const char *path, double **result)
  * @return number of elements in array on succes, 0 on failure
  */
 int kw_GetDoubleArray(Getkw_t *self, const char *path, double **result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -681,7 +681,7 @@ int kw_GetDoubleArray(Getkw_t *self, const char *path, double **result)
 	return key->len;
 }
 
-/** Get 'string' keyword 
+/** Get 'string' keyword
  *
  * @param self Getkw_t Object handle
  * @param path Path name of keyword to return
@@ -689,7 +689,7 @@ int kw_GetDoubleArray(Getkw_t *self, const char *path, double **result)
  * @return 1 on succes, 0 on failure
  */
 int kw_GetString(Getkw_t *self, const char *path, char **result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -699,7 +699,7 @@ int kw_GetString(Getkw_t *self, const char *path, char **result)
 	return key->len;
 }
 
-/** Get 'string array' keyword 
+/** Get 'string array' keyword
  *
  * @param self Getkw_t Object handle
  * @param path Path name of keyword to return
@@ -707,7 +707,7 @@ int kw_GetString(Getkw_t *self, const char *path, char **result)
  * @return number of elements in array on succes, 0 on failure
  */
 int kw_GetStringArray(Getkw_t *self, const char *path, char ***result)
-{	
+{
 	Keyword_t *key;
 
 	key=findkw(self->cur, path);
@@ -717,7 +717,7 @@ int kw_GetStringArray(Getkw_t *self, const char *path, char ***result)
 	return key->len;
 }
 
-/** Get 'data' keyword 
+/** Get 'data' keyword
  *
  * This function is essentially identical to kw_GetStringArray, but checks for
  * keywords of type 'DATA'.
@@ -740,7 +740,7 @@ int kw_GetData(Getkw_t *self, const char *path, char ***result)
 
 /** Temporarily push a path on to the section stack
  *
- * Useful for implementing objects which can be multiply defined 
+ * Useful for implementing objects which can be multiply defined
  * (e.g. grids, coords, basis sets, etc.), but in different sections.
  *
  * @param self Getkw_t Object handle
@@ -803,13 +803,13 @@ int kw_HasKeyword(Getkw_t *self, const char *path)
 /** Test if a section has a particular sub-section
  *
  * @param self Getkw_t Object handle
- * @param path Path name of section to find 
+ * @param path Path name of section to find
  * @return 1 on succes, 0 on failure
  */
 int kw_HasSection(Getkw_t *self, const char *path)
 {
 	Section_t *sect;
-	
+
 	sect=findsect(self->cur, path);
 	if (sect == NULL) {
 		return 0;
@@ -827,7 +827,7 @@ int kw_HasSection(Getkw_t *self, const char *path)
  * return the default values.
  *
  * @param self Getkw_t Object handle
- * @param path Path name of section to find 
+ * @param path Path name of section to find
  * @return 1 on succes, 0 on failure
  */
 int kw_SectionIsSet(Getkw_t *self, const char *path)
@@ -845,7 +845,7 @@ int kw_SectionIsSet(Getkw_t *self, const char *path)
  * return the default value.
  *
  * @param self Getkw_t Object handle
- * @param path Path name of keyword to find 
+ * @param path Path name of keyword to find
  * @return 1 on succes, 0 on failure
  */
 int kw_KeywordIsSet(Getkw_t *self, const char *path)
@@ -918,17 +918,17 @@ int main(void)
 	printf("*******************************************************\n");
 	kw_PrintSection(input->toplevel);
 	printf("*******************************************************\n");
-	
+
 	n=kw_GetInt(input, "raboof.foobar(gnat).foo", &i);
 	printf("raboof.foobar(gnat).foo %d, len=%d\n", i, n);
-	
+
 	kw_PushSection(input, "raboof");
 	n=-1;
 	i=-1;
 	n=kw_GetInt(input, "foobar(gnat).bar", &i);
 	printf("foobar(gnat).bar %d, len=%d\n", i, n);
 	kw_PopSection(input);
-	
+
 	n=kw_GetIntArray(input, "defs(apa).foo", &a);
 	printf("defs(apa): %d\n", n);
 	for (i=0; i < n; i++) {
@@ -942,11 +942,11 @@ int main(void)
 		printf("%s\n", data[i]);
 	}
 	printf("\n");
-	printf("foot(): %d\n", kw_HasSection(input, "foot")); 
+	printf("foot(): %d\n", kw_HasSection(input, "foot"));
 	printf("raboof(): %d\n", kw_HasSection(input, "raboof"));
 	printf("raboof() set: %d\n", kw_SectionIsSet(input, "raboof"));
 	printf("has key: %d\n", kw_HasKeyword(input, "rabd"));
-	
+
 	kw_DelGetkw(input);
 	unlink("test.inp");
 	printf("done.\n");

@@ -18,7 +18,7 @@
 template <class T>
 class Keyval: public Keyword {
 public:
-	Keyval(const string name, int type, T xarg): arg(xarg), Keyword(name,type) {};
+	Keyval(const string name, int type, T xarg): Keyword(name,type), arg(xarg) {};
 	Keyval(const string name, int type): Keyword(name,type) {};
 	virtual ~Keyval();
 	virtual bool get(T &t) {t=arg; return isset;};
