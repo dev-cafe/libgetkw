@@ -13,9 +13,7 @@
 
 #define TEST_ARRAY if (len > 1) cout << "Warning, invalid lenght of 1 for " << name << endl
 
-Keyword::Keyword(const string name, bool is_set) {
-	this->name = name;
-	isset = is_set;
+Keyword::Keyword(const string name, bool isDefined): name(name), isDefined(isDefined) {
 }
 
 Keyword::~Keyword() {

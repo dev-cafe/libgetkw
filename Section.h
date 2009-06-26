@@ -14,33 +14,61 @@ using namespace std;
 #include <fstream>
 #include <string>
 #include <map>
+#include <vector>
 
+#include "Envelope.h"
 #include "Keyword.h"
 
-class Section {
+class Section: public Envelope {
 public:
-	Section(const string name, int nkeys, int nsect);
+	Section(const string name, const string tag="", bool isDefined);
 	virtual ~Section();
-	static Section *readSection(ifstream &fis);
+	Section *getSect(string path);
+	Keyword *getKey(string path);
+	void add(Section &sect);
+	void add(Keyword &key);
+	static Section *readSect(ifstream &fis);
+
+    int getNkeys() const
+    {
+        return nkeys;
+    }
+
+    int getNsect() const
+    {
+        return nsect;
+    }
+
+    void setNkeys(int nkeys)
+    {
+        this->nkeys = nkeys;
+    }
+
+    void setNsect(int nsect)
+    {
+        this->nsect = nsect;
+    }
+
 protected:
-	struct strCmp {
-		bool operator()(string s1, string s2) const {
-			return s1.compare(s2) == 0;
-		}
-	};
-	string name;
-	int isset;
+	string tag;
 	int nkeys;
 	int nsect;
-	map<string, Section, strCmp> sects;
-	map<string, Keyword, strCmp> keys;
+//	map<string, Section> sects;
+//	map<string, Keyword> keys;
+
 	struct Bin {
 		enum KwType {Key, Sect, TagSect};
 		int type;
 		Keyword *key;
 		Section *sect;
-		map<string,Section> tsect;
+		map<string,Section *> tsect;
 	};
+	map<string, Envelope> bin;
+	Section *findsect(string path);
+	Keyword *findkw(string path);
+	static vector<string> *splitPath(const string path);
+	static string *getTag(const string path);
 };
+
 
 #endif /* SECTION_H_ */

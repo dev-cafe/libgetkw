@@ -21,8 +21,8 @@ public:
 	Keyval(const string name, int type, T xarg): Keyword(name,type), arg(xarg) {};
 	Keyval(const string name, int type): Keyword(name,type) {};
 	virtual ~Keyval();
-	virtual bool get(T &t) {t=arg; return isset;};
-	virtual void set(T &t) {arg=t; isset=true;};
+	virtual bool get(T &t) {t=arg; return isdef;};
+	virtual void set(T &t) {arg=t; isdef=true;};
 	virtual ostream &print(ostream &o);
 
 protected:

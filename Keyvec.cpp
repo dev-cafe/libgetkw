@@ -19,7 +19,7 @@ ostream& Keyvec<T>::print(ostream& o) {
 	for (unsigned int i = 0; i < arg.size(); i++) {
 		o << "  " << arg[i] <<endl;
 	}
-	return o << " (" << this->isset << ")";
+	return o << " (" << this->isdef << ")";
 }
 
 template class Keyvec<int> ;

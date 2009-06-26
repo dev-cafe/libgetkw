@@ -15,14 +15,12 @@ using namespace std;
 #include <vector>
 #include <fstream>
 
-class Keyword {
-public:
-	Keyword(const string name, bool is_set);
-	virtual ~Keyword();
+#include "Envelope.h"
 
-	bool isSet(void) {return isset;};
-	void setState(bool state) {isset=state;};
-	string &getName(void) { return name;};
+class Keyword: public Envelope {
+public:
+	Keyword(const string name, bool isDefined);
+	virtual ~Keyword();
 
 	static Keyword *readKey(ifstream &fis);
 
@@ -55,8 +53,6 @@ public:
 protected:
 	static bool convBool(string val);
 	static int convType(string typ);
-	string name;
-	bool isset;
 };
 
 

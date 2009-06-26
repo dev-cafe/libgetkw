@@ -2,38 +2,142 @@
  *
  * \date Jun 3, 2009
  * \author Jonas Juselius <jonas.juselius@uit.no> \n
- *         CTCC, University of Tromsø
+ *         CTCC, University of Troms√∏
  *
  * \brief  Container for Sections and Keywords
  */
 
 using namespace std;
 #include <iostream>
-#include <string>
 
 #include "Section.h"
 
-Section::Section(const string name, int nkeys, int nsect) {
-
-	this->name=name;
-
-//	if (nkeys > 0) {
-//		this.>nkeys=nkeys;
-//	}
-//	if (nsect > 0) {
-//		self->sect=(Section_t **) calloc(nsect,sizeof(Section_t *));
-//		ASSERT_MEM(self->sect);
-//		self->nsect=nsect;
-//	}
-//	return self;
-
+Section::Section(const string name, const string tag) {
+	this->name = name;
+	this->tag = tag;
+	vector<string> *apa;
+	apa = splitPath("jonas.heter.jag");
+	for (unsigned int i = 0; i < apa->size(); i++) {
+		cout << apa->at(i) << " ";
+	}
+	cout << endl;
+	delete apa;
+	cout << "raboof" << endl;
 }
 
 Section::~Section() {
 	// TODO Auto-generated destructor stub
 }
 
+Keyword *Section::getKey(string path) {
+	return 0;
+}
 
+Section *Section::readSect(ifstream & fis) {
+	return 0;
+}
+
+Section *Section::getSect(string path) {
+
+
+	if (bin.find(path) == bin.end()) {
+		cout << "Error -> getSect(): no souch section: " << path << endl;
+		return 0;
+	}
+	switch (bin[path].type) {
+	case (Bin::Sect):
+		return bin[path].sect;
+	case (Bin::TagSect):
+		string *tag=getTag(path);
+		Section *s=bin[path].tsect[*tag];
+		delete tag;
+		return s;
+	default:
+		cout << "Error -> getSect(): not a section: " << path << endl;
+		return 0;
+	}
+
+}
+
+void Section::add(Section &sect) {
+	bool hasSect = bin.find(sect.name) != bin.end();
+
+	if (hasSect) {
+		if (sect.tag.empty() == true) {
+			string err = "Error Section::add: Section already defined ";
+			err.append(sect.name);
+			throw err;
+		}
+		bool hasTag = bin[sect.name].tsect.find(sect.tag)
+				!= bin[sect.name].tsect.end();
+		if (hasTag) {
+			string err = "Error Section::add: Section already defined ";
+			err.append(sect.name).append(sect.tag);
+			throw err;
+		}
+		bin[sect.name].tsect[sect.tag] = &sect;
+		bin[sect.name].type = Bin::TagSect;
+	} else {
+		bin[sect.name].sect = &sect;
+		bin[sect.name].type = Bin::Sect;
+	}
+
+}
+
+void Section::add(Keyword &key) {
+	string name = key.getName();
+	bool hasKey = bin.find(name) != bin.end();
+
+	if (hasKey) {
+		string err = "Error Section::add: Key already defined ";
+		err.append(name);
+		throw err;
+	} else {
+		bin[name].key = &key;
+		bin[name].type = Bin::Key;
+	}
+}
+
+Section *Section::findsect(string path) {
+	return 0;
+}
+
+Keyword *Section::findkw(string path) {
+	return 0;
+}
+
+vector<string> *Section::splitPath(const string path) {
+	vector<string> *elem = new vector<string> ();
+	string str = path;
+	unsigned int m = 0;
+	while (true) {
+		m = str.find('.');
+		if (m == string::npos) {
+			elem->push_back(str);
+			break;
+		} else {
+			elem->push_back(str.substr(0, m));
+		}
+		str = str.substr(m + 1);
+	}
+
+	return elem;
+}
+
+// check for ()
+string *Section::getTag(const string path) {
+	string *tag = new string();
+	unsigned int m, n = 0;
+	m = path.find('(');
+	if (m == string::npos) {
+		return 0;
+	} else {
+		n = path.find(')');
+	}
+	tag->append(path.substr(m+1,n-m-1));
+
+	return tag;
+}
 
 /* recursively delete current section and all its subsections */
 //static void del_section(Section_t *self)
