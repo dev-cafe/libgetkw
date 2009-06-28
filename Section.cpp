@@ -14,9 +14,7 @@ using namespace std;
 
 #define PRINT_FUNC_NAME cout << "@ Section::" << __func__ << endl;
 
-template<class T> static bool has_key(map<string, T> a, string b);
-
-Section::Section(const string name, const string tag) :
+Section::Section(const string &name, const string &tag) :
 	Envelope(name, false) {
 	PRINT_FUNC_NAME;
 	type = Sect;
@@ -41,20 +39,20 @@ Section::Section(const string name, const string tag) :
 //	}
 //}
 
-Section::~Section() {
-	map<string, Section *>::iterator sit;
-	map<string, Keyword *>::iterator kit;
-	for (sit = sects.begin(); sit != sects.end(); ++sit) {
-		delete sects[sit->first];
-	}
-	for (kit = keys.begin(); kit != keys.end(); ++kit) {
-		delete keys[kit->first];
-	}
-}
+//Section::~Section() {
+//	map<string, Section *>::iterator sit;
+//	map<string, Keyword *>::iterator kit;
+//	for (sit = sects.begin(); sit != sects.end(); ++sit) {
+//		delete sects[sit->first];
+//	}
+//	for (kit = keys.begin(); kit != keys.end(); ++kit) {
+//		delete keys[kit->first];
+//	}
+//}
 
-Keyword &Section::getKey(string path) {
+Keyword &Section::getKey(const string &path) {
 	PRINT_FUNC_NAME;
-	Envelope key = find(path);
+	Envelope &key = find(path);
 	if (key.getType() != Key) {
 		string err = "Error! Section::getKey(): Not a keyword, " + path;
 		throw err;
@@ -67,15 +65,14 @@ Section *Section::readSect(ifstream &fis) {
 	return 0;
 }
 
-// rather implement find section & kw
-Section &Section::getSect(string path) {
+Section &Section::getSect(const string &path) {
 	PRINT_FUNC_NAME;
-	Envelope key = find(path);
+	Envelope &key = find(path);
 	cout << "ok? " << endl;
-//	if (key.getType() != Sect) {
-//		string err = "Error! Section::getSect(): Not a section, " + path;
-//		throw err;
-//	}
+	if (key.getType() != Sect) {
+		string err = "Error! Section::getSect(): Not a section, " + path;
+		throw err;
+	}
 	cout << "ok!";
 	Section &sect = static_cast<Section &> (key);
 	return sect;
@@ -95,8 +92,8 @@ void Section::add(Section &sect) {
 		string err = "Error! Section::add: Section already defined, " + name;
 		throw err;
 	}
-	sects[name] = new Section(sect);
-	tags[sect.tag] = sects[name];
+	sects[name] = Section(sect);
+	tags[sect.tag] = &sects[name];
 }
 
 void Section::add(Keyword &key) {
@@ -108,21 +105,21 @@ void Section::add(Keyword &key) {
 		throw err;
 	}
 
-	keys[name] = new Keyword(key);
+	keys[name] = Keyword(key);
 }
 
-Envelope &Section::find(string pathspec) {
+Envelope &Section::find(const string &pathspec) {
 	PRINT_FUNC_NAME;
 	vector<string> path;
 	splitPath(pathspec, path);
 
-	Envelope *key = traversePath(path, pathspec);
-	return *key;
+	Envelope &key = traversePath(path, pathspec);
+	return key;
 }
 
-Envelope *Section::traversePath(vector<string> path, const string pathspec) {
+Envelope &Section::traversePath(vector<string> &path, const string &pathspec) {
 	PRINT_FUNC_NAME;
-	string cur = path[0];
+	string cur = string(path[0]);
 
 	if (path.size() == 1) {
 		if (has_key(cur))
@@ -137,12 +134,12 @@ Envelope *Section::traversePath(vector<string> path, const string pathspec) {
 	}
 
 	path.erase(path.begin());
-	Envelope *key = sects[cur]->traversePath(path, pathspec);
+	Envelope &key = sects[cur].traversePath(path, pathspec);
 	return key;
 
 }
 
-void Section::splitPath(const string pathspec, vector<string> &path) {
+void Section::splitPath(const string &pathspec, vector<string> &path) {
 	PRINT_FUNC_NAME;
 	string str = pathspec;
 	unsigned int m = 0;
@@ -158,7 +155,7 @@ void Section::splitPath(const string pathspec, vector<string> &path) {
 	}
 }
 
-int Section::splitTag(const string path, string &tag) {
+int Section::splitTag(const string &path, string &tag) {
 	PRINT_FUNC_NAME;
 	unsigned int m, n = 0;
 	m = path.find('<');
@@ -172,21 +169,21 @@ int Section::splitTag(const string path, string &tag) {
 	return m;
 }
 
-bool Section::has_key(string b) {
+bool Section::has_key(const string &b) {
 	if (keys.find(b) == keys.end())
 		return false;
 	return true;
 
 }
 
-bool Section::has_sect(string b) {
+bool Section::has_sect(const string &b) {
 	if (sects.find(b) == sects.end())
 		return false;
 	return true;
 
 }
 
-bool Section::has_tag(string b) {
+bool Section::has_tag(const string &b) {
 	if (tags.find(b) == tags.end())
 		return false;
 	return true;

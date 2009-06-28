@@ -10,9 +10,9 @@
 
 #include "Envelope.h"
 
-Envelope::Envelope(string name, bool isDefd):
-	name(name), isDefd(isDefd) {
+Envelope::Envelope(const string &name, bool isDefd): isDefd(isDefd) {
 	type=Env;
+	this->name=string(name);
 }
 
 Envelope::~Envelope() {

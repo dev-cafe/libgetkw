@@ -17,7 +17,7 @@ using namespace std;
 
 class Envelope {
 public:
-	Envelope(string name, bool isDefd);
+	Envelope(const string &name, bool isDefd);
 	virtual ~Envelope();
 	virtual ostream &print(ostream &o) { return o; }
     int getType() const

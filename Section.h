@@ -21,11 +21,11 @@ using namespace std;
 
 class Section: public Envelope {
 public:
-	Section(const string name, const string tag = "");
+	Section(const string &name, const string &tag = "");
 	//Section(const Section &s);
 	virtual ~Section();
-	Section &getSect(string path);
-	Keyword &getKey(string path);
+	Section &getSect(const string &path);
+	Keyword &getKey(const string &path);
 	void add(Section &sect);
 	void add(Keyword &key);
 	static Section *readSect(ifstream &fis);
@@ -59,16 +59,16 @@ protected:
 	int nkeys;
 	int nsect;
 	map<string, Section *> tags;
-	map<string, Section *> sects;
-	map<string, Keyword *> keys;
+	map<string, Section> sects;
+	map<string, Keyword> keys;
 
-	Envelope &find(string pathspec);
-	Envelope *traversePath(vector<string> path, const string pathspec);
-	void splitPath(const string pathspec, vector<string> &path);
-	int splitTag(const string path, string &tag);
-	bool has_key(const string name);
-	bool has_sect(const string name);
-	bool has_tag(const string name);
+	Envelope &find(const string &pathspec);
+	Envelope &traversePath(vector<string> &path, const string &pathspec);
+	void splitPath(const string &pathspec, vector<string> &path);
+	int splitTag(const string &path, string &tag);
+	bool has_key(const string &name);
+	bool has_sect(const string &name);
+	bool has_tag(const string &name);
 };
 
 #endif /* SECTION_H_ */
