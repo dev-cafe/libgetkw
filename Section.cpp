@@ -230,22 +230,7 @@ bool Section::has_tag(const string &b) {
 	return true;
 
 }
-/* recursively delete current section and all its subsections */
-//static void del_section(Section_t *self)
-//{
-//	int i;
-//
-//	for (i=0; i < self->nkeys; i++) {
-//		del_keyword(self->kw[i]);
-//	}
-//	for (i=0; i < self->nsect; i++) {
-//		del_section(self->sect[i]);
-//	}
-//	free(self->name);
-//	free(self->kw);
-//	free(self->sect);
-//	free(self);
-//}
+
 //
 //static Section_t *read_sect(FILE *fd)
 //{
@@ -296,39 +281,3 @@ bool Section::has_tag(const string &b) {
 //	return NULL;
 //}
 //
-//static Section_t *findsect(Section_t *self, const char *path)
-//{
-//	const char *name;
-//	char tmp[MAX_PATH];
-//	Section_t *sect;
-//	int len, i;
-//
-//	name=index(path, '.');
-//	if (name == NULL) {
-//		if (strcmp(path, self->name) == 0) {
-//			return self;
-//		}
-//		for (i=0; i < self->nsect; i++) {
-//			if (strcmp(path, self->sect[i]->name) == 0) {
-//				return self->sect[i];
-//			}
-//		}
-//		return self;
-//	}
-//
-//	len=(name-path)/sizeof(char);
-//	if (len > MAX_PATH-1) {
-//		MSG_ERROR("Too long path name");
-//		return NULL;
-//	}
-//	strncpy(tmp, path, len);
-//	tmp[len]='\0';
-//
-//	sect=getsect(self, tmp);
-//	if (sect == NULL) {
-//		MSG_ERROR("Invalid section");
-//		return NULL;
-//	}
-//
-//	return findsect(sect, name+1);
-//}
