@@ -22,7 +22,8 @@ using namespace std;
 class Section: public Envelope {
 public:
 	Section(const string &name, const string &tag = "");
-	//Section(const Section &s);
+	Section(const Section &s);
+	Section &operator=(const Section &s);
 	virtual ~Section();
 	Section &getSect(const string &path);
 	Keyword &getKey(const string &path);
@@ -59,8 +60,8 @@ protected:
 	int nkeys;
 	int nsect;
 	map<string, Section *> tags;
-	map<string, Section> sects;
-	map<string, Keyword> keys;
+	map<string, Section *> sects;
+	map<string, Keyword *> keys;
 
 	Envelope &find(const string &pathspec);
 	Envelope &traversePath(vector<string> &path, const string &pathspec);

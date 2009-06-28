@@ -18,6 +18,8 @@ using namespace std;
 class Envelope {
 public:
 	Envelope(const string &name, bool isDefd);
+	//Envelope(const Envelope &e): type(e.type), name(e.name), isDefd(e.isDefd) {cout << "envelope copy" << endl;};
+	//Envelope &operator=(const Envelope &e);
 	virtual ~Envelope();
 	virtual ostream &print(ostream &o) { return o; }
     int getType() const

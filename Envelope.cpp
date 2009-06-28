@@ -10,10 +10,18 @@
 
 #include "Envelope.h"
 
-Envelope::Envelope(const string &name, bool isDefd): isDefd(isDefd) {
-	type=Env;
-	this->name=string(name);
+Envelope::Envelope(const string &name, bool isDefd) :
+	isDefd(isDefd) {
+	type = Env;
+	this->name = name;
 }
+
+//Envelope &Envelope::operator=(const Envelope &e)
+//{
+//	type=e.type;
+//	name=e.name;
+//	return *this;
+//}
 
 Envelope::~Envelope() {
 	// TODO Auto-generated destructor stub
