@@ -16,7 +16,7 @@ Keyval<T>::~Keyval() {
 
 template <class T>
 ostream& Keyval<T>::print(ostream& o) {
-	return o << name << ": " << arg << " (" << isdef << ")";
+	return o << name << ": " << arg << " (" << isDefd << ")";
 }
 
 template class Keyval<int> ;

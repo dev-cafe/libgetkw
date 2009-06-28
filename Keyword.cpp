@@ -11,9 +11,11 @@
 #include "Keyval.h"
 #include "Keyvec.h"
 
-#define TEST_ARRAY if (len > 1) cout << "Warning, invalid lenght of 1 for " << name << endl
+#define TEST_ARRAY if (len > 1) cout << "Warning, invalid length of 1 for " << name << endl
 
-Keyword::Keyword(const string name, bool isDefined): name(name), isDefined(isDefined) {
+Keyword::Keyword(const string name, bool isDefd):
+	Envelope(name, isDefd) {
+	type=Key;
 }
 
 Keyword::~Keyword() {

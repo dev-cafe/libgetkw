@@ -19,8 +19,8 @@ public:
 	Keyvec(const string name, bool set, vector<T> xarg) :
 		Keyval<T>(name, set), arg(xarg) {};
 	virtual ~Keyvec();
-	virtual bool get(vector<T> &t) {t=arg; return this->isdef;};
-	virtual void set(vector<T> &t) {arg=t; this->isdef=true;};
+	virtual bool get(vector<T> &t) {t=arg; return this->isDefd;};
+	virtual void set(vector<T> &t) {arg=t; this->isDefd=true;};
 	virtual ostream &print(ostream &o);
 
 protected:

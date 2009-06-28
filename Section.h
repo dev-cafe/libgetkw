@@ -21,54 +21,54 @@ using namespace std;
 
 class Section: public Envelope {
 public:
-	Section(const string name, const string tag="", bool isDefined);
+	Section(const string name, const string tag = "");
+	//Section(const Section &s);
 	virtual ~Section();
-	Section *getSect(string path);
-	Keyword *getKey(string path);
+	Section &getSect(string path);
+	Keyword &getKey(string path);
 	void add(Section &sect);
 	void add(Keyword &key);
 	static Section *readSect(ifstream &fis);
 
-    int getNkeys() const
-    {
-        return nkeys;
-    }
+	string &getTag() {
+		return tag;
+	}
 
-    int getNsect() const
-    {
-        return nsect;
-    }
+	int getNkeys() const {
+		return nkeys;
+	}
 
-    void setNkeys(int nkeys)
-    {
-        this->nkeys = nkeys;
-    }
+	int getNsect() const {
+		return nsect;
+	}
 
-    void setNsect(int nsect)
-    {
-        this->nsect = nsect;
-    }
+	void setTag(const string tag) {
+		this->tag = tag;
+	}
+
+	void setNkeys(int nkeys) {
+		this->nkeys = nkeys;
+	}
+
+	void setNsect(int nsect) {
+		this->nsect = nsect;
+	}
 
 protected:
 	string tag;
 	int nkeys;
 	int nsect;
-//	map<string, Section> sects;
-//	map<string, Keyword> keys;
+	map<string, Section *> tags;
+	map<string, Section *> sects;
+	map<string, Keyword *> keys;
 
-	struct Bin {
-		enum KwType {Key, Sect, TagSect};
-		int type;
-		Keyword *key;
-		Section *sect;
-		map<string,Section *> tsect;
-	};
-	map<string, Envelope> bin;
-	Section *findsect(string path);
-	Keyword *findkw(string path);
-	static vector<string> *splitPath(const string path);
-	static string *getTag(const string path);
+	Envelope &find(string pathspec);
+	Envelope *traversePath(vector<string> path, const string pathspec);
+	void splitPath(const string pathspec, vector<string> &path);
+	int splitTag(const string path, string &tag);
+	bool has_key(const string name);
+	bool has_sect(const string name);
+	bool has_tag(const string name);
 };
-
 
 #endif /* SECTION_H_ */

@@ -19,7 +19,7 @@ using namespace std;
 
 class Keyword: public Envelope {
 public:
-	Keyword(const string name, bool isDefined);
+	Keyword(const string name, bool isDefd);
 	virtual ~Keyword();
 
 	static Keyword *readKey(ifstream &fis);
@@ -44,10 +44,6 @@ public:
 
 	virtual ostream &print(ostream &o) {return o << "nil" << endl; };
 
-	friend ostream& operator << (ostream& o, Keyword &kw)
-	{
-		return kw.print(o);
-	}
 	enum KeyType {Int, Dbl, Bool, Str, Data, IntArray,
 		DblArray, BoolArray, StrArray};
 protected:
