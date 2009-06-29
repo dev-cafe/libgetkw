@@ -17,17 +17,23 @@ using namespace std;
 
 class Envelope {
 public:
+	Envelope() {
+	}
 	Envelope(const string &name, bool isDefd);
-	//Envelope(const Envelope &e): type(e.type), name(e.name), isDefd(e.isDefd) {cout << "envelope copy" << endl;};
-	//Envelope &operator=(const Envelope &e);
+//	Envelope(const Envelope &e) :
+//		type(e.type), name(e.name), isDefd(e.isDefd) {
+//		cout << "envelope copy" << endl;
+//	}
+//	Envelope &operator=(const Envelope &e);
 	virtual ~Envelope();
-	virtual ostream &print(ostream &o) { return o; }
-    int getType() const
-    {
-        return type;
-    }
+	virtual ostream &print(ostream &o) {
+		return o;
+	}
+	int getType() const {
+		return type;
+	}
 
-    friend ostream& operator <<(ostream& o, Envelope &e) {
+	friend ostream& operator <<(ostream& o, Envelope &e) {
 		return e.print(o);
 	}
 
@@ -48,7 +54,9 @@ public:
 	}
 
 protected:
-	enum Type {Env, Key, Sect};
+	enum Type {
+		Env, Key, Sect
+	};
 	int type;
 	string name;
 	bool isDefd; //! True if explicitly set (i.e. not a default value)

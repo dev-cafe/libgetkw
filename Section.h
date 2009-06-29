@@ -21,6 +21,9 @@ using namespace std;
 
 class Section: public Envelope {
 public:
+	Section::Section() :
+		Envelope() {
+	}
 	Section(const string &name, const string &tag = "");
 	Section(const Section &s);
 	Section &operator=(const Section &s);
@@ -59,9 +62,9 @@ protected:
 	string tag;
 	int nkeys;
 	int nsect;
+	map<string, Section> sects;
+	map<string, Keyword> keys;
 	map<string, Section *> tags;
-	map<string, Section *> sects;
-	map<string, Keyword *> keys;
 
 	Envelope &find(const string &pathspec);
 	Envelope &traversePath(vector<string> &path, const string &pathspec);
@@ -70,6 +73,9 @@ protected:
 	bool has_key(const string &name);
 	bool has_sect(const string &name);
 	bool has_tag(const string &name);
+	void print_sects();
+	void print_keys();
+	void print_tags();
 };
 
 #endif /* SECTION_H_ */

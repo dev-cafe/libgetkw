@@ -19,6 +19,7 @@ using namespace std;
 
 class Keyword: public Envelope {
 public:
+	Keyword(): Envelope() {}
 	Keyword(const string name, bool isDefd);
 	virtual ~Keyword();
 

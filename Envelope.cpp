@@ -18,8 +18,8 @@ Envelope::Envelope(const string &name, bool isDefd) :
 
 //Envelope &Envelope::operator=(const Envelope &e)
 //{
-//	type=e.type;
-//	name=e.name;
+//	type = e.type;
+//	name = e.name;
 //	return *this;
 //}
 
