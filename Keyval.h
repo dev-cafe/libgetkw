@@ -18,11 +18,12 @@
 template <class T>
 class Keyval: public Keyword {
 public:
-	Keyval(const string name, int type, T xarg): Keyword(name,type), arg(xarg) {};
-	Keyval(const string name, int type): Keyword(name,type) {};
+	Keyval(const string name, T xarg, bool isDefd=false): Keyword(name, isDefd), arg(xarg) {};
+//	Keyval(const string name, bool isDefd=false): Keyword(name, isDefd) {};
 	virtual ~Keyval();
 	virtual bool get(T &t) {t=arg; return isDefd;};
 	virtual void set(T &t) {arg=t; isDefd=true;};
+	virtual Keyval<T> *clone();
 	virtual ostream &print(ostream &o);
 
 protected:

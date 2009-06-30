@@ -2,7 +2,7 @@
  *
  * \date Jun 3, 2009
  * \author Jonas Juselius <jonas.juselius@uit.no> \n
- *         CTCC, University of Troms√∏
+ *         CTCC, University of Tromsø
  *
  * \brief  Container for Sections and Keywords
  */
@@ -17,8 +17,8 @@ using namespace std;
 #define PRINT_FUNC_NAME cout << "@ Section::" << __func__ << endl;
 
 Section::Section(const string &name, const string &tag) :
-	Envelope(name, false) {
-	type = Sect;
+	name(name) {
+	isDefd = false;
 	nsect = 0;
 	nkeys = 0;
 	if (tag.empty()) {
@@ -28,79 +28,86 @@ Section::Section(const string &name, const string &tag) :
 	}
 }
 
-Section::Section(const Section &s) :
-	Envelope(s) {
+Section::Section(const Section &s) {
+	cout << "#section copy, " << s.name << endl;
 	tag = s.tag;
 	nkeys = s.nkeys;
 	nsect = s.nsect;
-	sects = s.sects;
-	keys = s.keys;
-	tags = s.tags;
+
+	map<string, Section *>::const_iterator sit;
+	map<string, Keyword *>::const_iterator kit;
+	for (sit = s.sects.begin(); sit != s.sects.end(); ++sit) {
+		sects[sit->first] = new Section(*sit->second);
+		tags[(*sit->second).tag] = sects[sit->first];
+	}
+	for (kit = s.keys.begin(); kit != s.keys.end(); ++kit) {
+		keys[kit->first] = kit->second->clone();
+	}
+
 }
 
 Section &Section::operator=(const Section &s) {
-	type = s.type;
+	cout << "#section " << name + " = " + s.name << endl;
 	name = s.name;
 	tag = s.tag;
 	nkeys = s.nkeys;
 	nsect = s.nsect;
-	sects = s.sects;
-	keys = s.keys;
-	tags = s.tags;
+
+	map<string, Section *>::const_iterator sit;
+	map<string, Keyword *>::const_iterator kit;
+	for (sit = s.sects.begin(); sit != s.sects.end(); ++sit) {
+		sects[sit->first] = new Section(*sit->second);
+		tags[(*sit->second).tag] = sects[sit->first];
+	}
+	for (kit = s.keys.begin(); kit != s.keys.end(); ++kit) {
+		keys[kit->first] = new Keyword(*kit->second);
+	}
+
 	return *this;
 }
 
 Section::~Section() {
+	cout << "#section delete, " << name << endl;
+
+	map<string, Section *>::iterator sit;
+	map<string, Keyword *>::iterator kit;
+	for (sit = sects.begin(); sit != sects.end(); ++sit) {
+		delete sects[sit->first];
+	}
+	for (kit = keys.begin(); kit != keys.end(); ++kit) {
+		delete keys[kit->first];
+	}
 }
 
-Keyword &Section::getKey(const string &path) {
-	Keyword *key = findKey(path);
-//	if (key->getType() != Key) {
-//		string err = "Error! Section::getKey(): Not a keyword, " + path;
-//		throw err;
-//	}
-//	Keyword *kw;
-//	Keyval<int> *ikw = static_cast<Keyval<int> *> (key);
-//	cout << "apa"  << *ikw << endl;
-//
-//	cout << ".......kusss "  << endl;
-//	switch (123123) {
-//	case Keyword::Int:
-//		cout << "int .......kusss" << endl;
-//		kw = static_cast<Keyval<int> *> (key);
-//		break;
-//	case Keyword::Dbl:
-//		kw = static_cast<Keyval<double> *> (key);
-//		break;
-//	case Keyword::Bool:
-//		kw = static_cast<Keyval<bool> *> (key);
-//		break;
-//	case Keyword::Str:
-//		cout << "int .......kusss" << endl;
-//		kw = static_cast<Keyval<string> *> (key);
-//		break;
-//	default:
-//		cout << "default .......kusss" << endl;
-//		break;
-//	}
+Section &Section::getSect(const string &pathspec) {
+	vector<string> path;
+	splitPath(pathspec, path);
 
-	//	Keyword &kw = dynamic_cast<Keyword &> (*key);
-	return *key;
+	Section *sect = traversePath(path, pathspec);
+	return *sect;
 }
+
+Keyword &Section::getKey(const string &pathspec) {
+	vector<string> path;
+	splitPath(pathspec, path);
+
+	string name = path.back();
+	Section *sect = traversePath(path, pathspec);
+	if (!has_key(name)) {
+		string err = "Error! Invalid keyword, " + pathspec;
+	}
+	return *sect->keys[name];
+}
+
+//Keyword &Section::getKey(const string &path) {
+//	Section *sect = findSect(path);
+//	if (!has_key())
+//		Keyword *kw;
+//	return *kw;
+//}
 
 Section *Section::readSect(ifstream &fis) {
 	return 0;
-}
-
-Section &Section::getSect(const string &path) {
-	Envelope *key = find(path);
-	if (key->getType() != Sect) {
-		string err = "Error! Section::getSect(): Not a section, " + path;
-		throw err;
-	}
-	Section &sect = static_cast<Section &> (*key);
-	return sect;
-
 }
 
 /* Sections can be multiply defined, provided they have different tags.
@@ -115,29 +122,21 @@ void Section::addSect(Section &sect) {
 		throw err;
 	}
 
-	sects[name] = sect;
-	tags[sect.tag] = &sects[name];
+	sects[name] = new Section(sect);
+	tags[sect.tag] = sects[name];
 	nsect++;
 }
 
-template <class T> void Section::addKey(T &key) {
+template<class T> void Section::addKey(T &key) {
 	string name = key.getName();
 
 	if (has_key(name)) {
 		string err = "Error Section::add: Key already defined, " + name;
 		throw err;
 	}
-//	cout << "adding " << key;
 
-	map<string, Keyword *> kuk;
-	T *apa = new T(key);
-	cout << "adding " << *apa;
-	keys[name] = key;
-	kuk[name] = apa;
+	keys[name] = new T(key);
 	nkeys++;
-//	cout << " -> " << keys[name] <<endl;
-	cout << " -> " << *kuk[name] <<endl;
-	delete apa;
 }
 
 template void Section::addKey(Keyval<int> &);
@@ -145,58 +144,17 @@ template void Section::addKey(Keyval<double> &);
 template void Section::addKey(Keyval<bool> &);
 template void Section::addKey(Keyval<string> &);
 
-Envelope *Section::find(const string &pathspec) {
-	vector<string> path;
-	splitPath(pathspec, path);
-
-	Envelope *key = traversePath(path, pathspec);
-	return key;
-}
-
-
-Keyword *Section::findKey(const string &pathspec) {
-	vector<string> path;
-	splitPath(pathspec, path);
-
-	Keyword *key = traversePathKey(path, pathspec);
-	return key;
-}
-
-Keyword *Section::traversePathKey(vector<string> &path, const string &pathspec) {
-	string cur = path[0];
-
-	if (path.size() == 1) {
-		if (has_key(cur)) {
-			cout << "found " << cur << " = " << keys[cur] << endl;
-			return &keys[cur];
-		}
-		string err = "Error! traversePathKey: Invalid path, " + pathspec;
-		throw err;
-	}
-
-	if (!has_sect(cur))
-		cur = cur + "<" + cur + ">";
-	if (!has_sect(cur)) {
-		string err = "Error! traversePath: Invalid path, " + pathspec;
-		throw err;
-	}
-
-	path.erase(path.begin());
-	Keyword *key = sects[cur].traversePathKey(path, pathspec);
-	return key;
-}
-
-Envelope *Section::traversePath(vector<string> &path, const string &pathspec) {
+Section *Section::traversePath(vector<string> &path, const string &pathspec) {
 	string cur = path[0];
 
 	if (path.size() == 1) {
 		if (has_key(cur))
-			return &keys[cur];
+			return this;
 		if (!has_sect(cur)) {
 			cur = cur + "<" + cur + ">";
 		}
 		if (has_sect(cur))
-			return &sects[cur];
+			return sects[cur];
 		string err = "Error! traversePath: Invalid path, " + pathspec;
 		throw err;
 	}
@@ -209,8 +167,8 @@ Envelope *Section::traversePath(vector<string> &path, const string &pathspec) {
 	}
 
 	path.erase(path.begin());
-	Envelope *key = sects[cur].traversePath(path, pathspec);
-	return key;
+	Section *sect = sects[cur]->traversePath(path, pathspec);
+	return sect;
 }
 
 void Section::splitPath(const string &pathspec, vector<string> &path) {
@@ -243,14 +201,14 @@ int Section::splitTag(const string &path, string &tag) {
 }
 
 void Section::print_sects() {
-	map<string, Section>::const_iterator it;
+	map<string, Section *>::const_iterator it;
 	for (it = sects.begin(); it != sects.end(); ++it) {
 		cout << " * " << it->first << endl;
 	}
 }
 
 void Section::print_keys() {
-	map<string, Keyword>::const_iterator it;
+	map<string, Keyword *>::const_iterator it;
 	for (it = keys.begin(); it != keys.end(); ++it) {
 		cout << " * " << it->first << endl;
 	}

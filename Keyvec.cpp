@@ -22,6 +22,13 @@ ostream& Keyvec<T>::print(ostream& o) {
 	return o << " (" << this->isDefd << ")";
 }
 
+template<class T>
+Keyvec<T> *Keyvec<T>::clone()
+{
+	return new Keyvec<T>(*this);
+}
+
+
 template class Keyvec<int> ;
 template class Keyvec<double> ;
 template class Keyvec<bool> ;

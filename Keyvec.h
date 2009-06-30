@@ -14,13 +14,14 @@
 #include "Keyval.h"
 
 template<class T>
-class Keyvec: public Keyval<T> {
+class Keyvec: public Keyword {
 public:
-	Keyvec(const string name, bool set, vector<T> xarg) :
-		Keyval<T>(name, set), arg(xarg) {};
+	Keyvec(const string name, vector<T> xarg, bool isDefd) :
+		Keyword(name, isDefd), arg(xarg) {};
 	virtual ~Keyvec();
 	virtual bool get(vector<T> &t) {t=arg; return this->isDefd;};
 	virtual void set(vector<T> &t) {arg=t; this->isDefd=true;};
+	virtual Keyvec<T> *clone();
 	virtual ostream &print(ostream &o);
 
 protected:

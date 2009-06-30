@@ -16,14 +16,12 @@ using namespace std;
 #include <map>
 #include <vector>
 
-#include "Envelope.h"
+//#include "Envelope.h"
 #include "Keyword.h"
 
-class Section: public Envelope {
+class Section {
 public:
-	Section::Section() :
-		Envelope() {
-	}
+//	Section::Section() {}
 	Section(const string &name, const string &tag = "");
 	Section(const Section &s);
 	Section &operator=(const Section &s);
@@ -58,19 +56,34 @@ public:
 		this->nsect = nsect;
 	}
 
+	bool isDefined() const {
+		return isDefd;
+	}
+
+	string getName() const {
+		return name;
+	}
+
+	void setDefined(bool isDefd) {
+		this->isDefd = isDefd;
+	}
+
+	void setName(string name) {
+		this->name = name;
+	}
+
 protected:
+	string name;
 	string tag;
 	int nkeys;
 	int nsect;
-	map<string, Section> sects;
-	map<string, Keyword> keys;
+	bool isDefd;
+	map<string, Section *> sects;
+	map<string, Keyword *> keys;
 	map<string, Section *> tags;
 
-	Keyword *findKey(const string &pathspec);
-	Keyword *traversePathKey(vector<string> &path, const string &pathspec);
-
-	Envelope *find(const string &pathspec);
-	Envelope *traversePath(vector<string> &path, const string &pathspec);
+	Section *findSect(const string &pathspec);
+	Section *traversePath(vector<string> &path, const string &pathspec);
 	void splitPath(const string &pathspec, vector<string> &path);
 	int splitTag(const string &path, string &tag);
 	bool has_key(const string &name);

@@ -15,42 +15,106 @@ using namespace std;
 #include <vector>
 #include <fstream>
 
-#include "Envelope.h"
-
-class Keyword: public Envelope {
+class Keyword {
 public:
-	Keyword(): Envelope() {}
-	Keyword(const string name, bool isDefd);
+	Keyword(const string name, bool isDefd=false);
 	virtual ~Keyword();
 
 	static Keyword *readKey(ifstream &fis);
 
-	virtual bool get(int &t) {return false;};
-	virtual bool get(double &t) {return false;};
-	virtual bool get(bool &t) {return false;};
-	virtual bool get(string &t) {return false;};
-	virtual bool get(vector<int> &t) {return false;};
-	virtual bool get(vector<double> &t) {return false;};
-	virtual bool get(vector<bool> &t) {return false;};
-	virtual bool get(vector<string> &t) {return false;};
+	virtual Keyword *clone() {
+		return 0;
+	}
 
-	virtual void set(int &t) {};
-	virtual void set(double &t) {};
-	virtual void set(bool &t) {};
-	virtual void set(string &t) {};
-	virtual void set(vector<int> &t) {};
-	virtual void set(vector<double> &t) {};
-	virtual void set(vector<bool> &t) {};
-	virtual void set(vector<string> &t) {};
+	virtual bool get(int &t) {
+		return false;
+	}
 
-	virtual ostream &print(ostream &o) {return o << "No value"; };
+	virtual bool get(double &t) {
+		return false;
+	}
 
-	enum KeyType {Int, Dbl, Bool, Str, Data, IntArray,
-		DblArray, BoolArray, StrArray};
+	virtual bool get(bool &t) {
+		return false;
+	}
+
+	virtual bool get(string &t) {
+		return false;
+	}
+
+	virtual bool get(vector<int> &t) {
+		return false;
+	}
+
+	virtual bool get(vector<double> &t) {
+		return false;
+	}
+
+	virtual bool get(vector<bool> &t) {
+		return false;
+	}
+
+	virtual bool get(vector<string> &t) {
+		return false;
+	}
+
+	virtual void set(int &t) {
+	}
+
+	virtual void set(double &t) {
+	}
+
+	virtual void set(bool &t) {
+	}
+
+	virtual void set(string &t) {
+	}
+
+	virtual void set(vector<int> &t) {
+	}
+
+	virtual void set(vector<double> &t) {
+	}
+
+	virtual void set(vector<bool> &t) {
+	}
+
+	virtual void set(vector<string> &t) {
+	}
+
+	bool isDefined() const {
+		return isDefd;
+	}
+
+	string getName() const {
+		return name;
+	}
+
+	void setDefined(bool isDefd) {
+		this->isDefd = isDefd;
+	}
+
+	void setName(string name) {
+		this->name = name;
+	}
+
+	friend ostream& operator <<(ostream& o, Keyword &key) {
+		return key.print(o);
+	}
+
+	virtual ostream &print(ostream &o) {
+		return o << "No value";
+	}
+
+	enum KeyType {
+		Int, Dbl, Bool, Str, Data, IntArray, DblArray, BoolArray, StrArray
+	};
 protected:
-	static bool convBool(string val);
-	static int convType(string typ);
+	string name;
+	bool isDefd;
+	int kind;
+	static bool convBool(const string val);
+	static int convKind(const string typ);
 };
-
 
 #endif /* KEYWORD_H_ */
