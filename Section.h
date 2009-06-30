@@ -21,7 +21,6 @@ using namespace std;
 
 class Section {
 public:
-//	Section::Section() {}
 	Section(const string &name, const string &tag = "");
 	Section(const Section &s);
 	Section &operator=(const Section &s);

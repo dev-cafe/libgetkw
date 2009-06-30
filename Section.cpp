@@ -29,7 +29,6 @@ Section::Section(const string &name, const string &tag) :
 }
 
 Section::Section(const Section &s) {
-	cout << "#section copy, " << s.name << endl;
 	tag = s.tag;
 	nkeys = s.nkeys;
 	nsect = s.nsect;
@@ -47,7 +46,6 @@ Section::Section(const Section &s) {
 }
 
 Section &Section::operator=(const Section &s) {
-	cout << "#section " << name + " = " + s.name << endl;
 	name = s.name;
 	tag = s.tag;
 	nkeys = s.nkeys;
@@ -67,8 +65,6 @@ Section &Section::operator=(const Section &s) {
 }
 
 Section::~Section() {
-	cout << "#section delete, " << name << endl;
-
 	map<string, Section *>::iterator sit;
 	map<string, Keyword *>::iterator kit;
 	for (sit = sects.begin(); sit != sects.end(); ++sit) {
@@ -98,13 +94,6 @@ Keyword &Section::getKey(const string &pathspec) {
 	}
 	return *sect->keys[name];
 }
-
-//Keyword &Section::getKey(const string &path) {
-//	Section *sect = findSect(path);
-//	if (!has_key())
-//		Keyword *kw;
-//	return *kw;
-//}
 
 Section *Section::readSect(ifstream &fis) {
 	return 0;
@@ -241,38 +230,3 @@ bool Section::has_tag(const string &b) {
 	return true;
 
 }
-
-//
-//static Section_t *read_sect(FILE *fd)
-//{
-//	Section_t *sect;
-//	char name[MAX_KEYLEN];
-//	char tagname[2*MAX_KEYLEN+2];
-//	char tag[MAX_KEYLEN];
-//	int nsect, nkeys, i;
-//	char set[6];
-//
-//	i=fscanf(fd, "%*s %s %d %s\n", name, &nsect, set);
-//	i=fscanf(fd, "%*s %1c %*s %d\n", tag, &nkeys);
-///*    printf("SECT: %s %c %d %d %c \n", name, tag[0], nsect, nkeys, set[0]);*/
-//	if (tag[0] == 'T') {
-//		i=fscanf(fd, "%s\n", tag);
-//		sprintf(tagname, "%s(%s)", name, tag);
-///*        printf("TAG: %s -> %s\n", tag, tagname);*/
-//		sect=new_section(tagname, nkeys, nsect);
-//	} else {
-//		sect=new_section(name, nkeys, nsect);
-//	}
-//
-//	sect->set=conv_bool(set[0]);
-//
-//	for (i=0; i < nkeys; i++) {
-//		sect->kw[i]=read_key(fd);
-//	}
-//	for (i=0; i < nsect; i++) {
-//		sect->sect[i]=read_sect(fd);
-//	}
-//
-//	return sect;
-//}
-//

@@ -13,6 +13,9 @@
 #include <stack>
 
 #include "Section.h"
+#include "Keyword.h"
+#include "Keyval.h"
+#include "Keyvec.h"
 
 class Getkw {
 protected:
@@ -27,7 +30,14 @@ public:
 	void set_strict(bool flag);
 	void set_verbose(bool flag);
 protected:
-	Section *read_input(istream &fis);
+	enum KeyType {
+		Int, Dbl, Bool, Str, Data, IntArray, DblArray, BoolArray, StrArray
+	};
+	static Section *read_input(istream &fis);
+	static Section *readSect(ifstream &fis);
+	static Keyword *readKey(ifstream &fis);
+	static bool convBool(const string val);
+	static int convKind(const string typ);
 };
 
 

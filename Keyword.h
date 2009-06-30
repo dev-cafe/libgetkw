@@ -20,8 +20,6 @@ public:
 	Keyword(const string name, bool isDefd=false);
 	virtual ~Keyword();
 
-	static Keyword *readKey(ifstream &fis);
-
 	virtual Keyword *clone() {
 		return 0;
 	}
@@ -106,15 +104,11 @@ public:
 		return o << "No value";
 	}
 
-	enum KeyType {
-		Int, Dbl, Bool, Str, Data, IntArray, DblArray, BoolArray, StrArray
-	};
 protected:
 	string name;
 	bool isDefd;
-	int kind;
-	static bool convBool(const string val);
-	static int convKind(const string typ);
+//	int kind;
+
 };
 
 #endif /* KEYWORD_H_ */
