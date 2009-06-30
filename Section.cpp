@@ -11,12 +11,16 @@ using namespace std;
 #include <iostream>
 
 #include "Section.h"
+#include "Keyval.h"
+#include "Keyvec.h"
 
 #define PRINT_FUNC_NAME cout << "@ Section::" << __func__ << endl;
 
 Section::Section(const string &name, const string &tag) :
 	Envelope(name, false) {
 	type = Sect;
+	nsect = 0;
+	nkeys = 0;
 	if (tag.empty()) {
 		this->tag = name;
 	} else {
@@ -50,13 +54,38 @@ Section::~Section() {
 }
 
 Keyword &Section::getKey(const string &path) {
-	Envelope &key = find(path);
-	if (key.getType() != Key) {
-		string err = "Error! Section::getKey(): Not a keyword, " + path;
-		throw err;
-	}
-	Keyword &kw = static_cast<Keyword &> (key);
-	return kw;
+	Keyword *key = findKey(path);
+//	if (key->getType() != Key) {
+//		string err = "Error! Section::getKey(): Not a keyword, " + path;
+//		throw err;
+//	}
+//	Keyword *kw;
+//	Keyval<int> *ikw = static_cast<Keyval<int> *> (key);
+//	cout << "apa"  << *ikw << endl;
+//
+//	cout << ".......kusss "  << endl;
+//	switch (123123) {
+//	case Keyword::Int:
+//		cout << "int .......kusss" << endl;
+//		kw = static_cast<Keyval<int> *> (key);
+//		break;
+//	case Keyword::Dbl:
+//		kw = static_cast<Keyval<double> *> (key);
+//		break;
+//	case Keyword::Bool:
+//		kw = static_cast<Keyval<bool> *> (key);
+//		break;
+//	case Keyword::Str:
+//		cout << "int .......kusss" << endl;
+//		kw = static_cast<Keyval<string> *> (key);
+//		break;
+//	default:
+//		cout << "default .......kusss" << endl;
+//		break;
+//	}
+
+	//	Keyword &kw = dynamic_cast<Keyword &> (*key);
+	return *key;
 }
 
 Section *Section::readSect(ifstream &fis) {
@@ -64,12 +93,12 @@ Section *Section::readSect(ifstream &fis) {
 }
 
 Section &Section::getSect(const string &path) {
-	Envelope &key = find(path);
-	if (key.getType() != Sect) {
+	Envelope *key = find(path);
+	if (key->getType() != Sect) {
 		string err = "Error! Section::getSect(): Not a section, " + path;
 		throw err;
 	}
-	Section &sect = static_cast<Section &> (key);
+	Section &sect = static_cast<Section &> (*key);
 	return sect;
 
 }
@@ -79,7 +108,7 @@ Section &Section::getSect(const string &path) {
  * map if applicable. The following sections with the same name are added
  * to the tags map.
  */
-void Section::add(Section &sect) {
+void Section::addSect(Section &sect) {
 	string name = sect.name + "<" + sect.tag + ">";
 	if (has_key(name)) {
 		string err = "Error! Section::add: Section already defined, " + name;
@@ -88,38 +117,86 @@ void Section::add(Section &sect) {
 
 	sects[name] = sect;
 	tags[sect.tag] = &sects[name];
+	nsect++;
 }
 
-void Section::add(Keyword &key) {
+template <class T> void Section::addKey(T &key) {
 	string name = key.getName();
 
 	if (has_key(name)) {
 		string err = "Error Section::add: Key already defined, " + name;
 		throw err;
 	}
+//	cout << "adding " << key;
 
+	map<string, Keyword *> kuk;
+	T *apa = new T(key);
+	cout << "adding " << *apa;
 	keys[name] = key;
+	kuk[name] = apa;
+	nkeys++;
+//	cout << " -> " << keys[name] <<endl;
+	cout << " -> " << *kuk[name] <<endl;
+	delete apa;
 }
 
-Envelope &Section::find(const string &pathspec) {
+template void Section::addKey(Keyval<int> &);
+template void Section::addKey(Keyval<double> &);
+template void Section::addKey(Keyval<bool> &);
+template void Section::addKey(Keyval<string> &);
+
+Envelope *Section::find(const string &pathspec) {
 	vector<string> path;
 	splitPath(pathspec, path);
 
-	Envelope &key = traversePath(path, pathspec);
+	Envelope *key = traversePath(path, pathspec);
 	return key;
 }
 
-Envelope &Section::traversePath(vector<string> &path, const string &pathspec) {
+
+Keyword *Section::findKey(const string &pathspec) {
+	vector<string> path;
+	splitPath(pathspec, path);
+
+	Keyword *key = traversePathKey(path, pathspec);
+	return key;
+}
+
+Keyword *Section::traversePathKey(vector<string> &path, const string &pathspec) {
+	string cur = path[0];
+
+	if (path.size() == 1) {
+		if (has_key(cur)) {
+			cout << "found " << cur << " = " << keys[cur] << endl;
+			return &keys[cur];
+		}
+		string err = "Error! traversePathKey: Invalid path, " + pathspec;
+		throw err;
+	}
+
+	if (!has_sect(cur))
+		cur = cur + "<" + cur + ">";
+	if (!has_sect(cur)) {
+		string err = "Error! traversePath: Invalid path, " + pathspec;
+		throw err;
+	}
+
+	path.erase(path.begin());
+	Keyword *key = sects[cur].traversePathKey(path, pathspec);
+	return key;
+}
+
+Envelope *Section::traversePath(vector<string> &path, const string &pathspec) {
 	string cur = path[0];
 
 	if (path.size() == 1) {
 		if (has_key(cur))
-			return keys[cur];
+			return &keys[cur];
 		if (!has_sect(cur)) {
 			cur = cur + "<" + cur + ">";
 		}
 		if (has_sect(cur))
-			return sects[cur];
+			return &sects[cur];
 		string err = "Error! traversePath: Invalid path, " + pathspec;
 		throw err;
 	}
@@ -132,7 +209,7 @@ Envelope &Section::traversePath(vector<string> &path, const string &pathspec) {
 	}
 
 	path.erase(path.begin());
-	Envelope &key = sects[cur].traversePath(path, pathspec);
+	Envelope *key = sects[cur].traversePath(path, pathspec);
 	return key;
 }
 

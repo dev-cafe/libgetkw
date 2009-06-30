@@ -43,7 +43,7 @@ public:
 	virtual void set(vector<bool> &t) {};
 	virtual void set(vector<string> &t) {};
 
-	virtual ostream &print(ostream &o) {return o << "nil" << endl; };
+	virtual ostream &print(ostream &o) {return o << "No value"; };
 
 	enum KeyType {Int, Dbl, Bool, Str, Data, IntArray,
 		DblArray, BoolArray, StrArray};

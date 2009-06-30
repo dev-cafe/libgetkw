@@ -30,8 +30,8 @@ public:
 	virtual ~Section();
 	Section &getSect(const string &path);
 	Keyword &getKey(const string &path);
-	void add(Section &sect);
-	void add(Keyword &key);
+	void addSect(Section &sect);
+	template <class T> void addKey(T &key);
 	static Section *readSect(ifstream &fis);
 
 	string &getTag() {
@@ -66,8 +66,11 @@ protected:
 	map<string, Keyword> keys;
 	map<string, Section *> tags;
 
-	Envelope &find(const string &pathspec);
-	Envelope &traversePath(vector<string> &path, const string &pathspec);
+	Keyword *findKey(const string &pathspec);
+	Keyword *traversePathKey(vector<string> &path, const string &pathspec);
+
+	Envelope *find(const string &pathspec);
+	Envelope *traversePath(vector<string> &path, const string &pathspec);
 	void splitPath(const string &pathspec, vector<string> &path);
 	int splitTag(const string &path, string &tag);
 	bool has_key(const string &name);
