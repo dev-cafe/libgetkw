@@ -29,6 +29,7 @@ public:
 	Section &getSect(const string &path);
 	Keyword &getKey(const string &path);
 	void addSect(Section &sect);
+	void addSect(Section *);
 	template <class T> void addKeyword(T &key);
 	void addKey(Keyword *key);
 	static Section *readSect(ifstream &fis);

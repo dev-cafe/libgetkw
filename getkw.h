@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <stack>
 
 #include "Section.h"
@@ -36,6 +37,7 @@ protected:
 	};
 	static Section *readSect(istream &fis);
 	static Keyword *readKey(istream &fis);
+	static void readline(istream &fis, istringstream &isi);
 	static bool convBool(const string val);
 	static int convKind(const string typ);
 private:

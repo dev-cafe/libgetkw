@@ -102,6 +102,18 @@ Section *Section::readSect(ifstream &fis) {
  * map if applicable. The following sections with the same name are added
  * to the tags map.
  */
+void Section::addSect(Section *sect) {
+	string name = sect->name + "<" + sect->tag + ">";
+	if (has_key(name)) {
+		string err = "Error! Section::add: Section already defined, " + name;
+		throw err;
+	}
+
+	sects[name] = sect;
+	tags[sect->tag] = sects[name];
+	nsect++;
+}
+
 void Section::addSect(Section &sect) {
 	string name = sect.name + "<" + sect.tag + ">";
 	if (has_key(name)) {
@@ -113,7 +125,6 @@ void Section::addSect(Section &sect) {
 	tags[sect.tag] = sects[name];
 	nsect++;
 }
-
 //! Add an allocated key to a section
 void Section::addKey(Keyword *key) {
 	string name = key->getName();
