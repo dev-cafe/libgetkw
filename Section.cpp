@@ -11,8 +11,6 @@ using namespace std;
 #include <iostream>
 
 #include "Section.h"
-#include "Keyval.h"
-#include "Keyvec.h"
 
 #define PRINT_FUNC_NAME cout << "@ Section::" << __func__ << endl;
 
@@ -116,7 +114,21 @@ void Section::addSect(Section &sect) {
 	nsect++;
 }
 
-template<class T> void Section::addKey(T &key) {
+//! Add an allocated key to a section
+void Section::addKey(Keyword *key) {
+	string name = key->getName();
+
+	if (has_key(name)) {
+		string err = "Error Section::add: Key already defined, " + name;
+		throw err;
+	}
+
+	keys[name] = key;
+	nkeys++;
+}
+
+//! Copy and and add a keyword to a section
+template<class T> void Section::addKeyword(T &key) {
 	string name = key.getName();
 
 	if (has_key(name)) {
@@ -128,10 +140,10 @@ template<class T> void Section::addKey(T &key) {
 	nkeys++;
 }
 
-template void Section::addKey(Keyval<int> &);
-template void Section::addKey(Keyval<double> &);
-template void Section::addKey(Keyval<bool> &);
-template void Section::addKey(Keyval<string> &);
+template void Section::addKeyword(Keyval<int> &);
+template void Section::addKeyword(Keyval<double> &);
+template void Section::addKeyword(Keyval<bool> &);
+template void Section::addKeyword(Keyval<string> &);
 
 Section *Section::traversePath(vector<string> &path, const string &pathspec) {
 	string cur = path[0];

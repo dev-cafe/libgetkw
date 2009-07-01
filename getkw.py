@@ -44,7 +44,7 @@ class Section:
 		self.callback=callback
 		self.fullname=self.name
 		if tag != None:
-			self.fullname=self.fullname+'('+self.tag+')'
+			self.fullname=self.fullname+'<'+self.tag+'>'
 
 	def __cmp__(self, other):
 		return cmp(self.name,other.name)
@@ -73,10 +73,10 @@ class Section:
 		self.__setitem__(k,val)
 
 	def _split_tag(self, key):
-		i=string.find(key, '(')
+		i=string.find(key, '<')
 		if i == -1:
 			return (key, None)
-		j=string.rfind(key, ')')
+		j=string.rfind(key, '>')
 		if j == -1:
 			raise KeyError, 'faulty tag spec'
 		return (key[0:i], key[i+1:j])
@@ -725,8 +725,8 @@ line: %d" % ( name, lineno(self.loc,self.strg))
 		sect_end   = Literal("}").suppress()
 		array_begin   = Literal("[").suppress()
 		array_end   = Literal("]").suppress()
-		arg_begin   = Literal("(").suppress()
-		arg_end   = Literal(")").suppress()
+		tag_begin   = Literal("<").suppress()
+		tag_end   = Literal(">").suppress()
 		eql   = Literal("=").suppress()
 		dmark = Literal('$').suppress()
 		end_data=Literal('$end').suppress()
@@ -744,7 +744,7 @@ line: %d" % ( name, lineno(self.loc,self.strg))
 				Literal("\n").suppress() ^ \
 				quotedString.setParseAction(removeQuotes))+array_end
 		sect=name+sect_begin
-		tag_sect=name+Group(arg_begin+name+arg_end)+sect_begin
+		tag_sect=name+Group(tag_begin+name+tag_end)+sect_begin
 
 		# Grammar
 		keyword = name + eql + kstr
@@ -790,14 +790,19 @@ if __name__ == '__main__':
 title = foo
 string="fooo bar"
 
-defs(apa) { 
+defs {
+foo=[1,2,3]
+bar=99.0
+}
+
+defs<apa> { 
 foo=[1, 2, 3,
 4,5, 6,7,8,9, 
 10] 
 bar=22.0
 }
 
-defs(gorilla) { 
+defs<gorilla> { 
 foo=[1, 2, 3,
 4,5, 6,7,8,9, 
 10] 
@@ -811,7 +816,7 @@ raboof {
     foo=1
     bar=1
 
-	foobar(gnat) {
+	foobar<gnat>{
 		foo=1
 		bar=2
 	}

@@ -10,6 +10,8 @@
 #ifndef GETKW_H_
 #define GETKW_H_
 
+#include <iostream>
+#include <fstream>
 #include <stack>
 
 #include "Section.h"
@@ -18,27 +20,29 @@
 #include "Keyvec.h"
 
 class Getkw {
-protected:
-	string file;
-	Section *toplevel;
-	Section *cur;
-	//Section *stack[MAX_SECT_STACK];
-	//int sp;
 public:
 	Getkw(string file);
 	virtual ~Getkw();
 	void set_strict(bool flag);
 	void set_verbose(bool flag);
+	Section &pushSection(const string path);
+	Section &popSection();
+	Section &getSect(const string path);
+	Keyword &getKey(const string path);
+	template <class T> void get(const string path, T &val);
 protected:
 	enum KeyType {
 		Int, Dbl, Bool, Str, Data, IntArray, DblArray, BoolArray, StrArray
 	};
-	static Section *read_input(istream &fis);
-	static Section *readSect(ifstream &fis);
-	static Keyword *readKey(ifstream &fis);
+	static Section *readSect(istream &fis);
+	static Keyword *readKey(istream &fis);
 	static bool convBool(const string val);
 	static int convKind(const string typ);
+private:
+	string file;
+	Section *toplevel;
+	Section *cur;
+	stack<Section *> sstack;
 };
-
 
 #endif /* GETKW_H_ */

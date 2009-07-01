@@ -8,8 +8,6 @@
  */
 
 using namespace std;
-#include <iostream>
-#include <fstream>
 
 #include "Getkw.h"
 
@@ -18,7 +16,7 @@ using namespace std;
 Getkw::Getkw(string file) {
 
 	if (file.empty() || file.compare("stdin") == 0 || file.compare("STDIN")) {
-		toplevel = read_input(cin);
+		toplevel = readSect(cin);
 	} else {
 		const char *fname = file.data();
 		ifstream fis(fname);
@@ -26,14 +24,14 @@ Getkw::Getkw(string file) {
 			cout << "Open failed: " << file << endl;
 			throw 256;
 		}
-		toplevel = read_input(fis);
+		toplevel = readSect(fis);
 
 		cur = toplevel;
 	}
 }
 
 Getkw::~Getkw() {
-	// TODO Auto-generated destructor stub
+	delete toplevel;
 }
 
 void Getkw::set_strict(bool flag) {
@@ -42,43 +40,46 @@ void Getkw::set_strict(bool flag) {
 void Getkw::set_verbose(bool flag) {
 }
 
-Section *Getkw::read_input(istream &fis) {
-	return NULL;
-}
-
 Section *Getkw::readSect(istream &fis) {
 	string name;
-	string tagname;
 	string tag;
 	string dummy;
-	int nsect, nkeys, i;
 	string set;
+	int nsect, nkeys, i;
+	bool isSet, hasTag;
 
 	fis >> dummy >> name >> nsect >> set;
 	fis >> dummy >> tag >> nkeys;
-	cout << name << tag[0] << nsect << nkeys << set[0];
-	if (tag[0] == 'T') {
-		fis >> tag;
-		tagname=name + "<"+tag+">";
-		cout << "TAG: "<< tag << " "<<  tagname;
-		Section sect = Section(name, tag);
-	} else {
-		Section sect = Section(name);
-	}
+	cout << name << tag << nsect << nkeys << set;
+	isSet = convBool(set);
+	hasTag = convBool(tag);
 
-	sect.isDefined(convBool(set));
+	Keyword *key;
+	Section *sect;
+	Section *thissect = new Section(name);
+	sect->setDefined(isSet);
+	if (hasTag) {
+		fis >> tag;
+		sect->setTag(tag);
+	}
 
 	for (i = 0; i < nkeys; i++) {
-		sect.addKey(readKey(fis));
+		// mem leak
+		key = readKey(fis);
+		thissect->addKey(key);
+		//delete key;
 	}
 	for (i = 0; i < nsect; i++) {
-		sect.addSect(readSsect(fis));
+		// mem leak
+		sect = readSect(fis);
+		thissect->addSect(*sect);
+		delete sect;
 	}
 
 	return sect;
 }
 
-Keyword *Getkw::readKey(ifstream &fis) {
+Keyword *Getkw::readKey(istream &fis) {
 	string type, name, set;
 	int len;
 
@@ -170,8 +171,8 @@ Keyword *Getkw::readKey(ifstream &fis) {
 		key = new Keyvec<string> (name, sv, setf);
 		break;
 	default:
-		cout << "Unknown keyword type: " << type << " (" << kind << ")\n";
-		return NULL;
+		string err = "Unknown keyword type: " + name + " <> " + type;
+		throw err;
 		break;
 	}
 	return key;
@@ -179,9 +180,7 @@ Keyword *Getkw::readKey(ifstream &fis) {
 }
 
 bool Getkw::convBool(const string val) {
-	const string T = "True";
-
-	if (val.compare(T) == 0)
+	if (val[0] == 'T' or val[0] == 't')
 		return true;
 	return false;
 

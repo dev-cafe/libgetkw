@@ -16,8 +16,9 @@ using namespace std;
 #include <map>
 #include <vector>
 
-//#include "Envelope.h"
 #include "Keyword.h"
+#include "Keyval.h"
+#include "Keyvec.h"
 
 class Section {
 public:
@@ -28,7 +29,8 @@ public:
 	Section &getSect(const string &path);
 	Keyword &getKey(const string &path);
 	void addSect(Section &sect);
-	template <class T> void addKey(T &key);
+	template <class T> void addKeyword(T &key);
+	void addKey(Keyword *key);
 	static Section *readSect(ifstream &fis);
 
 	string &getTag() {
