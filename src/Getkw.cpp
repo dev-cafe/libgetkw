@@ -13,14 +13,17 @@ using namespace std;
 
 #define TEST_ARRAY if (len > 1) cout << "Warning, invalid length of 1 for " << name << endl
 
-Getkw::Getkw(const string file) {
+Getkw::Getkw(const string &file) {
+	strict = false;
+	verbose = false;
 
-	if (file.empty() != 0 || file.compare("stdin") == 0 || file.compare("STDIN") == 0) {
-		cout << "Reading from stdin " << endl;
+	if (file.empty() != 0 || file.compare("stdin") == 0
+			|| file.compare("STDIN") == 0) {
+		if (verbose) cout << "Reading from stdin " << endl;
 		toplevel = readSect(cin);
 	} else {
 		const char *fname = file.data();
-		cout << "Opening file, " << file << endl;
+		if (verbose) cout << "Opening file, " << file << endl;
 		ifstream fis(fname);
 		if (fis.bad()) {
 			cout << "Open failed: " << file << endl;
@@ -36,10 +39,58 @@ Getkw::~Getkw() {
 	delete toplevel;
 }
 
-void Getkw::set_strict(bool flag) {
+void Getkw::setStrict(bool flag) {
+	strict = flag;
 }
 
-void Getkw::set_verbose(bool flag) {
+void Getkw::setVerbose(bool flag) {
+	verbose = flag;
+}
+
+template<class T> void Getkw::get(const string &path, T val) {
+	Keyword &key = cur->getKey(path);
+	cout << key;
+	key.get(val);
+}
+
+template void Getkw::get(const string&, int);
+template void Getkw::get(const string&, double);
+template void Getkw::get(const string&, bool);
+template void Getkw::get(const string&, string);
+template void Getkw::get(const string&, vector<int>);
+template void Getkw::get(const string&, vector<double>);
+template void Getkw::get(const string&, vector<bool>);
+template void Getkw::get(const string&, vector<string>);
+
+Keyword &Getkw::getKey(const string &path) {
+	return cur->getKey(path);
+}
+
+Section &Getkw::getSect(const string &path) {
+	return cur->getSect(path);
+}
+
+void Getkw::pushSection(const string &path) {
+	sstack.push(cur);
+	try {
+		Section &newsec = cur->getSect(path);
+		cur = &newsec;
+	} catch (string err) {
+		cout << err;
+		if (strict)
+			exit(1);
+	}
+
+}
+
+void Getkw::popSection() {
+	if (sstack.empty()) {
+		cout << "Error! Getkw stack is empty!" << endl;
+		if (strict)
+			exit(1);
+	}
+	cur = sstack.top();
+	sstack.pop();
 }
 
 Section *Getkw::readSect(istream &fis) {
@@ -51,44 +102,34 @@ Section *Getkw::readSect(istream &fis) {
 	int nsect, nkeys, i;
 	bool isSet, hasTag;
 
-	cout << "@ In readSect" << endl;
 	readline(fis, isi);
-//	cout << "$$" << buf << endl;
 	isi >> dum1 >> name >> nsect >> set;
 	readline(fis, isi);
-//	cout << "$$" << buf << e4ndl;
-	isi >> dum1 >> tag >>  dum2 >> nkeys;
-	cout <<"!"<< dum1 << tag << dum2 << nkeys <<endl;
+	isi >> dum1 >> tag >> dum2 >> nkeys;
 
-	cout << "SECT=" << name << " TAG=" << tag << " NSECT=" << nsect <<
-	" NKEYS=" << nkeys << " SET="<< set << endl;
+	//	cout << "SECT=" << name << " TAG=" << tag << " NSECT=" << nsect <<
+	//	" NKEYS=" << nkeys << " SET="<< set << endl;
 	isSet = convBool(set);
 	hasTag = convBool(tag);
-	cout << isSet << hasTag << endl;
 
 	Keyword *key;
 	Section *sect;
 	Section *thissect = new Section(name);
 	thissect->setDefined(isSet);
 	if (hasTag) {
-		readline(fis,isi);
+		readline(fis, isi);
 		isi >> tag;
-		cout << "tag=" << tag;
+		//		cout << "tag=" << tag;
 		thissect->setTag(tag);
 	}
 
 	for (i = 0; i < nkeys; i++) {
-		// mem leak
 		key = readKey(fis);
 		thissect->addKey(key);
-		//delete key;
 	}
 	for (i = 0; i < nsect; i++) {
-		// mem leak
-		cout << "sectno " << i << endl;
 		sect = readSect(fis);
 		thissect->addSect(sect);
-		//delete sect;
 	}
 
 	return thissect;
@@ -99,10 +140,9 @@ Keyword *Getkw::readKey(istream &fis) {
 	string type, name, set;
 	int len;
 
-	cout << "@@@ In readKey()\n";
 	readline(fis, isi);
 	isi >> type >> name >> len >> set;
-	cout << type << ":" << name << ":" << len << ":" << set << endl;
+	//	cout << type << ":" << name << ":" << len << ":" << set << endl;
 
 	bool setf = convBool(set);
 	int kind = convKind(type);
@@ -131,7 +171,6 @@ Keyword *Getkw::readKey(istream &fis) {
 		double ds;
 		readline(fis, isi);
 		isi >> ds;
-		cout << ds << endl;
 		key = new Keyval<double> (name, ds, setf);
 		break;
 	case Bool:
@@ -141,16 +180,14 @@ Keyword *Getkw::readKey(istream &fis) {
 		bool bs;
 		readline(fis, isi);
 		isi >> ss;
-		bs=convBool(ss);
+		bs = convBool(ss);
 		key = new Keyval<bool> (name, bs, setf);
-		cout << *key << endl;
 		break;
 	case Str:
 		TEST_ARRAY;
 		if (len == 0)
 			return NULL;
 		getline(fis, ss);
-		cout << ss << endl;
 		key = new Keyval<string> (name, ss, setf);
 		break;
 	case IntArray:
@@ -198,7 +235,7 @@ Keyword *Getkw::readKey(istream &fis) {
 		key = new Keyvec<string> (name, sv, setf);
 		break;
 	default:
-		cout << "WTF!" <<endl;
+		cout << "WTF!" << endl;
 		string err = "Unknown keyword type: " + name + " <> " + type;
 		throw err;
 		break;
@@ -207,22 +244,21 @@ Keyword *Getkw::readKey(istream &fis) {
 
 }
 
-void Getkw::readline(istream &fis, istringstream &isi)
-{
+void Getkw::readline(istream &fis, istringstream &isi) {
 	static string buf;
 	getline(fis, buf);
 	isi.clear();
 	isi.str(buf);
 }
 
-bool Getkw::convBool(const string val) {
+bool Getkw::convBool(const string &val) {
 	if (val[0] == 'T' or val[0] == 't')
 		return true;
 	return false;
 
 }
 
-int Getkw::convKind(const string typ) {
+int Getkw::convKind(const string &typ) {
 	static const string INT = "INT";
 	static const string DBL = "DBL";
 	static const string BOOL = "BOOL";

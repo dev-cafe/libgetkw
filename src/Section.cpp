@@ -11,6 +11,7 @@ using namespace std;
 #include <iostream>
 
 #include "Section.h"
+#include "GetkwError.h"
 
 #define PRINT_FUNC_NAME cout << "@ Section::" << __func__ << endl;
 
@@ -87,9 +88,12 @@ Keyword &Section::getKey(const string &pathspec) {
 
 	string name = path.back();
 	Section *sect = traversePath(path, pathspec);
-	if (!has_key(name)) {
-		string err = "Error! Invalid keyword, " + pathspec;
+	cout << "nami" << name << endl;
+	if (!sect->has_key(name)) {
+		string err = "Invalid keyword, " + pathspec;
+		throw GetkwError(err);
 	}
+	cout << " " << (*sect->keys[name]).getName() << endl;
 	return *sect->keys[name];
 }
 
