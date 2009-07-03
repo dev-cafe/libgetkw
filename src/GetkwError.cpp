@@ -10,12 +10,46 @@
 
 #include "GetkwError.h"
 
-GetkwError::GetkwError(const string &err, bool verbose): msg(err), verbose(verbose) {
-	if (verbose) {
+bool GetkwError::strict = false;
+bool GetkwError::verbose = true;
+
+GetkwError::GetkwError() {
+}
+
+GetkwError::GetkwError(const string &err):
+	msg(err) {
+	if (verbose or strict) {
 		cout << "Error! " << msg << endl;
+	}
+	if (strict) {
+		cout << "Exiting..." << endl;
+		exit(1);
 	}
 }
 
 GetkwError::~GetkwError() throw() {
 	// TODO Auto-generated destructor stub
+}
+
+void GetkwError::trigger(const string &err)
+{
+	msg = err;
+	if (verbose or strict) {
+		cout << "Error! " << msg << endl;
+	}
+	if (strict) {
+		cout << "Exiting..." << endl;
+		exit(1);
+	}
+	throw *this;
+}
+
+void GetkwError::setVerbose(bool flag)
+{
+	verbose = flag;
+}
+
+void GetkwError::setStrict(bool flag)
+{
+	strict = flag;
 }

@@ -10,22 +10,45 @@
 #include "Keyval.h"
 
 template<class T>
-Keyval<T>::~Keyval() {
-	// TODO Auto-generated destructor stub
+Keyval<T>::Keyval(const string &name, T &xarg, bool isDefd) :
+	Keyword(name, isDefd), arg(xarg) {
+	kind = isKind(arg);
 }
 
 template<class T>
-Keyval<T> *Keyval<T>::clone()
-{
-	return new Keyval<T>(*this);
+Keyval<T>::~Keyval() {
 }
 
-//template Keyval<int> Keyval<T>::clone();
+template<class T>
+Keyval<T> *Keyval<T>::clone() {
+	return new Keyval<T> (*this);
+}
 
+template<class T>
+ostream& Keyval<T>::repr(ostream& o) {
+	if (kind == Str) {
+		o << "  " + name << " = " << "\"" << arg << "\"";
+	} else {
+		o << "  " + name << " = " << arg;
+	}
+	return o;
+}
 
-template <class T>
-ostream& Keyval<T>::print(ostream& o) {
-	return o << name << ": " << arg << " (" << isDefd << ")";
+template<class T>
+bool Keyval<T>::get(T &t) {
+	t = arg;
+	if (isKind(t) != kind) {
+		string err = "Keyword kind mismatch: " + getNamedKind(kind);
+		throw GetkwError(err);
+	}
+	return isDefd;
+}
+
+template<class T>
+void Keyval<T>::set(T &t) {
+	arg = t;
+	isDefd = true;
+	kind = isKind(t);
 }
 
 template class Keyval<int> ;

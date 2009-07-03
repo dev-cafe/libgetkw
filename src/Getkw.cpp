@@ -19,15 +19,17 @@ Getkw::Getkw(const string &file) {
 
 	if (file.empty() != 0 || file.compare("stdin") == 0
 			|| file.compare("STDIN") == 0) {
-		if (verbose) cout << "Reading from stdin " << endl;
+		if (verbose)
+			cout << "Reading from stdin " << endl;
 		toplevel = readSect(cin);
 	} else {
 		const char *fname = file.data();
-		if (verbose) cout << "Opening file, " << file << endl;
+		if (verbose)
+			cout << "Opening file, " << file << endl;
 		ifstream fis(fname);
 		if (fis.bad()) {
-			cout << "Open failed: " << file << endl;
-			throw 256;
+			string err = "Open failed: " + file;
+			throw GetkwError(err);
 		}
 		toplevel = readSect(fis);
 
@@ -47,20 +49,29 @@ void Getkw::setVerbose(bool flag) {
 	verbose = flag;
 }
 
-template<class T> void Getkw::get(const string &path, T val) {
+void Getkw::print()
+{
+	cout << repr(cout) << endl;
+}
+
+ostream &Getkw::repr(ostream &o)
+{
+	return o << *toplevel;
+}
+
+template<class T> void Getkw::get(const string &path, T &val) {
 	Keyword &key = cur->getKey(path);
-	cout << key;
 	key.get(val);
 }
 
-template void Getkw::get(const string&, int);
-template void Getkw::get(const string&, double);
-template void Getkw::get(const string&, bool);
-template void Getkw::get(const string&, string);
-template void Getkw::get(const string&, vector<int>);
-template void Getkw::get(const string&, vector<double>);
-template void Getkw::get(const string&, vector<bool>);
-template void Getkw::get(const string&, vector<string>);
+template void Getkw::get(const string&, int&);
+template void Getkw::get(const string&, double&);
+template void Getkw::get(const string&, bool&);
+template void Getkw::get(const string&, string&);
+template void Getkw::get(const string&, vector<int>&);
+template void Getkw::get(const string&, vector<double>&);
+template void Getkw::get(const string&, vector<bool>&);
+template void Getkw::get(const string&, vector<string>&);
 
 Keyword &Getkw::getKey(const string &path) {
 	return cur->getKey(path);
@@ -107,8 +118,6 @@ Section *Getkw::readSect(istream &fis) {
 	readline(fis, isi);
 	isi >> dum1 >> tag >> dum2 >> nkeys;
 
-	//	cout << "SECT=" << name << " TAG=" << tag << " NSECT=" << nsect <<
-	//	" NKEYS=" << nkeys << " SET="<< set << endl;
 	isSet = convBool(set);
 	hasTag = convBool(tag);
 
@@ -119,7 +128,6 @@ Section *Getkw::readSect(istream &fis) {
 	if (hasTag) {
 		readline(fis, isi);
 		isi >> tag;
-		//		cout << "tag=" << tag;
 		thissect->setTag(tag);
 	}
 
@@ -142,7 +150,6 @@ Keyword *Getkw::readKey(istream &fis) {
 
 	readline(fis, isi);
 	isi >> type >> name >> len >> set;
-	//	cout << type << ":" << name << ":" << len << ":" << set << endl;
 
 	bool setf = convBool(set);
 	int kind = convKind(type);
@@ -155,7 +162,7 @@ Keyword *Getkw::readKey(istream &fis) {
 	vector<string> sv;
 
 	switch (kind) {
-	case Int:
+	case Keyword::Int:
 		TEST_ARRAY;
 		if (len == 0)
 			return NULL;
@@ -164,7 +171,7 @@ Keyword *Getkw::readKey(istream &fis) {
 		isi >> is;
 		key = new Keyval<int> (name, is, setf);
 		break;
-	case Dbl:
+	case Keyword::Dbl:
 		TEST_ARRAY;
 		if (len == 0)
 			return NULL;
@@ -173,7 +180,7 @@ Keyword *Getkw::readKey(istream &fis) {
 		isi >> ds;
 		key = new Keyval<double> (name, ds, setf);
 		break;
-	case Bool:
+	case Keyword::Bool:
 		TEST_ARRAY;
 		if (len == 0)
 			return NULL;
@@ -183,14 +190,14 @@ Keyword *Getkw::readKey(istream &fis) {
 		bs = convBool(ss);
 		key = new Keyval<bool> (name, bs, setf);
 		break;
-	case Str:
+	case Keyword::Str:
 		TEST_ARRAY;
 		if (len == 0)
 			return NULL;
 		getline(fis, ss);
 		key = new Keyval<string> (name, ss, setf);
 		break;
-	case IntArray:
+	case Keyword::IntArray:
 		if (len == 0)
 			return NULL;
 		int ival;
@@ -201,7 +208,7 @@ Keyword *Getkw::readKey(istream &fis) {
 		}
 		key = new Keyvec<int> (name, iv, setf);
 		break;
-	case DblArray:
+	case Keyword::DblArray:
 		if (len == 0)
 			return NULL;
 		double dval;
@@ -212,7 +219,7 @@ Keyword *Getkw::readKey(istream &fis) {
 		}
 		key = new Keyvec<double> (name, dv, setf);
 		break;
-	case BoolArray:
+	case Keyword::BoolArray:
 		if (len == 0)
 			return NULL;
 		bool bval;
@@ -224,8 +231,8 @@ Keyword *Getkw::readKey(istream &fis) {
 		}
 		key = new Keyvec<bool> (name, bv, setf);
 		break;
-	case StrArray:
-	case Data:
+	case Keyword::StrArray:
+	case Keyword::Data:
 		if (len == 0)
 			return NULL;
 		for (int i = 0; i < len; i++) {
@@ -235,9 +242,8 @@ Keyword *Getkw::readKey(istream &fis) {
 		key = new Keyvec<string> (name, sv, setf);
 		break;
 	default:
-		cout << "WTF!" << endl;
 		string err = "Unknown keyword type: " + name + " <> " + type;
-		throw err;
+		throw GetkwError(err);
 		break;
 	}
 	return key;
@@ -268,24 +274,25 @@ int Getkw::convKind(const string &typ) {
 	static const string DBL_ARRAY = "DBL_ARRAY";
 	static const string BOOL_ARRAY = "BOOL_ARRAY";
 	static const string STR_ARRAY = "STR_ARRAY";
+
 	if (typ.compare(INT) == 0)
-		return Int;
+		return Keyword::Int;
 	if (typ.compare(DBL) == 0)
-		return Dbl;
+		return Keyword::Dbl;
 	if (typ.compare(BOOL) == 0)
-		return Bool;
+		return Keyword::Bool;
 	if (typ.compare(STR) == 0)
-		return Str;
+		return Keyword::Str;
 	if (typ.compare(DATA) == 0)
-		return Data;
+		return Keyword::Data;
 	if (typ.compare(INT_ARRAY) == 0)
-		return IntArray;
+		return Keyword::IntArray;
 	if (typ.compare(DBL_ARRAY) == 0)
-		return DblArray;
+		return Keyword::DblArray;
 	if (typ.compare(BOOL_ARRAY) == 0)
-		return BoolArray;
+		return Keyword::BoolArray;
 	if (typ.compare(STR_ARRAY) == 0)
-		return StrArray;
+		return Keyword::StrArray;
 	return -1;
 }
 

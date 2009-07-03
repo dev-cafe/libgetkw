@@ -15,9 +15,11 @@ using namespace std;
 #include <vector>
 #include <fstream>
 
+#include "GetkwError.h"
+
 class Keyword {
 public:
-	Keyword(const string name, bool isDefd=false);
+	Keyword(const string name, bool isDefd = false);
 	virtual ~Keyword();
 
 	virtual Keyword *clone() {
@@ -25,34 +27,42 @@ public:
 	}
 
 	virtual bool get(int &t) {
+		throwErrorWrongKind(t);
 		return false;
 	}
 
 	virtual bool get(double &t) {
+		throwErrorWrongKind(t);
 		return false;
 	}
 
 	virtual bool get(bool &t) {
+		throwErrorWrongKind(t);
 		return false;
 	}
 
 	virtual bool get(string &t) {
+		throwErrorWrongKind(t);
 		return false;
 	}
 
 	virtual bool get(vector<int> &t) {
+		throwErrorWrongKind(t);
 		return false;
 	}
 
 	virtual bool get(vector<double> &t) {
+		throwErrorWrongKind(t);
 		return false;
 	}
 
 	virtual bool get(vector<bool> &t) {
+		throwErrorWrongKind(t);
 		return false;
 	}
 
 	virtual bool get(vector<string> &t) {
+		throwErrorWrongKind(t);
 		return false;
 	}
 
@@ -88,6 +98,9 @@ public:
 		return name;
 	}
 
+	int getKind() const {
+		return kind;
+	}
 	void setDefined(bool isDefd) {
 		this->isDefd = isDefd;
 	}
@@ -97,18 +110,65 @@ public:
 	}
 
 	friend ostream& operator <<(ostream& o, Keyword &key) {
-		return key.print(o);
+		return key.repr(o);
 	}
 
-	virtual ostream &print(ostream &o) {
-		return o << "No value";
+	virtual void print() {
+		cout << repr(cout) << endl;
 	}
 
+	virtual ostream &repr(ostream &o) {
+		return o << "Warning! Keyword: Unknown key type.";
+	}
+
+	enum KeyType {
+		Unknown = -1,
+		Undefined,
+		Int,
+		Dbl,
+		Bool,
+		Str,
+		IntArray,
+		DblArray,
+		BoolArray,
+		StrArray,
+		Data
+	};
+
+	const static string &getNamedKind(int i);
+	template<class T> void throwErrorWrongKind(T &t);
 protected:
+	int isKind(int &t) {
+		return Int;
+	}
+	int isKind(double &t) {
+		return Dbl;
+	}
+	int isKind(bool &t) {
+		return Bool;
+	}
+	int isKind(string &t) {
+		return Str;
+	}
+	int isKind(vector<int> &t) {
+		return IntArray;
+	}
+	int isKind(vector<double> &t) {
+		return DblArray;
+	}
+	int isKind(vector<bool> &) {
+		return BoolArray;
+	}
+	int isKind(vector<string> &t) {
+		return StrArray;
+	}
+	template<class T> int setKind(T &t) {
+		cout << "Warning! Unknown kind:" << t << endl;
+		return Unknown;
+	}
 	string name;
 	bool isDefd;
-//	int kind;
-
+	int kind;
 };
 
 #endif /* KEYWORD_H_ */

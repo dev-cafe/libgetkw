@@ -19,6 +19,7 @@ using namespace std;
 #include "Keyword.h"
 #include "Keyval.h"
 #include "Keyvec.h"
+#include "GetkwError.h"
 
 class Section {
 public:
@@ -33,6 +34,11 @@ public:
 	template <class T> void addKeyword(T &key);
 	void addKey(Keyword *key);
 	static Section *readSect(ifstream &fis);
+	void print();
+	ostream &repr(ostream &o);
+	friend ostream& operator <<(ostream& o, Section &s) {
+		return s.repr(o);
+	}
 
 	string &getTag() {
 		return tag;
@@ -73,7 +79,6 @@ public:
 	void setName(string name) {
 		this->name = name;
 	}
-
 protected:
 	string name;
 	string tag;

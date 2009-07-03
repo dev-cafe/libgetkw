@@ -11,6 +11,7 @@
 #ifndef GETKWERROR_H_
 #define GETKWERROR_H_
 
+#include <cstdlib>
 #include <exception>
 #include <iostream>
 #include <string>
@@ -19,17 +20,22 @@ using namespace std;
 
 class GetkwError: public exception {
 public:
-	GetkwError(const string &err, bool verbose = true);
+	GetkwError();
+	GetkwError(const string &err);
 	virtual ~GetkwError() throw();
+	void trigger(const string &msg);
+	static void setVerbose(bool flag);
+	static void setStrict(bool flag);
 	friend ostream& operator<<(ostream &o, const GetkwError &e) {
 			return o << e.msg;
 	}
-	virtual const char *what() {
-		return msg.data();
-	}
+//	virtual const char *what() {
+//		return err.c_str();
+//	}
 private:
 	string msg;
-	bool verbose;
+	static bool verbose;
+	static bool strict;
 };
 
 #endif /* GETKWERROR_H_ */

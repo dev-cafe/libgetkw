@@ -16,14 +16,15 @@
 template<class T>
 class Keyvec: public Keyword {
 public:
-	Keyvec(const string name, vector<T> xarg, bool isDefd) :
-		Keyword(name, isDefd), arg(xarg) {};
+	Keyvec(const string &name, vector<T> &xarg, bool isDefd = false);
 	virtual ~Keyvec();
-	virtual bool get(vector<T> &t) {t=arg; return this->isDefd;};
-	virtual void set(vector<T> &t) {arg=t; this->isDefd=true;};
+	virtual bool get(vector<T> &t);
+	virtual void set(vector<T> &t);
 	virtual Keyvec<T> *clone();
-	virtual ostream &print(ostream &o);
-
+	virtual ostream &repr(ostream &o);
+	friend ostream& operator <<(ostream& o, Keyvec<T> &key) {
+		return key.repr(o);
+	}
 protected:
 	vector<T> arg;
 };

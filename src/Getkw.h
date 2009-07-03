@@ -31,11 +31,13 @@ public:
 	void popSection();
 	Section &getSect(const string &path);
 	Keyword &getKey(const string &path);
-	template <class T> void get(const string &path, T val);
+	template <class T> void get(const string &path, T &val);
+	void print();
+	ostream &repr(ostream &o);
+	friend ostream &operator<< (ostream &o, Getkw &gkw) {
+		return gkw.repr(o);
+	}
 protected:
-	enum KeyType {
-		Int, Dbl, Bool, Str, Data, IntArray, DblArray, BoolArray, StrArray
-	};
 	static Section *readSect(istream &fis);
 	static Keyword *readKey(istream &fis);
 	static void readline(istream &fis, istringstream &isi);

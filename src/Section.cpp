@@ -88,12 +88,10 @@ Keyword &Section::getKey(const string &pathspec) {
 
 	string name = path.back();
 	Section *sect = traversePath(path, pathspec);
-	cout << "nami" << name << endl;
 	if (!sect->has_key(name)) {
 		string err = "Invalid keyword, " + pathspec;
 		throw GetkwError(err);
 	}
-	cout << " " << (*sect->keys[name]).getName() << endl;
 	return *sect->keys[name];
 }
 
@@ -110,7 +108,7 @@ void Section::addSect(Section *sect) {
 	string name = sect->name + "<" + sect->tag + ">";
 	if (has_key(name)) {
 		string err = "Error! Section::add: Section already defined, " + name;
-		throw err;
+		throw GetkwError(err);
 	}
 
 	sects[name] = sect;
@@ -122,7 +120,7 @@ void Section::addSect(Section &sect) {
 	string name = sect.name + "<" + sect.tag + ">";
 	if (has_key(name)) {
 		string err = "Error! Section::add: Section already defined, " + name;
-		throw err;
+		throw GetkwError(err);
 	}
 
 	sects[name] = new Section(sect);
@@ -135,7 +133,7 @@ void Section::addKey(Keyword *key) {
 
 	if (has_key(name)) {
 		string err = "Error Section::add: Key already defined, " + name;
-		throw err;
+		throw GetkwError(err);
 	}
 
 	keys[name] = key;
@@ -148,7 +146,7 @@ template<class T> void Section::addKeyword(T &key) {
 
 	if (has_key(name)) {
 		string err = "Error Section::add: Key already defined, " + name;
-		throw err;
+		throw GetkwError(err);
 	}
 
 	keys[name] = new T(key);
@@ -172,14 +170,14 @@ Section *Section::traversePath(vector<string> &path, const string &pathspec) {
 		if (has_sect(cur))
 			return sects[cur];
 		string err = "Error! traversePath: Invalid path, " + pathspec;
-		throw err;
+		throw GetkwError(err);
 	}
 
 	if (!has_sect(cur))
 		cur = cur + "<" + cur + ">";
 	if (!has_sect(cur)) {
 		string err = "Error! traversePath: Invalid path, " + pathspec;
-		throw err;
+		throw GetkwError(err);
 	}
 
 	path.erase(path.begin());
@@ -256,4 +254,30 @@ bool Section::has_tag(const string &b) {
 		return false;
 	return true;
 
+}
+
+void Section::print()
+{
+	cout << repr(cout) << endl;
+}
+
+ostream &Section::repr(ostream &o)
+{
+	o << name;
+	if (name.compare(tag) != 0) {
+		o << "<" + tag + ">";
+	}
+	o << " {" << endl;
+
+	map<string, Keyword *>::const_iterator kit;
+	for (kit = keys.begin(); kit != keys.end(); ++kit) {
+		o << *kit->second << endl;
+	}
+
+	map<string, Section *>::const_iterator sit;
+	for (sit = sects.begin(); sit != sects.end(); ++sit) {
+		o << *sit->second << endl;
+	}
+
+	return o << "}";
 }
