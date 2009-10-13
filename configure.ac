@@ -7,7 +7,7 @@
 AC_INIT([MRChem2],[dev],[jonas.juselius@uit.no])
 AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR(src/MRChem2.cpp)
+AC_CONFIG_SRCDIR(Python/getkw.py)
 AC_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT([/usr/local])
 AC_PROG_MAKE_SET
@@ -40,21 +40,19 @@ AC_ARG_ENABLE([fortran],
      esac],[debug=false])
 AM_CONDITIONAL([HAVE_FORTRAN], [test x$enable_fortran = xtrue])
 
-AC_ARG_ENABLE([extmod],
-	AC_HELP_STRING([--enable-extmod], [Enable Python extension module]), 
-	[extmod=1], [extmod=0])
-
 AC_PROG_RANLIB
 # find compilers
 AC_PROG_CC
 AC_PROG_CXX
-test "x$enable_fortran" = "xtrue" && AC_PROG_FC
+if test "x$enable_fortran" = "xtrue"; then 
+	AC_PROG_FC
+	AC_FC_WRAPPERS
+fi
 # Get sensible compile flags (see acinclude.m4)
 # Definitions in ./config/compilers.conf & ./config/{arch}.conf
 ACX_SETUP_CUSTOM_BUILD_FLAGS
 
 AX_PYTHON
-
 AC_CACHE_SAVE
 
 CXXFLAGS="${cxx_flags}"

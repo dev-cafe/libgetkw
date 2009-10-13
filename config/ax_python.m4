@@ -1,5 +1,5 @@
 # ===========================================================================
-#               http://autoconf-archive.cryp.to/ax_python.html
+#            http://www.nongnu.org/autoconf-archive/ax_python.html
 # ===========================================================================
 #
 # SYNOPSIS
@@ -10,7 +10,7 @@
 #
 #   This macro does a complete Python development environment check.
 #
-#   It recurses through several python versions (from 2.1 to 2.5 in this
+#   It recurses through several python versions (from 2.1 to 2.6 in this
 #   version), looking for an executable. When it finds an executable, it
 #   looks to find the header files and library.
 #
@@ -21,11 +21,7 @@
 #   This macro calls AC_SUBST on PYTHON_BIN (via AC_CHECK_PROG),
 #   PYTHON_INCLUDE_DIR and PYTHON_LIB.
 #
-# LAST MODIFICATION
-#
-#   2008-04-12
-#
-# COPYLEFT
+# LICENSE
 #
 #   Copyright (c) 2008 Michael Tindal
 #
@@ -51,43 +47,18 @@
 #   all other use of the material that constitutes the Autoconf Macro.
 #
 #   This special exception to the GPL applies to versions of the Autoconf
-#   Macro released by the Autoconf Macro Archive. When you make and
-#   distribute a modified version of the Autoconf Macro, you may extend this
-#   special exception to the GPL to apply to your modified version as well.
+#   Macro released by the Autoconf Archive. When you make and distribute a
+#   modified version of the Autoconf Macro, you may extend this special
+#   exception to the GPL to apply to your modified version as well.
 
 AC_DEFUN([AX_PYTHON],
-
 [AC_MSG_CHECKING(for python build information)
 AC_MSG_RESULT([])
-
-AC_ARG_WITH(python,
-        [AC_HELP_STRING([--with-python=DIR], [use Python in DIR])])
-
-
-stop_search=0
-for python in python2.5 python2.4 python2.3 python2.2 python2.1 python; do
-if test "x$with_python" != "x"; then
-  AC_CHECK_PROG(PYTHON_BIN, [$python], [$python], [no], [$with_python/bin])
-  ax_python_bin=$PYTHON_BIN
-  test "$ax_python_bin" != "no" && stop_search=1
-  AC_CHECK_HEADER([$with_python/include/$ax_python_bin/Python.h],
-     [ax_python_header=$with_python/include/$ax_python_bin], 
-     ax_python_header=no)
-  tmp_LDFLAGS="$LDFLAGS"
-  LDFLAGS="-L$with_python/lib/$ax_python_bin/config $LDFLAGS"
-  AC_CHECK_LIB([$ax_python_bin], main, 
-     [ax_python_lib=$with_python/lib/$ax_python_bin/config], ax_python_lib=no)
-  LDFLAGS="$tmp_LDFLAGS"
-
-  test "$stop_search" = "1" && break
-
-else
-
+for python in python2.6 python2.5 python2.4 python2.3 python2.2 python2.1 python; do
 AC_CHECK_PROGS(PYTHON_BIN, [$python])
 ax_python_bin=$PYTHON_BIN
 if test x$ax_python_bin != x; then
-   AC_CHECK_LIB($ax_python_bin, main, ax_python_lib=$ax_python_bin, 
-	ax_python_lib=no)
+   AC_CHECK_LIB($ax_python_bin, main, ax_python_lib=$ax_python_bin, ax_python_lib=no)
    AC_CHECK_HEADER([$ax_python_bin/Python.h],
    [[ax_python_header=`locate $ax_python_bin/Python.h | sed -e s,/Python.h,,`]],
    ax_python_header=no)
@@ -97,9 +68,7 @@ if test x$ax_python_bin != x; then
      fi
    fi
 fi
-fi
 done
-
 if test x$ax_python_bin = x; then
    ax_python_bin=no
 fi

@@ -3,6 +3,13 @@
 *~
 .*.swp
 *.in
+*.log
+*.out
+.deps
+stamp-*
+Makefile
+config.h
+config.status
 configure
 Documentation
 autom4te.cache
