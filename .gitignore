@@ -1,0 +1,13 @@
+*.o
+*.a
+*~
+.*.swp
+*.in
+configure
+Documentation
+autom4te.cache
+.settings
+.project
+.cproject
+.pydevproject
+
