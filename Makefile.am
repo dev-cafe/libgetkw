@@ -1,4 +1,6 @@
-SUBDIRS=c cpp Python
+SUBDIRS=cpp Python
+#SUBDIRS+=c
 if HAVE_FORTRAN
   SUBDIRS+=f95
 endif
+
