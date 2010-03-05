@@ -58,7 +58,7 @@ typedef struct {
 	int sp;
 } Getkw_t;
 
-Getkw_t *kw_InitGetkw(char *file);
+Getkw_t *kw_InitGetkw(const char *file);
 void kw_DelGetkw(Getkw_t *self);
 
 int kw_GetLong(Getkw_t *inp, const char *path, long *result);
