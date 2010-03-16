@@ -32,8 +32,8 @@ Section::Section(const Section &s) {
 	nkeys = s.nkeys;
 	nsect = s.nsect;
 
-	map<string, Section *>::const_iterator sit;
-	map<string, Keyword *>::const_iterator kit;
+	map<string, const Section *>::const_iterator sit;
+	map<string, const Keyword *>::const_iterator kit;
 	for (sit = s.sects.begin(); sit != s.sects.end(); ++sit) {
 		sects[sit->first] = new Section(*sit->second);
 		tags[(*sit->second).tag] = sects[sit->first];
@@ -50,8 +50,8 @@ Section &Section::operator=(const Section &s) {
 	nkeys = s.nkeys;
 	nsect = s.nsect;
 
-	map<string, Section *>::const_iterator sit;
-	map<string, Keyword *>::const_iterator kit;
+	map<string, const Section *>::const_iterator sit;
+	map<string, const Keyword *>::const_iterator kit;
 	for (sit = s.sects.begin(); sit != s.sects.end(); ++sit) {
 		sects[sit->first] = new Section(*sit->second);
 		tags[(*sit->second).tag] = sects[sit->first];
@@ -64,8 +64,8 @@ Section &Section::operator=(const Section &s) {
 }
 
 Section::~Section() {
-	map<string, Section *>::iterator sit;
-	map<string, Keyword *>::iterator kit;
+	map<string, const Section *>::iterator sit;
+	map<string, const Keyword *>::iterator kit;
 	for (sit = sects.begin(); sit != sects.end(); ++sit) {
 		delete sects[sit->first];
 	}
@@ -74,25 +74,26 @@ Section::~Section() {
 	}
 }
 
-Section &Section::getSect(const string &pathspec) {
+const Section &Section::getSect(const string &pathspec) const {
 	vector<string> path;
 	splitPath(pathspec, path);
 
-	Section *sect = traversePath(path, pathspec);
+	const Section *sect = traversePath(path, pathspec);
 	return *sect;
 }
 
-Keyword &Section::getKey(const string &pathspec) {
+const Keyword &Section::getKey(const string &pathspec) const {
 	vector<string> path;
 	splitPath(pathspec, path);
 
 	string name = path.back();
-	Section *sect = traversePath(path, pathspec);
+	const Section *sect = traversePath(path, pathspec);
 	if (!sect->has_key(name)) {
 		string err = "Invalid keyword, " + pathspec;
 		throw GetkwError(err);
 	}
-	return *sect->keys[name];
+	map<string,const Keyword *>::const_iterator iter = sect->keys.find(name);
+	return *iter->second;
 }
 
 Section *Section::readSect(ifstream &fis) {
@@ -153,7 +154,8 @@ template<class T> void Section::addKeyword(T &key) {
 	nkeys++;
 }
 
-Section *Section::traversePath(vector<string> &path, const string &pathspec) {
+const Section *Section::traversePath(vector<string> &path,
+									 const string &pathspec) const {
 	string cur = path[0];
 
 	if (path.size() == 1) {
@@ -162,8 +164,10 @@ Section *Section::traversePath(vector<string> &path, const string &pathspec) {
 		if (!has_sect(cur)) {
 			cur = cur + "<" + cur + ">";
 		}
-		if (has_sect(cur))
-			return sects[cur];
+		if (has_sect(cur)) {
+			map<string,const Section *>::const_iterator iter = sects.find(name);
+			return iter->second;
+		}
 		string err = "Error! traversePath: Invalid path, " + pathspec;
 		throw GetkwError(err);
 	}
@@ -176,11 +180,11 @@ Section *Section::traversePath(vector<string> &path, const string &pathspec) {
 	}
 
 	path.erase(path.begin());
-	Section *sect = sects[cur]->traversePath(path, pathspec);
-	return sect;
+	map<string,const Section *>::const_iterator iter = sects.find(cur);
+	return iter->second->traversePath(path, pathspec);
 }
 
-void Section::splitPath(const string &pathspec, vector<string> &path) {
+void Section::splitPath(const string &pathspec, vector<string> &path) const {
 	string str = pathspec;
 	string::size_type m = 0;
 	while (true) {
@@ -196,7 +200,7 @@ void Section::splitPath(const string &pathspec, vector<string> &path) {
 	}
 }
 
-int Section::splitTag(const string &path, string &tag) {
+int Section::splitTag(const string &path, string &tag) const {
 	string::size_type m, n = 0;
 	m = path.find('<');
 	if (m == string::npos)
@@ -209,33 +213,33 @@ int Section::splitTag(const string &path, string &tag) {
 	return m;
 }
 
-bool Section::has_key(const string &b) {
+bool Section::has_key(const string &b) const {
 	if (keys.find(b) == keys.end())
 		return false;
 	return true;
 
 }
 
-bool Section::has_sect(const string &b) {
+bool Section::has_sect(const string &b) const {
 	if (sects.find(b) == sects.end())
 		return false;
 	return true;
 
 }
 
-bool Section::has_tag(const string &b) {
+bool Section::has_tag(const string &b) const {
 	if (tags.find(b) == tags.end())
 		return false;
 	return true;
 
 }
 
-void Section::print()
+void Section::print() const
 {
 	cout << repr(cout) << endl;
 }
 
-ostream &Section::repr(ostream &o)
+ostream &Section::repr(ostream &o) const
 {
 	o << endl << name;
 	if (name.compare(tag) != 0) {
@@ -243,12 +247,12 @@ ostream &Section::repr(ostream &o)
 	}
 	o << " {" << endl;
 
-	map<string, Keyword *>::const_iterator kit;
+	map<string, const Keyword *>::const_iterator kit;
 	for (kit = keys.begin(); kit != keys.end(); ++kit) {
 		o << *kit->second << endl;
 	}
 
-	map<string, Section *>::const_iterator sit;
+	map<string, const Section *>::const_iterator sit;
 	for (sit = sects.begin(); sit != sects.end(); ++sit) {
 		o << *sit->second << endl;
 	}

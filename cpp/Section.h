@@ -10,7 +10,6 @@
 #ifndef SECTION_H_
 #define SECTION_H_
 
-using namespace std;
 #include <fstream>
 #include <string>
 #include <map>
@@ -23,24 +22,24 @@ using namespace std;
 
 class Section {
 public:
-	Section(const string &name, const string &tag = "");
+	Section(const std::string &name, const std::string &tag = "");
 	Section(const Section &s);
 	Section &operator=(const Section &s);
 	virtual ~Section();
-	Section &getSect(const string &path);
-	Keyword &getKey(const string &path);
+	const Section &getSect(const std::string &path) const;
+	const Keyword &getKey(const std::string &path) const;
 	void addSect(Section &sect);
 	void addSect(Section *);
 	template <class T> void addKeyword(T &key);
 	void addKey(Keyword *key);
 	static Section *readSect(ifstream &fis);
-	void print();
-	ostream &repr(ostream &o);
-	friend ostream& operator <<(ostream& o, Section &s) {
+	void print() const;
+	std::ostream &repr(ostream &o) const;
+	friend ostream& operator <<(ostream& o, const Section &s) {
 		return s.repr(o);
 	}
 
-	string &getTag() {
+	const std::string &getTag() const {
 		return tag;
 	}
 
@@ -52,7 +51,7 @@ public:
 		return nsect;
 	}
 
-	void setTag(const string tag) {
+	void setTag(const std::string tag) {
 		this->tag = tag;
 	}
 
@@ -68,7 +67,7 @@ public:
 		return isDefd;
 	}
 
-	string getName() const {
+	std::string getName() const {
 		return name;
 	}
 
@@ -76,26 +75,28 @@ public:
 		this->isDefd = isDefd;
 	}
 
-	void setName(string name) {
+	void setName(std::string name) {
 		this->name = name;
 	}
 protected:
-	string name;
-	string tag;
+	std::string name;
+	std::string tag;
 	int nkeys;
 	int nsect;
 	bool isDefd;
-	map<string, Section *> sects;
-	map<string, Keyword *> keys;
-	map<string, Section *> tags;
+	map<std::string, const Section *> sects;
+	map<std::string, const Keyword *> keys;
+	map<std::string, const Section *> tags;
 
-	Section *findSect(const string &pathspec);
-	Section *traversePath(vector<string> &path, const string &pathspec);
-	void splitPath(const string &pathspec, vector<string> &path);
-	int splitTag(const string &path, string &tag);
-	bool has_key(const string &name);
-	bool has_sect(const string &name);
-	bool has_tag(const string &name);
+	const Section *findSect(const std::string &pathspec) const;
+	const Section *traversePath(std::vector<std::string> &path,
+						  const std::string &pathspec) const;
+	void splitPath(const std::string &pathspec,
+				   std::vector<std::string> &path) const;
+	int splitTag(const std::string &path, std::string &tag) const;
+	bool has_key(const std::string &name) const;
+	bool has_sect(const std::string &name) const;
+	bool has_tag(const std::string &name) const;
 };
 
 #endif /* SECTION_H_ */

@@ -10,6 +10,8 @@
 
 #include "GetkwError.h"
 
+using namespace std;
+
 bool GetkwError::strict = false;
 bool GetkwError::verbose = true;
 

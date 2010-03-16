@@ -11,8 +11,9 @@ Makefile
 config.h
 config.status
 configure
-Documentation
+aclocal.m4
 autom4te.cache
+Documentation
 .settings
 .project
 .cproject

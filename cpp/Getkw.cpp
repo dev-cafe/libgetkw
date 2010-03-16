@@ -11,11 +11,11 @@ using namespace std;
 
 #include "Getkw.h"
 
-#define TEST_ARRAY if (len > 1) cout << "Warning, invalid length of 1 for " << name << endl
+#define TEST_ARRAY if (len > 1) \
+	cout << "Warning, invalid length of 1 for " << name << endl;
 
-Getkw::Getkw(const string &file) {
-	strict = false;
-	verbose = false;
+Getkw::Getkw(const string file, bool _verbose, bool _strict):
+		verbose(_verbose), strict(_strict) {
 
 	if (file.empty() != 0 || file.compare("stdin") == 0
 			|| file.compare("STDIN") == 0) {
@@ -54,36 +54,35 @@ void Getkw::print()
 	cout << repr(cout) << endl;
 }
 
-ostream &Getkw::repr(ostream &o)
+ostream &Getkw::repr(ostream &o) const
 {
 	o << *toplevel;
 	return o;
 }
 
-template<class T> void Getkw::get(const string &path, T &val) {
-	Keyword &key = cur->getKey(path);
+template<class T> void Getkw::get(const string &path, const T &val) const {
+	const Keyword &key = cur->getKey(path);
 	key.get(val);
 }
 
-Keyword &Getkw::getKey(const string &path) {
+const Keyword &Getkw::getKey(const string &path) const {
 	return cur->getKey(path);
 }
 
-Section &Getkw::getSect(const string &path) {
+const Section &Getkw::getSect(const string &path) const {
 	return cur->getSect(path);
 }
 
 void Getkw::pushSection(const string &path) {
 	sstack.push(cur);
 	try {
-		Section &newsec = cur->getSect(path);
+		const Section &newsec = cur->getSect(path);
 		cur = &newsec;
 	} catch (string err) {
 		cout << err;
 		if (strict)
 			exit(1);
 	}
-
 }
 
 void Getkw::popSection() {
@@ -288,11 +287,11 @@ int Getkw::convKind(const string &typ) {
 	return -1;
 }
 
-template void Getkw::get(const string&, int&);
-template void Getkw::get(const string&, double&);
-template void Getkw::get(const string&, bool&);
-template void Getkw::get(const string&, string&);
-template void Getkw::get(const string&, vector<int>&);
-template void Getkw::get(const string&, vector<double>&);
-template void Getkw::get(const string&, vector<bool>&);
-template void Getkw::get(const string&, vector<string>&);
+template void Getkw::get(const string&, const int&) const;
+template void Getkw::get(const string&, const double&) const;
+template void Getkw::get(const string&, const bool&) const;
+template void Getkw::get(const string&, const string&) const;
+template void Getkw::get(const string&, const vector<int>&) const;
+template void Getkw::get(const string&, const vector<double>&) const;
+template void Getkw::get(const string&, const vector<bool>&) const;
+template void Getkw::get(const string&, const vector<string>&) const;

@@ -11,6 +11,8 @@
 #include "Keyval.h"
 #include "Keyvec.h"
 
+using namespace std;
+
 Keyword::Keyword(const string name, bool isDefd) :
 	name(name), isDefd(isDefd) {
 	kind = Undefined;
@@ -19,55 +21,55 @@ Keyword::Keyword(const string name, bool isDefd) :
 Keyword::~Keyword() {
 }
 
-int Keyword::getInt() {
+int Keyword::getInt() const {
 	int i;
 	get(i);
 	return i;
 }
 
-double Keyword::getDbl() {
+double Keyword::getDbl() const {
 	double d;
 	get(d);
 	return d;
 }
 
-bool Keyword::getBool() {
+bool Keyword::getBool() const {
 	bool b;
 	get(b);
 	return b;
 }
 
-string Keyword::getStr() {
+string Keyword::getStr() const {
 	string str;
 	get(str);
 	return str;
 }
 
-vector<int> Keyword::getIntVec() {
+vector<int> Keyword::getIntVec() const {
 	vector<int> v;
 	get(v);
 	return v;
 }
 
-vector<double> Keyword::getDblVec(){
+vector<double> Keyword::getDblVec() const {
 	vector<double> v;
 	get(v);
 	return v;
 }
 
-vector<bool> Keyword::getBoolVec(){
+vector<bool> Keyword::getBoolVec() const {
 	vector<bool> v;
 	get(v);
 	return v;
 }
 
-vector<string> Keyword::getStrVec(){
+vector<string> Keyword::getStrVec() const {
 	vector<string> v;
 	get(v);
 	return v;
 }
 
-template <class T> void Keyword::throwErrorWrongKind(T &t) {
+template <class T> void Keyword::throwErrorWrongKind(T &t) const {
 	int rkind = isKind(t);
 	if (rkind != kind) {
 		string err = "Keyword type mismatch: requested '" + getNamedKind(rkind) +

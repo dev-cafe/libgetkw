@@ -16,24 +16,22 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
-
-class GetkwError: public exception {
+class GetkwError: public std::exception {
 public:
 	GetkwError();
-	GetkwError(const string &err);
+	GetkwError(const std::string &err);
 	virtual ~GetkwError() throw();
-	void trigger(const string &msg);
+	void trigger(const std::string &msg);
 	static void setVerbose(bool flag);
 	static void setStrict(bool flag);
-	friend ostream& operator<<(ostream &o, const GetkwError &e) {
+	friend std::ostream& operator<<(std::ostream &o, const GetkwError &e) {
 			return o << e.msg;
 	}
 //	virtual const char *what() {
 //		return err.c_str();
 //	}
 private:
-	string msg;
+	std::string msg;
 	static bool verbose;
 	static bool strict;
 };

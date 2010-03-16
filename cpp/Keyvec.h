@@ -16,17 +16,17 @@
 template<class T>
 class Keyvec: public Keyword {
 public:
-	Keyvec(const string &name, vector<T> &xarg, bool isDefd = false);
+	Keyvec(const std::string &name, std::vector<T> &xarg, bool isDefd = false);
 	virtual ~Keyvec();
-	virtual bool get(vector<T> &t);
-	virtual void set(vector<T> &t);
+	virtual bool get(std::vector<T> &t);
+	virtual void set(std::vector<T> &t);
 	virtual Keyvec<T> *clone();
-	virtual ostream &repr(ostream &o);
-	friend ostream& operator <<(ostream& o, Keyvec<T> &key) {
+	virtual std::ostream &repr(std::ostream &o) const;
+	friend std::ostream& operator <<(std::ostream& o, Keyvec<T> &key) {
 		return key.repr(o);
 	}
 protected:
-	vector<T> arg;
+	std::vector<T> arg;
 };
 
 #endif /* KEYVEC_H_ */

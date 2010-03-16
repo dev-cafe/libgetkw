@@ -9,6 +9,8 @@
 
 #include "Keyval.h"
 
+using namespace std;
+
 template<class T>
 Keyval<T>::Keyval(const string &name, T &xarg, bool isDefd) :
 	Keyword(name, isDefd), arg(xarg) {
@@ -25,7 +27,7 @@ Keyval<T> *Keyval<T>::clone() {
 }
 
 template<class T>
-ostream& Keyval<T>::repr(ostream& o) {
+ostream& Keyval<T>::repr(ostream& o) const {
 	if (kind == Str) {
 		o << "  " + name << " = " << "\"" << arg << "\"";
 	} else {
@@ -35,7 +37,7 @@ ostream& Keyval<T>::repr(ostream& o) {
 }
 
 template<class T>
-bool Keyval<T>::get(T &t) {
+bool Keyval<T>::get(T &t) const {
 	t = arg;
 	if (isKind(t) != kind) {
 		string err = "Keyword kind mismatch: " + getNamedKind(kind);

@@ -18,13 +18,13 @@
 template <class T>
 class Keyval: public Keyword {
 public:
-	Keyval(const string &name, T &xarg, bool isDefd=false);
+	Keyval(const std::string &name, T &xarg, bool isDefd=false);
 	virtual ~Keyval();
-	virtual bool get(T &t);
+	virtual bool get(T &t) const;
 	virtual void set(T &t);
 	virtual Keyval<T> *clone();
-	virtual ostream &repr(ostream &o);
-	friend ostream& operator <<(ostream& o, Keyval<T> &key) {
+	virtual std::ostream &repr(std::ostream &o) const;
+	friend std::ostream& operator <<(std::ostream& o, Keyval<T> &key) {
 		return key.repr(o);
 	}
 protected:

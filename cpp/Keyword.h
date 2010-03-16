@@ -10,7 +10,6 @@
 #ifndef KEYWORD_H_
 #define KEYWORD_H_
 
-using namespace std;
 #include <string>
 #include <vector>
 #include <fstream>
@@ -19,60 +18,62 @@ using namespace std;
 
 class Keyword {
 public:
-	Keyword(const string name, bool isDefd = false);
+	Keyword(const std::string name, bool isDefd = false);
 	virtual ~Keyword();
 
-	virtual Keyword *clone() {
+	virtual Keyword *clone() const {
 		return 0;
 	}
 
-	int getInt();
-	double getDbl();
-	bool getBool();
-	string getStr();
+	int getInt() const;
+	double getDbl() const;
+	bool getBool() const;
+	std::string getStr() const;
 
-	vector<int> getIntVec();
-	vector<double> getDblVec();
-	vector<bool> getBoolVec();
-	vector<string> getStrVec();
-	vector<string> getData() { return getStrVec(); }
+	std::vector<int> getIntVec() const;
+	std::vector<double> getDblVec() const;
+	std::vector<bool> getBoolVec() const;
+	std::vector<std::string> getStrVec() const;
+	std::vector<std::string> getData() const {
+		return getStrVec();
+	}
 
-	virtual bool get(int &t) {
+	virtual bool get(const int &t) const {
 		throwErrorWrongKind(t);
 		return false;
 	}
 
-	virtual bool get(double &t) {
+	virtual bool get(const double &t) const {
 		throwErrorWrongKind(t);
 		return false;
 	}
 
-	virtual bool get(bool &t) {
+	virtual bool get(const bool &t) const {
 		throwErrorWrongKind(t);
 		return false;
 	}
 
-	virtual bool get(string &t) {
+	virtual bool get(const std::string &t) const {
 		throwErrorWrongKind(t);
 		return false;
 	}
 
-	virtual bool get(vector<int> &t) {
+	virtual bool get(const std::vector<int> &t) const {
 		throwErrorWrongKind(t);
 		return false;
 	}
 
-	virtual bool get(vector<double> &t) {
+	virtual bool get(const std::vector<double> &t) const {
 		throwErrorWrongKind(t);
 		return false;
 	}
 
-	virtual bool get(vector<bool> &t) {
+	virtual bool get(const std::vector<bool> &t) const {
 		throwErrorWrongKind(t);
 		return false;
 	}
 
-	virtual bool get(vector<string> &t) {
+	virtual bool get(const std::vector<std::string> &t) const {
 		throwErrorWrongKind(t);
 		return false;
 	}
@@ -86,26 +87,26 @@ public:
 	virtual void set(bool &t) {
 	}
 
-	virtual void set(string &t) {
+	virtual void set(std::string &t) {
 	}
 
-	virtual void set(vector<int> &t) {
+	virtual void set(std::vector<int> &t) {
 	}
 
-	virtual void set(vector<double> &t) {
+	virtual void set(std::vector<double> &t) {
 	}
 
-	virtual void set(vector<bool> &t) {
+	virtual void set(std::vector<bool> &t) {
 	}
 
-	virtual void set(vector<string> &t) {
+	virtual void set(std::vector<std::string> &t) {
 	}
 
 	bool isDefined() const {
 		return isDefd;
 	}
 
-	string getName() const {
+	std::string getName() const {
 		return name;
 	}
 
@@ -116,19 +117,19 @@ public:
 		this->isDefd = isDefd;
 	}
 
-	void setName(string name) {
+	void setName(std::string name) {
 		this->name = name;
 	}
 
-	friend ostream& operator <<(ostream& o, Keyword &key) {
+	friend std::ostream& operator <<(std::ostream& o, const Keyword &key) {
 		return key.repr(o);
 	}
 
-	virtual void print() {
-		cout << repr(cout) << endl;
+	virtual void print() const {
+		std::cout << repr(std::cout) << std::endl;
 	}
 
-	virtual ostream &repr(ostream &o) {
+	virtual std::ostream &repr(std::ostream &o) const {
 		return o << "Warning! Keyword: Unknown key type.";
 	}
 
@@ -146,38 +147,38 @@ public:
 		Data
 	};
 
-	const static string &getNamedKind(int i);
-	template<class T> void throwErrorWrongKind(T &t);
+	const static std::string &getNamedKind(int i);
+	template<class T> void throwErrorWrongKind(T &t) const;
 protected:
-	int isKind(int &t) {
+	int isKind(const int &t) const {
 		return Int;
 	}
-	int isKind(double &t) {
+	int isKind(const double &t) const {
 		return Dbl;
 	}
-	int isKind(bool &t) {
+	int isKind(const bool &t) const {
 		return Bool;
 	}
-	int isKind(string &t) {
+	int isKind(const std::string &t) const {
 		return Str;
 	}
-	int isKind(vector<int> &t) {
+	int isKind(const std::vector<int> &t) const {
 		return IntArray;
 	}
-	int isKind(vector<double> &t) {
+	int isKind(const std::vector<double> &t) const {
 		return DblArray;
 	}
-	int isKind(vector<bool> &) {
+	int isKind(const std::vector<bool> &) const {
 		return BoolArray;
 	}
-	int isKind(vector<string> &t) {
+	int isKind(const std::vector<std::string> &t) const {
 		return StrArray;
 	}
 	template<class T> int setKind(T &t) {
-		cout << "Warning! Unknown kind:" << t << endl;
+		std::cout << "Warning! Unknown kind:" << t << std::endl;
 		return Unknown;
 	}
-	string name;
+	std::string name;
 	bool isDefd;
 	int kind;
 };

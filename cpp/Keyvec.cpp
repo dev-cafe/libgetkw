@@ -9,6 +9,8 @@
 
 #include "Keyvec.h"
 
+using namespace std;
+
 template<class T>
 Keyvec<T>::Keyvec(const string &name, vector<T> &xarg, bool isDefd) :
 	Keyword(name, isDefd), arg(xarg) {
@@ -20,7 +22,7 @@ Keyvec<T>::~Keyvec() {
 }
 
 template<class T>
-ostream& Keyvec<T>::repr(ostream& o) {
+ostream& Keyvec<T>::repr(ostream& o) const {
 	o << "  " << name << " = [ ";
 	if (kind == StrArray) {
 		o << endl;

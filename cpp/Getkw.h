@@ -23,17 +23,17 @@
 
 class Getkw {
 public:
-	Getkw(const string &file);
+	Getkw(std::string file, bool _verbose = false, bool _strict = false);
 	virtual ~Getkw();
 	void setStrict(bool flag);
 	void setVerbose(bool flag);
 	void pushSection(const string &path);
 	void popSection();
-	Section &getSect(const string &path);
-	Keyword &getKey(const string &path);
-	template<class T> void get(const string &path, T &val);
+	const Section &getSect(const string &path) const;
+	const Keyword &getKey(const string &path) const;
+	template<class T> void get(const string &path, const T &val) const;
 
-	int getInt(const string &path) {
+	int getInt(const string &path) const {
 		return getKey(path).getInt();
 	}
 	double getDbl(const string &path) {
@@ -62,8 +62,8 @@ public:
 	}
 
 	void print();
-	ostream &repr(ostream &o);
-	friend ostream &operator<<(ostream &o, Getkw &gkw) {
+	std::ostream &repr(std::ostream &o) const;
+	friend ostream &operator<<(std::ostream &o, const Getkw &gkw) {
 		return gkw.repr(o);
 	}
 protected:
@@ -73,12 +73,12 @@ protected:
 	static bool convBool(const string &val);
 	static int convKind(const string &typ);
 private:
-	bool strict;
 	bool verbose;
+	bool strict;
 	string file;
 	Section *toplevel;
-	Section *cur;
-	stack<Section *> sstack;
+	const Section *cur;
+	std::stack<const Section *> sstack;
 };
 
 #endif /* GETKW_H_ */
