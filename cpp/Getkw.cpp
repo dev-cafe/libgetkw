@@ -49,7 +49,7 @@ void Getkw::setVerbose(bool flag) {
 	verbose = flag;
 }
 
-void Getkw::print()
+void Getkw::print() const
 {
 	cout << repr(cout) << endl;
 }

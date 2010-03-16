@@ -27,55 +27,55 @@ public:
 	virtual ~Getkw();
 	void setStrict(bool flag);
 	void setVerbose(bool flag);
-	void pushSection(const string &path);
+	void pushSection(const std::string &path);
 	void popSection();
-	const Section &getSect(const string &path) const;
-	const Keyword &getKey(const string &path) const;
-	template<class T> void get(const string &path, const T &val) const;
+	const Section &getSect(const std::string &path) const;
+	const Keyword &getKey(const std::string &path) const;
+	template<class T> void get(const std::string &path, const T &val) const;
 
-	int getInt(const string &path) const {
+	int getInt(const std::string &path) const {
 		return getKey(path).getInt();
 	}
-	double getDbl(const string &path) {
+	double getDbl(const std::string &path) {
 		return getKey(path).getDbl();
 	}
-	bool getBool(const string &path) {
+	bool getBool(const std::string &path) {
 		return getKey(path).getBool();
 	}
-	string getStr(const string &path) {
+	std::string getStr(const std::string &path) {
 		return getKey(path).getStr();
 	}
-	vector<int> getIntVec(const string &path) {
+	std::vector<int> getIntVec(const std::string &path) {
 		return getKey(path).getIntVec();
 	}
-	vector<double> getDblVec(const string &path) {
+	std::vector<double> getDblVec(const std::string &path) {
 		return getKey(path).getDblVec();
 	}
-	vector<bool> getBoolVec(const string &path) {
+	std::vector<bool> getBoolVec(const std::string &path) {
 		return getKey(path).getBoolVec();
 	}
-	vector<string> getStrVec(const string &path) {
+	std::vector<std::string> getStrVec(const std::string &path) {
 		return getKey(path).getStrVec();
 	}
-	vector<string> getData(const string &path) {
+	std::vector<std::string> getData(const std::string &path) {
 		return getKey(path).getData();
 	}
 
-	void print();
+	void print() const;
 	std::ostream &repr(std::ostream &o) const;
-	friend ostream &operator<<(std::ostream &o, const Getkw &gkw) {
+	friend std::ostream &operator<<(std::ostream &o, const Getkw &gkw) {
 		return gkw.repr(o);
 	}
 protected:
-	static Section *readSect(istream &fis);
-	static Keyword *readKey(istream &fis);
-	static void readline(istream &fis, istringstream &isi);
-	static bool convBool(const string &val);
-	static int convKind(const string &typ);
+	static Section *readSect(std::istream &fis);
+	static Keyword *readKey(std::istream &fis);
+	static void readline(std::istream &fis, std::istringstream &isi);
+	static bool convBool(const std::string &val);
+	static int convKind(const std::string &typ);
 private:
 	bool verbose;
 	bool strict;
-	string file;
+	std::string file;
 	Section *toplevel;
 	const Section *cur;
 	std::stack<const Section *> sstack;

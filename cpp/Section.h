@@ -32,10 +32,10 @@ public:
 	void addSect(Section *);
 	template <class T> void addKeyword(T &key);
 	void addKey(Keyword *key);
-	static Section *readSect(ifstream &fis);
+	static Section *readSect(std::ifstream &fis);
 	void print() const;
-	std::ostream &repr(ostream &o) const;
-	friend ostream& operator <<(ostream& o, const Section &s) {
+	std::ostream &repr(std::ostream &o) const;
+	friend std::ostream& operator <<(std::ostream& o, const Section &s) {
 		return s.repr(o);
 	}
 
@@ -84,9 +84,9 @@ protected:
 	int nkeys;
 	int nsect;
 	bool isDefd;
-	map<std::string, const Section *> sects;
-	map<std::string, const Keyword *> keys;
-	map<std::string, const Section *> tags;
+	std::map<std::string, const Section *> sects;
+	std::map<std::string, const Keyword *> keys;
+	std::map<std::string, const Section *> tags;
 
 	const Section *findSect(const std::string &pathspec) const;
 	const Section *traversePath(std::vector<std::string> &path,
