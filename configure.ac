@@ -74,5 +74,5 @@ AC_CONFIG_FILES([Makefile
 				 f95/Makefile
 				 Python/Makefile
 				 ])
-dnl AC_CONFIG_SUBDIRS([libGetkw])
+dnl AC_CONFIG_SUBDIRS([libgetkw])
 AC_OUTPUT

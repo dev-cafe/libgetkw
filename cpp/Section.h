@@ -14,10 +14,9 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <boost/any.hpp>
 
 #include "Keyword.h"
-#include "Keyval.h"
-#include "Keyvec.h"
 #include "GetkwError.h"
 
 class Section {
@@ -27,11 +26,11 @@ public:
 	Section &operator=(const Section &s);
 	virtual ~Section();
 	const Section &getSect(const std::string &path) const;
-	const Keyword &getKey(const std::string &path) const;
+	template<class T> const Keyword<T> &getKey(const std::string &path) const;
 	void addSect(Section &sect);
 	void addSect(Section *);
-	template <class T> void addKeyword(T &key);
-	void addKey(Keyword *key);
+	template <class T> void addKey(const Keyword<T> &key);
+	template<class T> void addKey(Keyword<T> *key);
 	static Section *readSect(std::ifstream &fis);
 	void print() const;
 	std::ostream &repr(std::ostream &o) const;
@@ -84,9 +83,9 @@ protected:
 	int nkeys;
 	int nsect;
 	bool isDefd;
-	std::map<std::string, const Section *> sects;
-	std::map<std::string, const Keyword *> keys;
-	std::map<std::string, const Section *> tags;
+	std::map<std::string, Section *> sects;
+	std::map<std::string, boost::any> keys;
+	std::map<std::string, Section *> tags;
 
 	const Section *findSect(const std::string &pathspec) const;
 	const Section *traversePath(std::vector<std::string> &path,

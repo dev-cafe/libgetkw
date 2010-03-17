@@ -14,11 +14,10 @@
 #include <fstream>
 #include <sstream>
 #include <stack>
+#include <boost/any.hpp>
 
 #include "Section.h"
 #include "Keyword.h"
-#include "Keyval.h"
-#include "Keyvec.h"
 #include "GetkwError.h"
 
 class Getkw {
@@ -30,35 +29,35 @@ public:
 	void pushSection(const std::string &path);
 	void popSection();
 	const Section &getSect(const std::string &path) const;
-	const Keyword &getKey(const std::string &path) const;
-	template<class T> void get(const std::string &path, const T &val) const;
+	template<class T> const Keyword<T> &getKeyword(const std::string &path) const;
+	template<class T> const T &get(const std::string &path) const;
 
 	int getInt(const std::string &path) const {
-		return getKey(path).getInt();
+		return get<int>(path);
 	}
-	double getDbl(const std::string &path) {
-		return getKey(path).getDbl();
+	double getDbl(const std::string &path) const {
+		return get<double>(path);
 	}
-	bool getBool(const std::string &path) {
-		return getKey(path).getBool();
+	bool getBool(const std::string &path) const {
+		return get<bool>(path);
 	}
-	std::string getStr(const std::string &path) {
-		return getKey(path).getStr();
+	const std::string &getStr(const std::string &path) const {
+		return get<std::string>(path);
 	}
-	std::vector<int> getIntVec(const std::string &path) {
-		return getKey(path).getIntVec();
+	const std::vector<int> getIntVec(const std::string &path) const {
+		return get<std::vector<int> >(path);
 	}
-	std::vector<double> getDblVec(const std::string &path) {
-		return getKey(path).getDblVec();
+	const std::vector<double> getDblVec(const std::string &path) const {
+		return get<std::vector<double> >(path);
 	}
-	std::vector<bool> getBoolVec(const std::string &path) {
-		return getKey(path).getBoolVec();
+	const std::vector<bool> getBoolVec(const std::string &path) const {
+		return get<std::vector<bool> >(path);
 	}
-	std::vector<std::string> getStrVec(const std::string &path) {
-		return getKey(path).getStrVec();
+	const std::vector<std::string> getStrVec(const std::string &path) const {
+		return get<std::vector<std::string> >(path);
 	}
-	std::vector<std::string> getData(const std::string &path) {
-		return getKey(path).getData();
+	const std::vector<std::string> getData(const std::string &path) const {
+		return getStrVec(path);
 	}
 
 	void print() const;
@@ -67,8 +66,8 @@ public:
 		return gkw.repr(o);
 	}
 protected:
-	static Section *readSect(std::istream &fis);
-	static Keyword *readKey(std::istream &fis);
+	static void readSect(Section *sect, std::istream &fis);
+	static bool readKey(Section *sect, std::istream &fis);
 	static void readline(std::istream &fis, std::istringstream &isi);
 	static bool convBool(const std::string &val);
 	static int convKind(const std::string &typ);

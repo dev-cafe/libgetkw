@@ -32,14 +32,14 @@ Section::Section(const Section &s) {
 	nkeys = s.nkeys;
 	nsect = s.nsect;
 
-	map<string, const Section *>::const_iterator sit;
-	map<string, const Keyword *>::const_iterator kit;
+	map<string, Section *>::const_iterator sit;
+	map<string, boost::any>::const_iterator kit;
 	for (sit = s.sects.begin(); sit != s.sects.end(); ++sit) {
 		sects[sit->first] = new Section(*sit->second);
 		tags[(*sit->second).tag] = sects[sit->first];
 	}
 	for (kit = s.keys.begin(); kit != s.keys.end(); ++kit) {
-		keys[kit->first] = kit->second->clone();
+		keys[kit->first] = kit->second;
 	}
 
 }
@@ -50,28 +50,28 @@ Section &Section::operator=(const Section &s) {
 	nkeys = s.nkeys;
 	nsect = s.nsect;
 
-	map<string, const Section *>::const_iterator sit;
-	map<string, const Keyword *>::const_iterator kit;
+	map<string, Section *>::const_iterator sit;
+	map<string, boost::any>::const_iterator kit;
 	for (sit = s.sects.begin(); sit != s.sects.end(); ++sit) {
 		sects[sit->first] = new Section(*sit->second);
 		tags[(*sit->second).tag] = sects[sit->first];
 	}
 	for (kit = s.keys.begin(); kit != s.keys.end(); ++kit) {
-		keys[kit->first] = new Keyword(*kit->second);
+		keys[kit->first] = kit->second;
 	}
 
 	return *this;
 }
 
 Section::~Section() {
-	map<string, const Section *>::iterator sit;
-	map<string, const Keyword *>::iterator kit;
+	map<string, Section *>::iterator sit;
+//	map<string, boost::any>::iterator kit;
 	for (sit = sects.begin(); sit != sects.end(); ++sit) {
 		delete sects[sit->first];
 	}
-	for (kit = keys.begin(); kit != keys.end(); ++kit) {
-		delete keys[kit->first];
-	}
+//	for (kit = keys.begin(); kit != keys.end(); ++kit) {
+//		delete keys[kit->first];
+//	}
 }
 
 const Section &Section::getSect(const string &pathspec) const {
@@ -82,7 +82,8 @@ const Section &Section::getSect(const string &pathspec) const {
 	return *sect;
 }
 
-const Keyword &Section::getKey(const string &pathspec) const {
+template<typename T>
+const Keyword<T> &Section::getKey(const string &pathspec) const {
 	vector<string> path;
 	splitPath(pathspec, path);
 
@@ -92,8 +93,8 @@ const Keyword &Section::getKey(const string &pathspec) const {
 		string err = "Invalid keyword, " + pathspec;
 		throw GetkwError(err);
 	}
-	map<string,const Keyword *>::const_iterator iter = sect->keys.find(name);
-	return *iter->second;
+	map<string, boost::any>::const_iterator iter = sect->keys.find(name);
+	return boost::any_cast<Keyword<T> >(iter->second);
 }
 
 Section *Section::readSect(ifstream &fis) {
@@ -129,20 +130,21 @@ void Section::addSect(Section &sect) {
 	nsect++;
 }
 //! Add an allocated key to a section
-void Section::addKey(Keyword *key) {
-	string name = key->getName();
+template<class T>
+void Section::addKey(Keyword<T> *key) {
+	const string &name = key->getName();
 
 	if (has_key(name)) {
 		string err = "Error Section::add: Key already defined, " + name;
 		throw GetkwError(err);
 	}
 
-	keys[name] = key;
+	keys[name] = boost::any(*key);
 	nkeys++;
 }
 
 //! Copy and and add a keyword to a section
-template<class T> void Section::addKeyword(T &key) {
+template<class T> void Section::addKey(const Keyword<T> &key) {
 	string name = key.getName();
 
 	if (has_key(name)) {
@@ -150,7 +152,7 @@ template<class T> void Section::addKeyword(T &key) {
 		throw GetkwError(err);
 	}
 
-	keys[name] = new T(key);
+	keys[name] = boost::any(key);
 	nkeys++;
 }
 
@@ -165,7 +167,7 @@ const Section *Section::traversePath(vector<string> &path,
 			cur = cur + "<" + cur + ">";
 		}
 		if (has_sect(cur)) {
-			map<string,const Section *>::const_iterator iter = sects.find(name);
+			map<string, Section *>::const_iterator iter = sects.find(name);
 			return iter->second;
 		}
 		string err = "Error! traversePath: Invalid path, " + pathspec;
@@ -180,7 +182,7 @@ const Section *Section::traversePath(vector<string> &path,
 	}
 
 	path.erase(path.begin());
-	map<string,const Section *>::const_iterator iter = sects.find(cur);
+	map<string, Section *>::const_iterator iter = sects.find(cur);
 	return iter->second->traversePath(path, pathspec);
 }
 
@@ -247,22 +249,22 @@ ostream &Section::repr(ostream &o) const
 	}
 	o << " {" << endl;
 
-	map<string, const Keyword *>::const_iterator kit;
+	map<string, boost::any>::const_iterator kit;
 	for (kit = keys.begin(); kit != keys.end(); ++kit) {
-		o << *kit->second << endl;
+//		o << kit->second << endl;
 	}
 
-	map<string, const Section *>::const_iterator sit;
+	map<string, Section *>::const_iterator sit;
 	for (sit = sects.begin(); sit != sects.end(); ++sit) {
-		o << *sit->second << endl;
+//		o << sit->second << endl;
 	}
 
 	o << "}";
 	return o;
 }
 
-template void Section::addKeyword(Keyval<int> &);
-template void Section::addKeyword(Keyval<double> &);
-template void Section::addKeyword(Keyval<bool> &);
-template void Section::addKeyword(Keyval<string> &);
+//template void Section::addKeyword(Keyval<int> &);
+//template void Section::addKeyword(Keyval<double> &);
+//template void Section::addKeyword(Keyval<bool> &);
+//template void Section::addKeyword(Keyval<string> &);
 
