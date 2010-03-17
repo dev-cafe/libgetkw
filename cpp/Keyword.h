@@ -13,7 +13,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-//#include <boost/any.hpp>
 
 #include "GetkwError.h"
 
@@ -46,13 +45,6 @@ public:
 
 	virtual ~Keyword() {
 	}
-//	boost::any any_clone(const boost::any &akey) {
-//		if (akey.type() != typeid(T)) {
-//			throw "Error! Type mismatch!";
-//		}
-//		Keyword<T> &key = *boost::any_cast<Keyword<T> *>(akey);
-//		return boost::any(new Keyword<T>(key));
-//	}
 
 	const T &get() const {
 		return val;
@@ -119,17 +111,17 @@ public:
 	}
 
 
-	static const string &getNamedKind(int i) {
-		static const string INT = "Int";
-		static const string DBL = "Dbl";
-		static const string BOOL = "Bool";
-		static const string STR = "Str";
-		static const string INT_ARRAY = "IntArray";
-		static const string DBL_ARRAY = "DblArray";
-		static const string BOOL_ARRAY = "BoolArray";
-		static const string STR_ARRAY = "StrArray";
-		static const string UNDEF = "Undefined";
-		static const string UNKN = "Unknown";
+	static const std::string &getNamedKind(int i) {
+		static const std::string INT = "Int";
+		static const std::string DBL = "Dbl";
+		static const std::string BOOL = "Bool";
+		static const std::string STR = "Str";
+		static const std::string INT_ARRAY = "IntArray";
+		static const std::string DBL_ARRAY = "DblArray";
+		static const std::string BOOL_ARRAY = "BoolArray";
+		static const std::string STR_ARRAY = "StrArray";
+		static const std::string UNDEF = "Undefined";
+		static const std::string UNKN = "Unknown";
 
 		switch (i) {
 		case (KeyType::Int):

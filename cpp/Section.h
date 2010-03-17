@@ -30,7 +30,7 @@ public:
 	void addSect(Section &sect);
 	void addSect(Section *);
 	template <class T> void addKey(const Keyword<T> &key);
-	template<class T> void addKey(Keyword<T> *key);
+	template<class T> void addKey(const Keyword<T> *key);
 	static Section *readSect(std::ifstream &fis);
 	void print() const;
 	std::ostream &repr(std::ostream &o) const;

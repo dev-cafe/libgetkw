@@ -131,7 +131,7 @@ void Section::addSect(Section &sect) {
 }
 //! Add an allocated key to a section
 template<class T>
-void Section::addKey(Keyword<T> *key) {
+void Section::addKey(const Keyword<T> *key) {
 	const string &name = key->getName();
 
 	if (has_key(name)) {
@@ -251,20 +251,73 @@ ostream &Section::repr(ostream &o) const
 
 	map<string, boost::any>::const_iterator kit;
 	for (kit = keys.begin(); kit != keys.end(); ++kit) {
-//		o << kit->second << endl;
+		if (kit->second.type() == typeid(int)) {
+			o << boost::any_cast<Keyword<int> >(kit->second) << endl;
+			continue;
+		}
+		if (kit->second.type() == typeid(bool)) {
+			o << boost::any_cast<Keyword<bool> >(kit->second) << endl;
+			continue;
+		}
+		if (kit->second.type() == typeid(double)) {
+			o << boost::any_cast<Keyword<double> >(kit->second) << endl;
+			continue;
+		}
+		if (kit->second.type() == typeid(std::string)) {
+			o << boost::any_cast<Keyword<std::string> >(kit->second) << endl;
+			continue;
+		}
+		if (kit->second.type() == typeid(std::vector<int>)) {
+			o << boost::any_cast<Keyword<std::vector<int> > >(kit->second) << endl;
+			continue;
+		}
+		if (kit->second.type() == typeid(std::vector<bool>)) {
+			o << boost::any_cast<Keyword<std::vector<bool> > >(kit->second) << endl;
+			continue;
+		}
+		if (kit->second.type() == typeid(std::vector<double>)) {
+			o << boost::any_cast<Keyword<std::vector<double> > >(kit->second) << endl;
+			continue;
+		}
+		if (kit->second.type() == typeid(std::vector<std::string>)) {
+			o << boost::any_cast<Keyword<std::vector<std::string> > >(kit->second) << endl;
+			continue;
+		}
 	}
 
 	map<string, Section *>::const_iterator sit;
 	for (sit = sects.begin(); sit != sects.end(); ++sit) {
-//		o << sit->second << endl;
+		o << *sit->second << endl;
 	}
 
 	o << "}";
 	return o;
 }
 
-//template void Section::addKeyword(Keyval<int> &);
-//template void Section::addKeyword(Keyval<double> &);
-//template void Section::addKeyword(Keyval<bool> &);
-//template void Section::addKeyword(Keyval<string> &);
+template void Section::addKey(const Keyword<int> *);
+template void Section::addKey(const Keyword<double> *);
+template void Section::addKey(const Keyword<bool> *);
+template void Section::addKey(const Keyword<string> *);
+template void Section::addKey(const Keyword<vector<int> > *);
+template void Section::addKey(const Keyword<vector<double> > *);
+template void Section::addKey(const Keyword<vector<bool> > *);
+template void Section::addKey(const Keyword<vector<string> > *);
+
+template void Section::addKey(const Keyword<int> &);
+template void Section::addKey(const Keyword<double> &);
+template void Section::addKey(const Keyword<bool> &);
+template void Section::addKey(const Keyword<string> &);
+template void Section::addKey(const Keyword<vector<int> > &);
+template void Section::addKey(const Keyword<vector<double> > &);
+template void Section::addKey(const Keyword<vector<bool> > &);
+template void Section::addKey(const Keyword<vector<string> > &);
+
+template const Keyword<int> &Section::getKey(const string &) const;
+template const Keyword<double> &Section::getKey(const string &) const;
+template const Keyword<bool> &Section::getKey(const string &) const;
+template const Keyword<string> &Section::getKey(const string &) const;
+template const Keyword<vector<int> > &Section::getKey(const string &) const;
+template const Keyword<vector<double> > &Section::getKey(const string &) const;
+template const Keyword<vector<bool> > &Section::getKey(const string &) const;
+template const Keyword<vector<string> > &Section::getKey(const string &) const;
 
