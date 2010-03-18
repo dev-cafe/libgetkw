@@ -7,7 +7,9 @@ GetkwError.cpp \
 GetkwError.h \
 Keyword.h \
 Section.cpp \
-Section.h 
+Section.h \
+messages.cpp \
+messages.h
 
 include_HEADERS= \
 Getkw.h \

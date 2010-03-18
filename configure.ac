@@ -13,14 +13,14 @@ AC_PREFIX_DEFAULT([/usr/local])
 AC_PROG_MAKE_SET
 AC_CANONICAL_HOST
 
-AC_ARG_ENABLE([debug],
-    AC_HELP_STRING([--enable-debug],[Turn on debugging]),
+AC_ARG_ENABLE([optimization],
+    AC_HELP_STRING([--enable-optimization],[Turn on optimizations]),
      [case "${enableval}" in
-       yes) debug=true ;;
-       no)  debug=false ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
-     esac],[debug=false])
-AM_CONDITIONAL([DEBUG], [test x$debug = xtrue])
+       yes) optimize=true ;;
+       no)  optimize=false ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-optimization]) ;;
+     esac],[optimize=false])
+AM_CONDITIONAL([OPTIMIZE], [test x$optimize = xtrue])
 
 AC_ARG_ENABLE([profiling],
      AC_HELP_STRING([--enable-profiling],[Turn on profiling]),
@@ -37,7 +37,7 @@ AC_ARG_ENABLE([fortran],
        yes) enable_fortran=true ;;
        no)  enable_fortran=false ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-fortran]) ;;
-     esac],[debug=false])
+     esac],[optimize=false])
 AM_CONDITIONAL([HAVE_FORTRAN], [test x$enable_fortran = xtrue])
 
 AC_PROG_RANLIB
@@ -55,9 +55,9 @@ ACX_SETUP_CUSTOM_BUILD_FLAGS
 AX_PYTHON
 AC_CACHE_SAVE
 
-CXXFLAGS="${cxx_flags}"
-if test "$debug" = "true"; then
-	CXXFLAGS=${cxx_debug}
+CXXFLAGS="${cxx_debug}"
+if test "$optimize" = "true"; then
+	CXXFLAGS="${cxx_flags}"
 fi
 if test "$profiling" = "true"; then
 	CXXFLAGS="$CXXFLAGS ${cxx_prof}"

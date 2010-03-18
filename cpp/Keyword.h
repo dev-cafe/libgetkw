@@ -39,7 +39,7 @@ public:
 	Keyword(const std::string _name, const T &_val, bool _isDefd = false):
 			name(_name), val(_val), isDefd(_isDefd) {
 		if (not setKind(_val)) {
-			throw "Invalid key type!";
+			THROW_GETKW("Invalid key type!");
 		}
 	}
 

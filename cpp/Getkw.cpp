@@ -17,26 +17,25 @@ using namespace std;
 Getkw::Getkw(const string file, bool _verbose, bool _strict):
 		verbose(_verbose), strict(_strict) {
 
-	Section *toplevel = new Section("Start");
+	toplevel = 0;
 	if (file.empty() != 0 || file.compare("stdin") == 0
 			|| file.compare("STDIN") == 0) {
 		if (verbose) {
 			cout << "Reading from stdin " << endl;
 		}
-		readSect(toplevel, cin);
+		toplevel = readSect(cin);
 	} else {
 		const char *fname = file.data();
 		if (verbose)
 			cout << "Opening file, " << file << endl;
 		ifstream fis(fname);
-		if (fis.bad()) {
-			string err = "Open failed: " + file;
-			throw GetkwError(err);
+		if (not fis) {
+			THROW_GETKW("Open failed: " + file);
 		}
-		readSect(toplevel, fis);
-
-		cur = toplevel;
+		toplevel = readSect(fis);
 	}
+	cur = toplevel;
+
 }
 
 Getkw::~Getkw() {
@@ -99,7 +98,7 @@ void Getkw::popSection() {
 	sstack.pop();
 }
 
-void Getkw::readSect(Section *cursect, istream &fis) {
+Section *Getkw::readSect(istream &fis) {
 	istringstream isi;
 	string name;
 	string tag;
@@ -122,16 +121,18 @@ void Getkw::readSect(Section *cursect, istream &fis) {
 		readline(fis, isi);
 		isi >> tag;
 		thissect->setTag(tag);
+	} else {
+		thissect->setTag(name);
 	}
 
 	for (i = 0; i < nkeys; i++) {
 		readKey(thissect, fis);
 	}
 	for (i = 0; i < nsect; i++) {
-		readSect(thissect, fis);
+		Section *newsect = readSect(fis);
+		thissect->addSect(newsect);
 	}
-
-	cursect->addSect(thissect);
+	return thissect;
 }
 
 bool Getkw::readKey(Section *sect, istream &fis) {
@@ -232,9 +233,7 @@ bool Getkw::readKey(Section *sect, istream &fis) {
 		sect->addKey(new Keyword<vector<string> >(name, sv, setf));
 		break;
 	default:
-		string err = "Unknown keyword type: " + name + " <> " + type;
-		throw GetkwError(err);
-		break;
+		THROW_GETKW("Unknown keyword type: " + name + " <> " + type);
 	}
 	return true;
 

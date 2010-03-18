@@ -34,7 +34,7 @@ public:
 	static Section *readSect(std::ifstream &fis);
 	void print() const;
 	std::ostream &repr(std::ostream &o) const;
-	friend std::ostream& operator <<(std::ostream& o, const Section &s) {
+	friend std::ostream& operator<<(std::ostream& o, const Section &s) {
 		return s.repr(o);
 	}
 

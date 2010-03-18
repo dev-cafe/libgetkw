@@ -13,6 +13,12 @@ using namespace std;
 #include "Section.h"
 #include "GetkwError.h"
 
+#define IF_ANY_KEYTYPE_IS(A, T) \
+if (A.type() == typeid(const Keyword< T > *))
+
+#define ANY_TO_CONST_KEY_PTR(A, T) \
+boost::any_cast<const Keyword< T > *>(A)
+
 #define PRINT_FUNC_NAME cout << "@ Section::" << __func__ << endl;
 
 Section::Section(const string &_name, const string &_tag) :
@@ -71,47 +77,47 @@ Section::~Section() {
 	}
 	for (kit = keys.begin(); kit != keys.end(); ++kit) {
 
-		if (kit->second.type() == typeid(int)) {
-			Keyword<int> *key = boost::any_cast<Keyword<int> *>(keys[kit->first]);
+		IF_ANY_KEYTYPE_IS(kit->second, int) {
+			const Keyword<int> *key = ANY_TO_CONST_KEY_PTR(kit->second, int);
 			delete key;
 			continue;
 		}
-		if (kit->second.type() == typeid(bool)) {
-			Keyword<bool> *key = boost::any_cast<Keyword<bool> *>(keys[kit->first]);
+		IF_ANY_KEYTYPE_IS(kit->second, bool) {
+			const Keyword<bool> *key = ANY_TO_CONST_KEY_PTR(kit->second, bool);
 			delete key;
 			continue;
 		}
-		if (kit->second.type() == typeid(double)) {
-			Keyword<double> *key = boost::any_cast<Keyword<double> *>(keys[kit->first]);
+		IF_ANY_KEYTYPE_IS(kit->second, double) {
+			const Keyword<double> *key = ANY_TO_CONST_KEY_PTR(kit->second, double);
 			delete key;
 			continue;
 		}
-		if (kit->second.type() == typeid(std::string)) {
-			Keyword<string> *key = boost::any_cast<Keyword<string> *>(keys[kit->first]);
+		IF_ANY_KEYTYPE_IS(kit->second, string) {
+			const Keyword<string> *key = ANY_TO_CONST_KEY_PTR(kit->second, string);
 			delete key;
 			continue;
 		}
-		if (kit->second.type() == typeid(std::vector<int>)) {
-			Keyword<vector<int> > *key = boost::any_cast<Keyword<vector<int> > *>(keys[kit->first]);
+		IF_ANY_KEYTYPE_IS(kit->second, vector<int>) {
+			const Keyword<vector<int> > *key = ANY_TO_CONST_KEY_PTR(kit->second, vector<int>);
 			delete key;
 			continue;
 		}
-		if (kit->second.type() == typeid(std::vector<bool>)) {
-			Keyword<vector<bool> > *key = boost::any_cast<Keyword<vector<bool> > *>(keys[kit->first]);
+		IF_ANY_KEYTYPE_IS(kit->second, vector<bool>) {
+			const Keyword<vector<bool> > *key = ANY_TO_CONST_KEY_PTR(kit->second, vector<bool>);
 			delete key;
 			continue;
 		}
-		if (kit->second.type() == typeid(std::vector<double>)) {
-			Keyword<vector<double> > *key = boost::any_cast<Keyword<vector<double> > *>(keys[kit->first]);
+		IF_ANY_KEYTYPE_IS(kit->second, vector<double>) {
+			const Keyword<vector<double> > *key = ANY_TO_CONST_KEY_PTR(kit->second, vector<double>);
 			delete key;
 			continue;
 		}
-		if (kit->second.type() == typeid(std::vector<std::string>)) {
-			Keyword<vector<string> > *key = boost::any_cast<Keyword<vector<string> > *>(keys[kit->first]);
+		IF_ANY_KEYTYPE_IS(kit->second, vector<string>) {
+			const Keyword<vector<string> > *key = ANY_TO_CONST_KEY_PTR(kit->second, vector<string>);
 			delete key;
 			continue;
 		}
-		throw "Error! Unknown key type!";
+		THROW_GETKW("Error! Unknown key type!");
 	}
 }
 
@@ -131,11 +137,10 @@ const Keyword<T> &Section::getKey(const string &pathspec) const {
 	string name = path.back();
 	const Section *sect = traversePath(path, pathspec);
 	if (!sect->has_key(name)) {
-		string err = "Invalid keyword, " + pathspec;
-		throw GetkwError(err);
+		THROW_GETKW("Invalid keyword, " + pathspec);
 	}
 	map<string, boost::any>::const_iterator iter = sect->keys.find(name);
-	return *boost::any_cast<Keyword<T> *>(iter->second);
+	return *ANY_TO_CONST_KEY_PTR(iter->second, T);
 }
 
 Section *Section::readSect(ifstream &fis) {
@@ -150,8 +155,7 @@ Section *Section::readSect(ifstream &fis) {
 void Section::addSect(Section *sect) {
 	string name = sect->name + "<" + sect->tag + ">";
 	if (has_key(name)) {
-		string err = "Error! Section::add: Section already defined, " + name;
-		throw GetkwError(err);
+		THROW_GETKW("Section::add: Section already defined, " + name);
 	}
 
 	sects[name] = sect;
@@ -162,8 +166,7 @@ void Section::addSect(Section *sect) {
 void Section::addSect(Section &sect) {
 	string name = sect.name + "<" + sect.tag + ">";
 	if (has_key(name)) {
-		string err = "Error! Section::add: Section already defined, " + name;
-		throw GetkwError(err);
+		THROW_GETKW("Section::add: Section already defined, " + name);
 	}
 
 	sects[name] = new Section(sect);
@@ -176,8 +179,7 @@ void Section::addKey(const Keyword<T> *key) {
 	const string &name = key->getName();
 
 	if (has_key(name)) {
-		string err = "Error Section::add: Key already defined, " + name;
-		throw GetkwError(err);
+		THROW_GETKW("Section::add: Key already defined, " + name);
 	}
 
 	keys[name] = boost::any(key);
@@ -189,8 +191,7 @@ template<class T> void Section::addKey(const Keyword<T> &key) {
 	string name = key.getName();
 
 	if (has_key(name)) {
-		string err = "Error Section::add: Key already defined, " + name;
-		throw GetkwError(err);
+		THROW_GETKW("Section::add: Key already defined, " + name);
 	}
 
 	keys[name] = boost::any(new Keyword<T>(key));
@@ -211,15 +212,13 @@ const Section *Section::traversePath(vector<string> &path,
 			map<string, Section *>::const_iterator iter = sects.find(name);
 			return iter->second;
 		}
-		string err = "Error! traversePath: Invalid path, " + pathspec;
-		throw GetkwError(err);
+		THROW_GETKW("traversePath: Invalid path, " + pathspec);
 	}
 
 	if (!has_sect(cur))
 		cur = cur + "<" + cur + ">";
 	if (!has_sect(cur)) {
-		string err = "Error! traversePath: Invalid path, " + pathspec;
-		throw GetkwError(err);
+		THROW_GETKW("traversePath: Invalid path, " + pathspec);
 	}
 
 	path.erase(path.begin());
@@ -292,39 +291,39 @@ ostream &Section::repr(ostream &o) const
 
 	map<string, boost::any>::const_iterator kit;
 	for (kit = keys.begin(); kit != keys.end(); ++kit) {
-		if (kit->second.type() == typeid(int)) {
-			o << boost::any_cast<Keyword<int> >(kit->second) << endl;
+		IF_ANY_KEYTYPE_IS(kit->second,int) {
+			o << *ANY_TO_CONST_KEY_PTR(kit->second, int) << endl;
 			continue;
 		}
-		if (kit->second.type() == typeid(bool)) {
-			o << boost::any_cast<Keyword<bool> >(kit->second) << endl;
+		IF_ANY_KEYTYPE_IS(kit->second,bool) {
+			o << *ANY_TO_CONST_KEY_PTR(kit->second, bool) << endl;
 			continue;
 		}
-		if (kit->second.type() == typeid(double)) {
-			o << boost::any_cast<Keyword<double> >(kit->second) << endl;
+		IF_ANY_KEYTYPE_IS(kit->second,double) {
+			o << *ANY_TO_CONST_KEY_PTR(kit->second, double) << endl;
 			continue;
 		}
-		if (kit->second.type() == typeid(std::string)) {
-			o << boost::any_cast<Keyword<std::string> >(kit->second) << endl;
+		IF_ANY_KEYTYPE_IS(kit->second, string) {
+			o << *ANY_TO_CONST_KEY_PTR(kit->second, string) << endl;
 			continue;
 		}
-		if (kit->second.type() == typeid(std::vector<int>)) {
-			o << boost::any_cast<Keyword<std::vector<int> > >(kit->second) << endl;
+		IF_ANY_KEYTYPE_IS(kit->second, vector<int>) {
+			o << *ANY_TO_CONST_KEY_PTR(kit->second, vector<int>) << endl;
 			continue;
 		}
-		if (kit->second.type() == typeid(std::vector<bool>)) {
-			o << boost::any_cast<Keyword<std::vector<bool> > >(kit->second) << endl;
+		IF_ANY_KEYTYPE_IS(kit->second, vector<bool>) {
+			o << *ANY_TO_CONST_KEY_PTR(kit->second, vector<bool>) << endl;
 			continue;
 		}
-		if (kit->second.type() == typeid(std::vector<double>)) {
-			o << boost::any_cast<Keyword<std::vector<double> > >(kit->second) << endl;
+		IF_ANY_KEYTYPE_IS(kit->second, vector<double>) {
+			o << *ANY_TO_CONST_KEY_PTR(kit->second, vector<double>) << endl;
 			continue;
 		}
-		if (kit->second.type() == typeid(std::vector<std::string>)) {
-			o << boost::any_cast<Keyword<std::vector<std::string> > >(kit->second) << endl;
+		IF_ANY_KEYTYPE_IS(kit->second, vector<string>) {
+			o << *ANY_TO_CONST_KEY_PTR(kit->second, vector<string>) << endl;
 			continue;
 		}
-		throw "Error! Unknown key type!";
+		THROW_GETKW("Unknown key type!");
 	}
 
 	map<string, Section *>::const_iterator sit;

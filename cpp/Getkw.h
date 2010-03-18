@@ -66,7 +66,7 @@ public:
 		return gkw.repr(o);
 	}
 protected:
-	static void readSect(Section *sect, std::istream &fis);
+	static Section *readSect(std::istream &fis);
 	static bool readKey(Section *sect, std::istream &fis);
 	static void readline(std::istream &fis, std::istringstream &isi);
 	static bool convBool(const std::string &val);

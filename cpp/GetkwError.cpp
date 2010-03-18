@@ -10,8 +10,6 @@
 
 #include "GetkwError.h"
 
-using namespace std;
-
 bool GetkwError::strict = false;
 bool GetkwError::verbose = true;
 
@@ -21,7 +19,7 @@ GetkwError::GetkwError() {
 GetkwError::GetkwError(const string &err):
 	msg(err) {
 	if (verbose or strict) {
-		cout << "Error! " << msg << endl;
+		cout << "Error: " << msg << endl;
 	}
 	if (strict) {
 		cout << "Exiting..." << endl;
@@ -29,6 +27,16 @@ GetkwError::GetkwError(const string &err):
 	}
 }
 
+GetkwError::GetkwError(ostringstream &err) {
+	this->msg = err.str();
+	if (verbose or strict) {
+		cout << "Error: " << msg << endl;
+	}
+	if (strict) {
+		cout << "Exiting..." << endl;
+		exit(1);
+	}
+}
 GetkwError::~GetkwError() throw() {
 	// TODO Auto-generated destructor stub
 }
@@ -37,7 +45,7 @@ void GetkwError::trigger(const string &err)
 {
 	msg = err;
 	if (verbose or strict) {
-		cout << "Error! " << msg << endl;
+		cout << "Error: " << msg << endl;
 	}
 	if (strict) {
 		cout << "Exiting..." << endl;
