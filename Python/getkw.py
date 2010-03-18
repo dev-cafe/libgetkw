@@ -779,6 +779,40 @@ def parse_error(s,t,d,err):
 			line(err.loc,err.pstr))
 	sys.exit(1)
 
+######## Convenience routines for callbacks ########
+
+def check_opt(sect,key):
+	try:
+		k=sect[key]
+	except:
+		print 'You have a typo in the code for key', key
+		sys.exit(1)
+	if k is not None:
+		if k.is_set():
+			return True
+	return False
+
+def check_required(list, sect):
+	err="Error: Required option '%s' not set in section '%s%s'!" 
+	for i in list:
+		if not check_opt(sect, i):
+			if sect.name == sect.tag or sect.tag is None:
+				print err % (i, sect.name, '')
+			else:
+				print err % (i, sect.name, '<' + sect.tag + '>')
+			sys.exit(1)
+
+def check_ignored(list, sect):
+	warn="Warning: The '%s' option will be ignored in section '%s%s'." 
+	for i in list:
+		if check_opt(sect, i):
+			if sect.name == sect.tag:
+				print warn % (i, sect.name, '')
+			else:
+				print warn % (i, sect.name, '<' + sect.tag + '>')
+
+####################################################
+
 def test( strng ):
 	bnf = GetkwParser()
 	try:

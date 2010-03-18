@@ -5,6 +5,7 @@
 *.in
 *.log
 *.out
+*.pyc
 .deps
 stamp-*
 Makefile
