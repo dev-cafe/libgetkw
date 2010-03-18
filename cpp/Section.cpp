@@ -15,15 +15,15 @@ using namespace std;
 
 #define PRINT_FUNC_NAME cout << "@ Section::" << __func__ << endl;
 
-Section::Section(const string &name, const string &tag) :
-	name(name) {
+Section::Section(const string &_name, const string &_tag) :
+	name(_name) {
 	isDefd = false;
 	nsect = 0;
 	nkeys = 0;
 	if (tag.empty()) {
-		this->tag = name;
+		this->tag = _name;
 	} else {
-		this->tag = tag;
+		this->tag = _tag;
 	}
 }
 
@@ -65,13 +65,54 @@ Section &Section::operator=(const Section &s) {
 
 Section::~Section() {
 	map<string, Section *>::iterator sit;
-//	map<string, boost::any>::iterator kit;
+	map<string, boost::any>::iterator kit;
 	for (sit = sects.begin(); sit != sects.end(); ++sit) {
 		delete sects[sit->first];
 	}
-//	for (kit = keys.begin(); kit != keys.end(); ++kit) {
-//		delete keys[kit->first];
-//	}
+	for (kit = keys.begin(); kit != keys.end(); ++kit) {
+
+		if (kit->second.type() == typeid(int)) {
+			Keyword<int> *key = boost::any_cast<Keyword<int> *>(keys[kit->first]);
+			delete key;
+			continue;
+		}
+		if (kit->second.type() == typeid(bool)) {
+			Keyword<bool> *key = boost::any_cast<Keyword<bool> *>(keys[kit->first]);
+			delete key;
+			continue;
+		}
+		if (kit->second.type() == typeid(double)) {
+			Keyword<double> *key = boost::any_cast<Keyword<double> *>(keys[kit->first]);
+			delete key;
+			continue;
+		}
+		if (kit->second.type() == typeid(std::string)) {
+			Keyword<string> *key = boost::any_cast<Keyword<string> *>(keys[kit->first]);
+			delete key;
+			continue;
+		}
+		if (kit->second.type() == typeid(std::vector<int>)) {
+			Keyword<vector<int> > *key = boost::any_cast<Keyword<vector<int> > *>(keys[kit->first]);
+			delete key;
+			continue;
+		}
+		if (kit->second.type() == typeid(std::vector<bool>)) {
+			Keyword<vector<bool> > *key = boost::any_cast<Keyword<vector<bool> > *>(keys[kit->first]);
+			delete key;
+			continue;
+		}
+		if (kit->second.type() == typeid(std::vector<double>)) {
+			Keyword<vector<double> > *key = boost::any_cast<Keyword<vector<double> > *>(keys[kit->first]);
+			delete key;
+			continue;
+		}
+		if (kit->second.type() == typeid(std::vector<std::string>)) {
+			Keyword<vector<string> > *key = boost::any_cast<Keyword<vector<string> > *>(keys[kit->first]);
+			delete key;
+			continue;
+		}
+		throw "Error! Unknown key type!";
+	}
 }
 
 const Section &Section::getSect(const string &pathspec) const {
@@ -94,7 +135,7 @@ const Keyword<T> &Section::getKey(const string &pathspec) const {
 		throw GetkwError(err);
 	}
 	map<string, boost::any>::const_iterator iter = sect->keys.find(name);
-	return boost::any_cast<Keyword<T> >(iter->second);
+	return *boost::any_cast<Keyword<T> *>(iter->second);
 }
 
 Section *Section::readSect(ifstream &fis) {
@@ -139,7 +180,7 @@ void Section::addKey(const Keyword<T> *key) {
 		throw GetkwError(err);
 	}
 
-	keys[name] = boost::any(*key);
+	keys[name] = boost::any(key);
 	nkeys++;
 }
 
@@ -152,7 +193,7 @@ template<class T> void Section::addKey(const Keyword<T> &key) {
 		throw GetkwError(err);
 	}
 
-	keys[name] = boost::any(key);
+	keys[name] = boost::any(new Keyword<T>(key));
 	nkeys++;
 }
 
@@ -283,6 +324,7 @@ ostream &Section::repr(ostream &o) const
 			o << boost::any_cast<Keyword<std::vector<std::string> > >(kit->second) << endl;
 			continue;
 		}
+		throw "Error! Unknown key type!";
 	}
 
 	map<string, Section *>::const_iterator sit;
