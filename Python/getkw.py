@@ -10,7 +10,8 @@
 #
 # TODO: 
 #       o general cleanup
-#       o usable python interface
+#       o better python interface
+#       o Pretty print inputs back to human readable form
 #
 # Known bugs: names with '-' mess things up...
 #
@@ -521,6 +522,9 @@ class Getkw:
 			return None
 		self.cur=self.stack[-1]
 		return self.cur
+
+	def get_topsect(self):
+		return self.top
 
 class GetkwParser:
 	"""Implements a class to do the actual parsing of input files and store
