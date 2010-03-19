@@ -23,6 +23,9 @@
 class Getkw {
 public:
 	Getkw(std::string file, bool _verbose = false, bool _strict = false);
+	Getkw(const Getkw &kw);
+	Getkw &operator=(const Getkw &kw);
+	Getkw();
 	virtual ~Getkw();
 	void setStrict(bool flag);
 	void setVerbose(bool flag);

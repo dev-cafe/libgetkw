@@ -87,6 +87,8 @@ protected:
 	std::map<std::string, boost::any> keys;
 	std::map<std::string, Section *> tags;
 
+	void copySects(const Section &s);
+	void copyKeys(const Section &s);
 	const Section *findSect(const std::string &pathspec) const;
 	const Section *traversePath(std::vector<std::string> &path,
 						  const std::string &pathspec) const;

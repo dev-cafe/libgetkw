@@ -116,14 +116,16 @@ class Section:
 		if not self.kw.has_key(kw.name):
 			self.kw[kw.name]=kw
 		else:
-			raise ValueError, 'Keyword "%s.%s" already defined!' % \
+			print 'Error: Keyword "%s.%s" already defined!' % \
 					(self.name, kw.name)
+			sys.exit(1)
 		kw.isset=set
 
 	def add_kw(self, name, typ, arg=None, req=False, set=False, callback=None):
 		if self.kw.has_key(name):
-			raise ValueError, 'Keyword "%s.%s" already defined!' % \
+			print 'Error: Keyword "%s.%s" already defined!' % \
 					(self.name, kw.name)
+			sys.exit(1)
 		kw=Keyword(name,typ,arg,req,callback)
 		kw.isset=set
 		self.kw[name]=kw

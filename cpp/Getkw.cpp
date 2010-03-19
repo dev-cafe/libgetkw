@@ -21,13 +21,13 @@ Getkw::Getkw(const string file, bool _verbose, bool _strict):
 	if (file.empty() != 0 || file.compare("stdin") == 0
 			|| file.compare("STDIN") == 0) {
 		if (verbose) {
-			cout << "Reading from stdin " << endl;
+			cout << "Reading input from stdin " << endl;
 		}
 		toplevel = readSect(cin);
 	} else {
 		const char *fname = file.data();
 		if (verbose)
-			cout << "Opening file, " << file << endl;
+			cout << "Opening input file, '" << file << "'" << endl;
 		ifstream fis(fname);
 		if (not fis) {
 			THROW_GETKW("Open failed: " + file);
@@ -36,6 +36,38 @@ Getkw::Getkw(const string file, bool _verbose, bool _strict):
 	}
 	cur = toplevel;
 
+}
+
+Getkw::Getkw() {
+	verbose = false;
+	strict = false;
+	toplevel = 0;
+	cur = 0;
+}
+
+Getkw::Getkw(const Getkw &kw) {
+	verbose = kw.verbose;
+	strict = kw.strict;
+	file = kw.file;
+	*toplevel = *kw.toplevel;
+	cur = toplevel;
+}
+
+Getkw &Getkw::operator=(const Getkw &kw) {
+	if (&kw == this) {
+		return *this;
+	}
+	verbose = kw.verbose;
+	strict = kw.strict;
+	file = kw.file;
+	if (toplevel == 0) {
+		toplevel = new Section(*kw.toplevel);
+	} else {
+		*toplevel = *kw.toplevel;
+	}
+	cur = toplevel;
+	sstack = stack<const Section *>();
+	return *this;
 }
 
 Getkw::~Getkw() {
@@ -57,26 +89,42 @@ void Getkw::print() const
 
 ostream &Getkw::repr(ostream &o) const
 {
-	o << *toplevel;
+	if (toplevel == 0) {
+		o << "Getkw not yet initialized" << endl;
+	} else {
+		o << *toplevel;
+	}
 	return o;
 }
 
 template<class T>
 const T &Getkw::get(const string &path) const {
+	if (cur == 0) {
+		THROW_GETKW("Getkw has not been initialized!");
+	}
 	const Keyword<T> &key = cur->getKey<T>(path);
 	return key.get();
 }
 
 template<class T>
 const Keyword<T> &Getkw::getKeyword(const string &path) const {
+	if (cur == 0) {
+		THROW_GETKW("Getkw has not been initialized!");
+	}
 	return cur->getKey<T>(path);
 }
 
 const Section &Getkw::getSect(const string &path) const {
+	if (cur == 0) {
+		THROW_GETKW("Getkw has not been initialized!");
+	}
 	return cur->getSect(path);
 }
 
 void Getkw::pushSection(const string &path) {
+	if (cur == 0) {
+		THROW_GETKW("Getkw has not been initialized!");
+	}
 	sstack.push(cur);
 	try {
 		const Section &newsec = cur->getSect(path);

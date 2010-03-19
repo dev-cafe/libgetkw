@@ -38,33 +38,21 @@ Section::Section(const Section &s) {
 	nkeys = s.nkeys;
 	nsect = s.nsect;
 
-	map<string, Section *>::const_iterator sit;
-	map<string, boost::any>::const_iterator kit;
-	for (sit = s.sects.begin(); sit != s.sects.end(); ++sit) {
-		sects[sit->first] = new Section(*sit->second);
-		tags[(*sit->second).tag] = sects[sit->first];
-	}
-	for (kit = s.keys.begin(); kit != s.keys.end(); ++kit) {
-		keys[kit->first] = kit->second;
-	}
-
+	copySects(s);
+	copyKeys(s);
 }
 
 Section &Section::operator=(const Section &s) {
+	if (&s == this) {
+		return *this;
+	}
 	name = s.name;
 	tag = s.tag;
 	nkeys = s.nkeys;
 	nsect = s.nsect;
 
-	map<string, Section *>::const_iterator sit;
-	map<string, boost::any>::const_iterator kit;
-	for (sit = s.sects.begin(); sit != s.sects.end(); ++sit) {
-		sects[sit->first] = new Section(*sit->second);
-		tags[(*sit->second).tag] = sects[sit->first];
-	}
-	for (kit = s.keys.begin(); kit != s.keys.end(); ++kit) {
-		keys[kit->first] = kit->second;
-	}
+	copySects(s);
+	copyKeys(s);
 
 	return *this;
 }
@@ -115,6 +103,62 @@ Section::~Section() {
 		IF_ANY_KEYTYPE_IS(kit->second, vector<string>) {
 			const Keyword<vector<string> > *key = ANY_TO_CONST_KEY_PTR(kit->second, vector<string>);
 			delete key;
+			continue;
+		}
+		THROW_GETKW("Error! Unknown key type!");
+	}
+}
+
+void Section::copySects(const Section &s) {
+	map<string, Section *>::const_iterator iter;
+	for (iter = s.sects.begin(); iter != s.sects.end(); ++iter) {
+		sects[iter->first] = new Section(*iter->second);
+		tags[(*iter->second).tag] = sects[iter->first];
+	}
+}
+
+void Section::copyKeys(const Section &s) {
+	map<string, boost::any>::const_iterator iter;
+
+	for (iter = s.keys.begin(); iter != s.keys.end(); ++iter) {
+		IF_ANY_KEYTYPE_IS(iter->second, int) {
+			const Keyword<int> *key = ANY_TO_CONST_KEY_PTR(iter->second, int);
+			keys[iter->first] = boost::any(new const Keyword<int>(*key));
+			continue;
+		}
+		IF_ANY_KEYTYPE_IS(iter->second, bool) {
+			const Keyword<bool> *key = ANY_TO_CONST_KEY_PTR(iter->second, bool);
+			keys[iter->first] = boost::any(new const Keyword<bool>(*key));
+			continue;
+		}
+		IF_ANY_KEYTYPE_IS(iter->second, double) {
+			const Keyword<double> *key = ANY_TO_CONST_KEY_PTR(iter->second, double);
+			keys[iter->first] = boost::any(new const Keyword<double>(*key));
+			continue;
+		}
+		IF_ANY_KEYTYPE_IS(iter->second, string) {
+			const Keyword<string> *key = ANY_TO_CONST_KEY_PTR(iter->second, string);
+			keys[iter->first] = boost::any(new const Keyword<string>(*key));
+			continue;
+		}
+		IF_ANY_KEYTYPE_IS(iter->second, vector<int>) {
+			const Keyword<vector<int> > *key = ANY_TO_CONST_KEY_PTR(iter->second, vector<int>);
+			keys[iter->first] = boost::any(new const Keyword<vector<int> >(*key));
+			continue;
+		}
+		IF_ANY_KEYTYPE_IS(iter->second, vector<bool>) {
+			const Keyword<vector<bool> > *key = ANY_TO_CONST_KEY_PTR(iter->second, vector<bool>);
+			keys[iter->first] = boost::any(new const Keyword<vector<bool> >(*key));
+			continue;
+		}
+		IF_ANY_KEYTYPE_IS(iter->second, vector<double>) {
+			const Keyword<vector<double> > *key = ANY_TO_CONST_KEY_PTR(iter->second, vector<double>);
+			keys[iter->first] = boost::any(new const Keyword<vector<double> >(*key));
+			continue;
+		}
+		IF_ANY_KEYTYPE_IS(iter->second, vector<string>) {
+			const Keyword<vector<string> > *key = ANY_TO_CONST_KEY_PTR(iter->second, vector<string>);
+			keys[iter->first] = boost::any(new const Keyword<vector<string> >(*key));
 			continue;
 		}
 		THROW_GETKW("Error! Unknown key type!");
@@ -289,46 +333,47 @@ ostream &Section::repr(ostream &o) const
 	}
 	o << " {" << endl;
 
-	map<string, boost::any>::const_iterator kit;
-	for (kit = keys.begin(); kit != keys.end(); ++kit) {
-		IF_ANY_KEYTYPE_IS(kit->second,int) {
-			o << *ANY_TO_CONST_KEY_PTR(kit->second, int) << endl;
+	map<string, boost::any>::const_iterator iter;
+	for (iter = keys.begin(); iter != keys.end(); ++iter) {
+		IF_ANY_KEYTYPE_IS(iter->second,int) {
+			o << *ANY_TO_CONST_KEY_PTR(iter->second, int) << endl;
 			continue;
 		}
-		IF_ANY_KEYTYPE_IS(kit->second,bool) {
-			o << *ANY_TO_CONST_KEY_PTR(kit->second, bool) << endl;
+		IF_ANY_KEYTYPE_IS(iter->second,bool) {
+			o << *ANY_TO_CONST_KEY_PTR(iter->second, bool) << endl;
 			continue;
 		}
-		IF_ANY_KEYTYPE_IS(kit->second,double) {
-			o << *ANY_TO_CONST_KEY_PTR(kit->second, double) << endl;
+		IF_ANY_KEYTYPE_IS(iter->second,double) {
+			o << *ANY_TO_CONST_KEY_PTR(iter->second, double) << endl;
 			continue;
 		}
-		IF_ANY_KEYTYPE_IS(kit->second, string) {
-			o << *ANY_TO_CONST_KEY_PTR(kit->second, string) << endl;
+		IF_ANY_KEYTYPE_IS(iter->second, string) {
+			o << *ANY_TO_CONST_KEY_PTR(iter->second, string) << endl;
 			continue;
 		}
-		IF_ANY_KEYTYPE_IS(kit->second, vector<int>) {
-			o << *ANY_TO_CONST_KEY_PTR(kit->second, vector<int>) << endl;
+		IF_ANY_KEYTYPE_IS(iter->second, vector<int>) {
+			o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<int>) << endl;
 			continue;
 		}
-		IF_ANY_KEYTYPE_IS(kit->second, vector<bool>) {
-			o << *ANY_TO_CONST_KEY_PTR(kit->second, vector<bool>) << endl;
+		IF_ANY_KEYTYPE_IS(iter->second, vector<bool>) {
+			o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<bool>) << endl;
 			continue;
 		}
-		IF_ANY_KEYTYPE_IS(kit->second, vector<double>) {
-			o << *ANY_TO_CONST_KEY_PTR(kit->second, vector<double>) << endl;
+		IF_ANY_KEYTYPE_IS(iter->second, vector<double>) {
+			o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<double>) << endl;
 			continue;
 		}
-		IF_ANY_KEYTYPE_IS(kit->second, vector<string>) {
-			o << *ANY_TO_CONST_KEY_PTR(kit->second, vector<string>) << endl;
+		IF_ANY_KEYTYPE_IS(iter->second, vector<string>) {
+			o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<string>) << endl;
 			continue;
 		}
 		THROW_GETKW("Unknown key type!");
 	}
 
-	map<string, Section *>::const_iterator sit;
-	for (sit = sects.begin(); sit != sects.end(); ++sit) {
-		o << *sit->second << endl;
+
+	map<string, Section *>::const_iterator s_it;
+	for (s_it = sects.begin(); s_it != sects.end(); ++s_it) {
+		o << *s_it->second << endl;
 	}
 
 	o << "}";
