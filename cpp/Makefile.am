@@ -1,5 +1,7 @@
 lib_LIBRARIES=libgetkw.a
 
+libgetkw_a_CPPFLAGS=@BOOST_CPPFLAGS@
+
 libgetkw_a_SOURCES= \
 Getkw.cpp \
 Getkw.h \

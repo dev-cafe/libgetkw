@@ -4,7 +4,7 @@
 # Written by Jonas Juselius <jonas@iki.fi> 2007
 #
 
-AC_INIT([MRChem2],[dev],[jonas.juselius@uit.no])
+AC_INIT([libgetkw],[dev],[jonas.juselius@uit.no])
 AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR(Python/getkw.py)
@@ -62,6 +62,8 @@ fi
 if test "$profiling" = "true"; then
 	CXXFLAGS="$CXXFLAGS ${cxx_prof}"
 fi
+
+AX_BOOST_BASE([1.35])
 
 LDFLAGS=${cxx_ldflags}
 
