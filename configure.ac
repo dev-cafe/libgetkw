@@ -7,6 +7,7 @@
 AC_INIT([libgetkw],[dev],[jonas.juselius@uit.no])
 AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE
+LT_INIT
 AC_CONFIG_SRCDIR(Python/getkw.py)
 AC_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT([/usr/local])
@@ -40,7 +41,6 @@ AC_ARG_ENABLE([fortran],
      esac],[optimize=false])
 AM_CONDITIONAL([HAVE_FORTRAN], [test x$enable_fortran = xtrue])
 
-AC_PROG_RANLIB
 # find compilers
 AC_PROG_CC
 AC_PROG_CXX

@@ -1,8 +1,8 @@
-lib_LIBRARIES=libgetkw.a
+lib_LTLIBRARIES=libgetkw.la
 
-libgetkw_a_CPPFLAGS=@BOOST_CPPFLAGS@
-
-libgetkw_a_SOURCES= \
+libgetkw_la_CPPFLAGS=@BOOST_CPPFLAGS@
+libgetkw_la_LDFLAGS=-version-info 1:1:1
+libgetkw_la_SOURCES= \
 Getkw.cpp \
 Getkw.h \
 GetkwError.cpp \

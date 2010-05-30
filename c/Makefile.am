@@ -1,5 +1,6 @@
-lib_LIBRARIES=libgetkw.a
-libgetkw_a_SOURCES= \
+lib_LTLIBRARIES=libgetkw.la
+libgetkw_la_LDFLAGS=-version-info 1:1:1
+libgetkw_la_SOURCES= \
 getkw.c \
 getkw.h \
 getkw_macros.h \
