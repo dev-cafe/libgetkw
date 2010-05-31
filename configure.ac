@@ -7,7 +7,7 @@
 AC_INIT([libgetkw],[dev],[jonas.juselius@uit.no])
 AC_CONFIG_AUX_DIR(config)
 AM_INIT_AUTOMAKE
-LT_INIT
+LT_INIT([disable-shared])
 AC_CONFIG_SRCDIR(Python/getkw.py)
 AC_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT([/usr/local])
@@ -71,9 +71,9 @@ AC_SUBST(AM_CXXFLAGS)
 AC_SUBST(EXTMOD, [$extmod])
 
 AC_CONFIG_FILES([Makefile 
-				 cpp/Makefile
-				 c/Makefile
-				 f95/Makefile
+				 cxxlib/Makefile
+				 clib/Makefile
+				 flib/Makefile
 				 Python/Makefile
 				 ])
 dnl AC_CONFIG_SUBDIRS([libgetkw])
