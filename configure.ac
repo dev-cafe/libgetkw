@@ -12,7 +12,6 @@ AC_CONFIG_SRCDIR(Python/getkw.py)
 AC_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT([/usr/local])
 AC_PROG_MAKE_SET
-AC_CANONICAL_HOST
 
 AC_ARG_ENABLE([optimization],
     AC_HELP_STRING([--enable-optimization],[Turn on optimizations]),
