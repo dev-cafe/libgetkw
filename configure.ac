@@ -71,9 +71,9 @@ AC_SUBST(AM_CXXFLAGS)
 AC_SUBST(EXTMOD, [$extmod])
 
 AC_CONFIG_FILES([Makefile 
-				 cxxlib/Makefile
-				 clib/Makefile
-				 flib/Makefile
+				 c++/Makefile
+				 csrc/Makefile
+				 fortran/Makefile
 				 Python/Makefile
 				 ])
 dnl AC_CONFIG_SUBDIRS([libgetkw])

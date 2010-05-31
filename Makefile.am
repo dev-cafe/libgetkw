@@ -1,6 +1,6 @@
-SUBDIRS=cxxlib Python
-#SUBDIRS+=clib
+SUBDIRS=c++ Python
+#SUBDIRS+=csrc
 if HAVE_FORTRAN
-  SUBDIRS+=flib
+  SUBDIRS+=fortran
 endif
 
