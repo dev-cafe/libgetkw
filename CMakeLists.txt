@@ -14,23 +14,23 @@ option(GETKW_FORTRAN_INTERFACE "Enable the Fortran interface" OFF)
 
 if (GETKW_C++_INTERFACE)
 	add_subdirectory(C++)
-endif (GETKW_C++_INTERFACE)
+endif (++_INTERFACE)
 
 if (GETKW_C_INTERFACE)
 	add_subdirectory(C)
-endif (GETKW_C_INTERFACE)
+endif ()
 
 if (GETKW_FORTRAN_INTERFACE)
 	add_subdirectory(Fortran)
-endif (GETKW_FORTRAN_INTERFACE)
+endif ()
 
-#find_package(Doxygen)
-#if (DOXYGEN_FOUND)
-#	add_custom_target(docs 
-#		COMMAND ${DOXYGEN_EXECUTABLE} 
-#		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-#		)
-#endif(DOXYGEN_FOUND)
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+	add_custom_target(docs 
+		COMMAND ${DOXYGEN_EXECUTABLE} 
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+		)
+endif()
 
 configure_file (
 	"${PROJECT_SOURCE_DIR}/config.h.in"
