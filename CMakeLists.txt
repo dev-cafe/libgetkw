@@ -14,7 +14,7 @@ option(GETKW_FORTRAN_INTERFACE "Enable the Fortran interface" OFF)
 
 if (GETKW_C++_INTERFACE)
 	add_subdirectory(C++)
-endif (++_INTERFACE)
+endif ()
 
 if (GETKW_C_INTERFACE)
 	add_subdirectory(C)
