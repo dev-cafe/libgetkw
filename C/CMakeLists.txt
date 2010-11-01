@@ -6,8 +6,8 @@ add_library(cgetkw
 	)
 
 install(TARGETS cgetkw ARCHIVE DESTINATION lib)
-install(FILES getkw.h getkw_macros.h
-    DESTINATION include/getkw
+install(FILES getkw.h 
+    DESTINATION include
 	)
 
 if (BUILD_C_TEST)

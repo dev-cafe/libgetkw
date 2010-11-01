@@ -12,6 +12,5 @@ add_library(getkw
 install(TARGETS getkw 
 	ARCHIVE DESTINATION lib)
 
-install(FILES Getkw.h Section.h GetkwError.h messages.h Keyword.h
-	DESTINATION include/getkw
+install(FILES Getkw.h DESTINATION include
 	)
