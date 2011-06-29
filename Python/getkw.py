@@ -746,7 +746,7 @@ line: %d" % ( name, lineno(self.loc,self.strg))
 
 		kstr= quotedString.setParseAction(removeQuotes) ^ \
 				dval ^ ival ^ lval ^ Word(prtable)
-		name = Word(alphas+"_",alphanums+"_")
+		name = Word(alphas+"_",alphanums+"_",nums)
 		vec=array_begin+delimitedList(dval ^ ival ^ lval ^ Word(prtable) ^ \
 				Literal("\n").suppress() ^ \
 				quotedString.setParseAction(removeQuotes))+array_end
