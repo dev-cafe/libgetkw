@@ -738,7 +738,7 @@ line: %d" % ( name, lineno(self.loc,self.strg))
 		dmark = Literal('$').suppress()
 		end_data=Literal('$end').suppress()
 		prtable = alphanums+r'!$%&*+-./<>?@^_|~'
-		ival=Regex('[-]?\d+')
+		ival=Word(nums)
 		dval=Regex('-?\d+\.\d*([eE]?[+-]?\d+)?')
 		lval=Regex('([Yy]es|[Nn]o|[Tt]rue|[Ff]alse|[Oo]n|[Oo]ff)')
 	
@@ -746,12 +746,14 @@ line: %d" % ( name, lineno(self.loc,self.strg))
 
 		kstr= quotedString.setParseAction(removeQuotes) ^ \
 				dval ^ ival ^ lval ^ Word(prtable)
-		name = Word(alphas+"_",alphanums+"_",nums)
+		name = Word(alphas+"_",alphanums+"_")
 		vec=array_begin+delimitedList(dval ^ ival ^ lval ^ Word(prtable) ^ \
 				Literal("\n").suppress() ^ \
 				quotedString.setParseAction(removeQuotes))+array_end
 		sect=name+sect_begin
-		tag_sect=name+Group(tag_begin+name+tag_end)+sect_begin
+		tag_val = name ^ ival
+		tag_def = Group(tag_begin + tag_val + tag_end) 
+		tag_sect=name + tag_def + sect_begin
 
 		# Grammar
 		keyword = name + eql + kstr
@@ -770,6 +772,7 @@ line: %d" % ( name, lineno(self.loc,self.strg))
 		vector.setParseAction(self.store_vector)
 		data.setParseAction(self.store_data)
 		sect.setParseAction(self.add_sect)
+		tag_val.setParseAction(lambda x: str(x))
 		tag_sect.setParseAction(self.add_sect)
 		sect_end.setParseAction(self.pop_sect)
 
@@ -857,7 +860,7 @@ raboof {
     foo=1
     bar=1
 
-	foobar<gnat>{
+	foobar<1>{
 		foo=1
 		bar=2
 	        foobar<gnu>{
@@ -873,7 +876,6 @@ raboof {
       h -1.0 1.0 0.0
     $end
 }
-
 
 """
 	ini = test(teststr)
