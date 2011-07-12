@@ -859,6 +859,11 @@ raboof {
 	foobar<gnat>{
 		foo=1
 		bar=2
+	        foobar<gnu>{
+		        foo=1
+		        bar=2
+	        }
+
 	}
 
     $COORD

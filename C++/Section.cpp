@@ -187,6 +187,12 @@ const Keyword<T> &Section::getKey(const string &pathspec) const {
 	return *ANY_TO_CONST_KEY_PTR(iter->second, T);
 }
 
+template<class T>
+const T &Section::get(const string &path) const {
+	const Keyword<T> &key = this->getKey<T>(path);
+	return key.get();
+}
+
 Section *Section::readSect(ifstream &fis) {
 	return 0;
 }
@@ -407,3 +413,11 @@ template const Keyword<vector<double> > &Section::getKey(const string &) const;
 template const Keyword<vector<bool> > &Section::getKey(const string &) const;
 template const Keyword<vector<string> > &Section::getKey(const string &) const;
 
+template const int &Section::get<int>(const string&) const;
+template const bool &Section::get<bool>(const string&) const;
+template const double &Section::get<double>(const string&) const;
+template const string &Section::get<string>(const string&) const;
+template const vector<int> &Section::get<vector<int> >(const string&) const;
+template const vector<double> &Section::get<vector<double> >(const string&) const;
+template const vector<bool> &Section::get<vector<bool> >(const string&) const;
+template const vector<string> &Section::get<vector<string> >(const string&) const;
