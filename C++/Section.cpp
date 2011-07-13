@@ -168,7 +168,6 @@ void Section::copyKeys(const Section &s) {
 const Section &Section::getSect(const string &pathspec) const {
 	vector<string> path;
 	splitPath(pathspec, path);
-
 	const Section *sect = traversePath(path, pathspec);
 	return *sect;
 }
@@ -259,7 +258,7 @@ const Section *Section::traversePath(vector<string> &path,
 			cur = cur + "<" + cur + ">";
 		}
 		if (has_sect(cur)) {
-			map<string, Section *>::const_iterator iter = sects.find(name);
+			map<string, Section *>::const_iterator iter = sects.find(cur);
 			return iter->second;
 		}
 		THROW_GETKW("traversePath: Invalid path, " + pathspec);
