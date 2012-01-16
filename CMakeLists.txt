@@ -10,7 +10,7 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 option(GETKW_C++_INTERFACE "Enable the C++ interface" ON)
 option(GETKW_C_INTERFACE "Enable the C interface" OFF)
-option(GETKW_FORTRAN_INTERFACE "Enable the Fortran interface" OFF)
+option(GETKW_FORTRAN_INTERFACE "Enable the Fortran interface" ON)
 
 if (GETKW_C++_INTERFACE)
 	add_subdirectory(C++)
