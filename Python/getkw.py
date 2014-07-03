@@ -5,10 +5,10 @@
 ## @package getkw.py
 ## @brief getkw -- a simple input parser for Fortran 95
 #
-# Written by Jonas Juselius <jonas.juselius@chem.uit.no> 
+# Written by Jonas Juselius <jonas.juselius@chem.uit.no>
 # University of Tromsø, 2006
 #
-# TODO: 
+# TODO:
 #       o general cleanup
 #       o better python interface
 #       o Pretty print inputs back to human readable form
@@ -66,7 +66,7 @@ class Section:
 			self.kw[k]=val
 		else:
 			raise TypeError, 'Not a Section or Keyword'
-	
+
 	def get(self, k):
 		return self.__getitem__(k)
 
@@ -205,7 +205,7 @@ class Section:
 
 	def status(self):
 		return self.isset
-	
+
 	def set_status(self, set):
 		if set:
 			self.isset=True
@@ -267,13 +267,13 @@ class Section:
 			print '>>> Required section not set: %s \n' % path
 			sys.exit(1)
 		for i in self.kw:
-			j=templ.fetch_kw(i) 
+			j=templ.fetch_kw(i)
 			if j is None:
 				print '>>> Invalid keyword: %s ' % (path+dlm+i)
 				sys.exit(1)
 			self.kw[i].xvalidate(j,path)
 		for i in self.sect:
-			j=templ.fetch_sect(i) 
+			j=templ.fetch_sect(i)
 			if j is None:
 				print '>>> Invalid section: %s ' % (path+dlm+i)
 				sys.exit(1)
@@ -288,7 +288,7 @@ class Section:
 		nkw=0
 		for i in self.kw:
 			nkw=nkw+1
-		
+
 		s="SECT %s %d %s\n" % (self.name, nsect, self.isset)
 		if self.tag is not None:
 			s=s+"TAG T KW %d\n" % (nkw)
@@ -315,7 +315,7 @@ class Section:
 				return True
 		return False
 
-		
+
 class Keyword:
 	"""Placehoder for keyword objects
 	"""
@@ -327,13 +327,13 @@ class Keyword:
 		self.arg=[]
 		self.is_array=False
 		self.callback=callback
-		
+
 		if re.search('_ARRAY', typ) or typ == 'DATA':
 			self.is_array=True
 			if arg is None: # unlimited arg length
 				self.nargs=-1
 			elif isinstance(arg,int): # number of elements in self.arg == arg
-				self.nargs=arg  
+				self.nargs=arg
 				arg=None
 			if isinstance(arg,tuple) or isinstance(arg,list):
 				self.nargs=len(arg)
@@ -352,12 +352,12 @@ class Keyword:
 		if n > len(self.arg)-1:
 			raise IndexError
 		self.arg[n]=arg
-	
+
 	def setkw(self, arg):
 		if arg is None: # init stage
 			return
 
-		if self.is_array and self.nargs > 0: 
+		if self.is_array and self.nargs > 0:
 			if len(arg) != self.nargs:
 				print "keyword lenght mismatsh %s(%i): %i" % (self.name,
 						self.nargs, len(arg))
@@ -380,7 +380,7 @@ class Keyword:
 
 	def set(self, val):
 		self.setkw(val)
-	
+
 	def sanity_check(self,path):
 		if path is None:
 			path=self.name
@@ -400,7 +400,7 @@ class Keyword:
 			print '>>> Required key not set: %s' % (path)
 			sys.exit(1)
 		if templ.type != self.type:
-			if self.type == 'INT': 
+			if self.type == 'INT':
 				self.arg=map(float,self.arg)
 				self.type='DBL'
 			elif self.type == 'INT_ARRAY':
@@ -416,7 +416,7 @@ class Keyword:
 				print ' -> wanted %d, got %d' % (templ.nargs, len(self.arg))
 				sys.exit(1)
 		return True
-				
+
 	def typecheck(self):
 		if self.arg[0] == 'None':
 			return True
@@ -447,7 +447,7 @@ class Keyword:
 			print 'getkw: Unknown type: ', self.name, '=', self.type
 			raise TypeError
 		return True
-	
+
 	def is_type(self, typ):
 		if typ == self.type:
 			return True
@@ -458,7 +458,7 @@ class Keyword:
 
 	def is_required(self):
 		return self.req
-	
+
 	def set_status(self, set):
 		if set:
 			self.isset=True
@@ -466,12 +466,12 @@ class Keyword:
 			self.isset=False
 
 	def __str__(self):
-#        if self.type == 'STR': 
+#        if self.type == 'STR':
 #            print 'foo', self.name, self.arg
 		if (self.type == 'STR' or 'STR_ARRAY' or 'DATA') and \
 				(self.arg == '' or self.arg == None): # empty string
 			nargs=-1 # flags as empty for Fortran code
-		else: 
+		else:
 			nargs=len(self.arg)
 			tmp=''
 			for i in self.arg:
@@ -581,7 +581,7 @@ class GetkwParser:
 		if self.caseless:
 			name=name.lower()
 		k=Section(name, tag)
-		self.cur.add_sect(k, set=True)  
+		self.cur.add_sect(k, set=True)
 		self.push_sect(k)
 
 	def push_sect(self,k):
@@ -596,11 +596,11 @@ class GetkwParser:
 			self.path.append(x)
 
 	def pop_sect(self,s,l,t):
-		if self.templ is not None:  
+		if self.templ is not None:
 			del self.path[-1]
 		del self.stack[-1]
 		self.cur=self.stack[-1]
-	
+
 	def store_key(self,s,l,t):
 		q=t.asList()
 		self.strg=s
@@ -614,7 +614,7 @@ class GetkwParser:
 		else:
 			k=self.path[-1].fetch_kw(name)
 			if k is None:
-				print "Unknown keyword '%s' line: %d" % (name, 
+				print "Unknown keyword '%s' line: %d" % (name,
 						lineno(self.loc,self.strg))
 				if strict:
 					sys.exit(1)
@@ -638,13 +638,13 @@ class GetkwParser:
 		else:
 			k=self.path[-1].fetch_kw(name)
 			if k is None:
-				print "Unknown keyword '%s', line: %d" % (name, 
+				print "Unknown keyword '%s', line: %d" % (name,
 						lineno(self.loc,self.strg))
 				if strict:
 					sys.exit(1)
 				argt=None
 			else:
-				if k.nargs == -1: 
+				if k.nargs == -1:
 					pass
 				elif len(arg) != k.nargs:
 					print "Invalid number of elements for key '%s',\
@@ -711,7 +711,7 @@ line: %d" % ( name, lineno(self.loc,self.strg))
 		if isinstance(arg, float):
 			return 'DBL'
 		return 'STR'
-	
+
 	def conv_ival(self, s, loc, toks):
 		return int(toks[0])
 
@@ -738,10 +738,10 @@ line: %d" % ( name, lineno(self.loc,self.strg))
 		dmark = Literal('$').suppress()
 		end_data=Literal('$end').suppress()
 		prtable = alphanums+r'!$%&*+-./<>?@^_|~'
-		ival=Word(nums)
+		ival=Word('-' + nums)
 		dval=Regex('-?\d+\.\d*([eE]?[+-]?\d+)?')
 		lval=Regex('([Yy]es|[Nn]o|[Tt]rue|[Ff]alse|[Oo]n|[Oo]ff)')
-	
+
 		# Helper definitions
 
 		kstr= quotedString.setParseAction(removeQuotes) ^ \
@@ -752,7 +752,7 @@ line: %d" % ( name, lineno(self.loc,self.strg))
 				quotedString.setParseAction(removeQuotes))+array_end
 		sect=name+sect_begin
 		tag_val = name ^ ival
-		tag_def = Group(tag_begin + tag_val + tag_end) 
+		tag_def = Group(tag_begin + tag_val + tag_end)
 		tag_sect=name + tag_def + sect_begin
 
 		# Grammar
@@ -761,10 +761,10 @@ line: %d" % ( name, lineno(self.loc,self.strg))
 		data=Combine(dmark+name)+SkipTo(end_data)+end_data
 		section=Forward()
 		sect_def=(sect | tag_sect ) #| vec_sect)
-		input=section | data | vector | keyword 
+		input=section | data | vector | keyword
 		section << sect_def+ZeroOrMore(input) + sect_end
 
-		# Parsing actions	
+		# Parsing actions
 		ival.setParseAction(self.conv_ival)
 		dval.setParseAction(self.conv_dval)
 		lval.setParseAction(self.conv_lval)
@@ -781,7 +781,7 @@ line: %d" % ( name, lineno(self.loc,self.strg))
 		return bnf
 
 def parse_error(s,t,d,err):
-	print "Parse error, line %d: %s" %  ( lineno(err.loc,err.pstr), 
+	print "Parse error, line %d: %s" %  ( lineno(err.loc,err.pstr),
 			line(err.loc,err.pstr))
 	sys.exit(1)
 
@@ -799,7 +799,7 @@ def check_opt(sect,key):
 	return False
 
 def check_required(list, sect):
-	err="Error: Required option '%s' not set in section '%s%s'!" 
+	err="Error: Required option '%s' not set in section '%s%s'!"
 	for i in list:
 		if not check_opt(sect, i):
 			if sect.name == sect.tag or sect.tag is None:
@@ -809,7 +809,7 @@ def check_required(list, sect):
 			sys.exit(1)
 
 def check_ignored(list, sect):
-	warn="Warning: The '%s' option will be ignored in section '%s%s'." 
+	warn="Warning: The '%s' option will be ignored in section '%s%s'."
 	for i in list:
 		if check_opt(sect, i):
 			if sect.name == sect.tag:
@@ -839,17 +839,17 @@ foo=[1,2,3]
 bar=99.0
 }
 
-defs<apa> { 
+defs<apa> {
 foo=[1, 2, 3,
-4,5, 6,7,8,9, 
-10] 
+4,5, 6,7,8,9,
+10]
 bar=22.0
 }
 
-defs<gorilla> { 
+defs<gorilla> {
 foo=[1, 2, 3,
-4,5, 6,7,8,9, 
-10] 
+4,5, 6,7,8,9,
+10]
 bar=22.0
 }
 
