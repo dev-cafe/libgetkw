@@ -39,5 +39,5 @@ configure_file (
 	)
 
 install(FILES Python/getkw.py Python/pyparsing.py
-	DESTINATION share/libgetkw
+	DESTINATION lib/python2.7/site-packages 
 	)
