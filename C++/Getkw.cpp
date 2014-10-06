@@ -14,6 +14,8 @@ using namespace std;
 #define TEST_ARRAY if (len > 1) \
 	cout << "Warning, invalid length of 1 for " << name << endl;
 
+using namespace std;
+
 Getkw::Getkw(const string file, bool _verbose, bool _strict):
 		verbose(_verbose), strict(_strict) {
 

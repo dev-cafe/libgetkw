@@ -22,6 +22,8 @@ boost::any_cast<const Keyword< T > *>(A)
 
 #define PRINT_FUNC_NAME cout << "@ Section::" << __func__ << endl;
 
+using namespace std;
+
 Section::Section(const string &_name, const string &_tag) :
 	name(_name) {
 	isDefd = false;
