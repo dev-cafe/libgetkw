@@ -12,8 +12,6 @@
 #include "Section.h"
 #include "GetkwError.h"
 
-using namespace std;
-
 #define IF_ANY_KEYTYPE_IS(A, T) \
 if (A.type() == typeid(const Keyword< T > *))
 
