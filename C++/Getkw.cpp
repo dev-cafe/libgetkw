@@ -9,6 +9,8 @@
 
 #include "Getkw.h"
 
+using namespace std;
+
 #define TEST_ARRAY if (len > 1) \
 	cout << "Warning, invalid length of 1 for " << name << endl;
 
