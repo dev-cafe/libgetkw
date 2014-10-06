@@ -32,21 +32,16 @@ public:
 	void pushSection(const std::string &path);
 	void popSection();
 	const Section &getSect(const std::string &path) const;
-	template<class T> const Keyword<T> &getKeyword(const std::string &path) const;
+	template<class T> const Keyword<T> 
+        &getKeyword(const std::string &path) const;
 	template<class T> const T &get(const std::string &path) const;
 
-	int getInt(const std::string &path) const {
-		return get<int>(path);
-	}
-	double getDbl(const std::string &path) const {
-		return get<double>(path);
-	}
-	bool getBool(const std::string &path) const {
-		return get<bool>(path);
-	}
+	int getInt(const std::string &path) const {return get<int>(path);}
+	double getDbl(const std::string &path) const {return get<double>(path);}
+	bool getBool(const std::string &path) const {return get<bool>(path);}
 	const std::string &getStr(const std::string &path) const {
-		return get<std::string>(path);
-	}
+        return get<std::string>(path);
+    }
 	const std::vector<int> getIntVec(const std::string &path) const {
 		return get<std::vector<int> >(path);
 	}

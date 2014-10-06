@@ -193,7 +193,8 @@ class Section:
 	def fetch_sect(self, name):
 		(key, tag)=self._split_tag(name)
 		if self.sect.has_key(key):
-			return self.sect[name][tag]
+			if self.sect[key].has_key(tag):
+				return self.sect[key][tag]
 		return None
 
 	def get_keys(self):
@@ -862,6 +863,11 @@ raboof {
 	foobar<1>{
 		foo=1
 		bar=2
+	        foobar<gnu>{
+		        foo=1
+		        bar=2
+	        }
+
 	}
 
     $COORD
