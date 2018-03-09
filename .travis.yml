@@ -1,0 +1,97 @@
+language: cpp
+sudo: false
+dist: trusty
+ruby: 2.2.0
+cache:
+  bundler: true
+  pip: true
+env:
+  global:
+    - USE_CCACHE=1
+    - CCACHE_COMPRESS=1
+    - CCACHE_MAXSIZE=200M
+    - CCACHE_CPP2=1
+    - PIPENV_VENV_IN_PROJECT=1
+    - PIPENV_IGNORE_VIRTUALENVS=1
+    - LC_ALL="en_US.UTF-8"
+    - LANG="en_US.UTF-8"
+    - LANGUAGE="en_US.UTF-8"
+    - PYTHONIOENCODING=UTF-8
+matrix:
+  include:
+    - os: linux
+      addons: &1
+        apt:
+          packages:
+            - cmake3
+            - cmake3-data
+            - g++-4.8
+            - gcc-4.8
+            - gfortran-4.8
+            - clang-format-3.9
+            - libboost-all-dev
+            - lcov
+      env:
+        - CXX_COMPILER='g++-4.8'
+        - C_COMPILER='gcc-4.8'
+        - Fortran_COMPILER='gfortran-4.8'
+        - PYTHON='--three'
+        - RUN_DANGER=true
+    - os: linux
+      addons: *1
+      env:
+        - CXX_COMPILER='g++-4.8'
+        - C_COMPILER='gcc-4.8'
+        - Fortran_COMPILER='gfortran-4.8'
+        - PYTHON='--two'
+    - os: linux
+      addons: *1
+      env:
+        - CXX_COMPILER='g++-4.8'
+        - C_COMPILER='gcc-4.8'
+        - Fortran_COMPILER='gfortran-4.8'
+        - PYTHON='--two'
+        - COVERAGE='--type=debug --coverage'
+    - os: osx
+      env:
+        - CXX_COMPILER='clang++'
+        - C_COMPILER='clang'
+        - Fortran_COMPILER='gfortran-7'
+        - BOOST_ROOT='/usr/local/opt/boost@1.59'
+        - PYTHON='--two'
+before_install:
+  - test -n $CC && unset CC
+  - test -n $CXX && unset CXX
+  - test -n $FC && unset FC
+install:
+  - ./.ci/install_dependencies.sh
+  - pipenv $PYTHON install
+  - pipenv run python --version
+before_script:
+  - cd $TRAVIS_BUILD_DIR
+  - echo 'Build set up summary'
+  - |
+    if [[ "$RUN_DANGER" = true ]]; then
+      bundle install --gemfile=.ci/Gemfile
+    fi
+script:
+  - |
+    if [[ "$RUN_DANGER" = true ]]; then
+      BUNDLE_GEMFILE=.ci/Gemfile bundle exec danger --dangerfile=.ci/Dangerfile --verbose
+    fi
+  - |
+    pipenv run python setup --cxx=$CXX_COMPILER $COVERAGE
+  - cd build
+  - cmake --build . -- jobs=2 VERBOSE=1
+  - ctest --output-on-failure --verbose --parallel 2
+after_success:
+  - |
+    if [[ "$COVERAGE" = "--type=debug --coverage" ]]; then
+      cd $TRAVIS_BUILD_DIR
+      lcov --version
+      lcov --directory . --capture --output-file coverage.info
+      lcov --remove coverage.info '/usr/*' --output-file coverage.info
+      lcov --remove coverage.info 'tests/*' --output-file coverage.info
+      lcov --list coverage.info
+      bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports"
+    fi
