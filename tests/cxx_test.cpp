@@ -1,3 +1,17 @@
+/*
+ * getkw -- a simple input parser
+ * Copyright (C) 2018 Jonas Juselius and contributors.
+ *
+ * This file is part of getkw.
+
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * For information on the complete list of contributors to the
+ * getkw library, see: <http://getkw.readthedocs.io/>
+ */
+
 #include "Getkw.hpp"
 #include "Keyword.hpp"
 #include "Section.hpp"
