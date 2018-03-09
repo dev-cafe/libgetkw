@@ -1,0 +1,10 @@
+breathe
+docopt
+fprettify
+pyparsing
+pyyaml
+recommonmark
+sphinx
+sphinx-rtd-theme
+sphinxcontrib-bibtex
+yapf

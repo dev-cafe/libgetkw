@@ -13,31 +13,31 @@ option(GETKW_C_INTERFACE "Enable the C interface" OFF)
 option(GETKW_FORTRAN_INTERFACE "Enable the Fortran interface" OFF)
 
 if (GETKW_C++_INTERFACE)
-	add_subdirectory(C++)
+  add_subdirectory(C++)
 endif ()
 
 if (GETKW_C_INTERFACE)
-	add_subdirectory(C)
+  add_subdirectory(C)
 endif ()
 
 if (GETKW_FORTRAN_INTERFACE)
-	enable_language(Fortran)
-	add_subdirectory(Fortran)
+  enable_language(Fortran)
+  add_subdirectory(Fortran)
 endif ()
 
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
-	add_custom_target(docs 
-		COMMAND ${DOXYGEN_EXECUTABLE} 
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-		)
+  add_custom_target(docs
+    COMMAND ${DOXYGEN_EXECUTABLE}
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
 endif()
 
 configure_file (
-	"${PROJECT_SOURCE_DIR}/config.h.in"
-	"${PROJECT_BINARY_DIR}/config.h"
-	)
+  "${PROJECT_SOURCE_DIR}/config.h.in"
+  "${PROJECT_BINARY_DIR}/config.h"
+  )
 
 install(FILES Python/getkw.py Python/pyparsing.py
-	DESTINATION lib/python2.7/site-packages 
-	)
+  DESTINATION lib/python2.7/site-packages
+  )
