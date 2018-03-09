@@ -1,6 +1,6 @@
 /*
  * getkw -- a simple input parser
- * Copyright (C) 2018 Jonas Juselius and contributors.
+ * Copyright (C) YEAR AUTHORS
  *
  * This file is part of getkw.
 
@@ -12,17 +12,3 @@
  * getkw library, see: <http://getkw.readthedocs.io/>
  */
 
-/*
- * \file messages.cpp
- *
- *  \date Jul 24, 2009
- *  \author Jonas Juselius <jonas.juselius@uit.no> \n
- *          CTCC, University of Tromsø
- *
- * \breif
- */
-
-#include "messages.h"
-
-int GetkwMessageStream::msg::DebugLevel = 0;
-std::ostream * GetkwMessageStream::msg::out = &std::cout;

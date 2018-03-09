@@ -1,0 +1,23 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+breathe = "*"
+docopt = "*"
+fprettify = "*"
+pyparsing = "*"
+PyYAML = "*"
+recommonmark = "*"
+Sphinx = "*"
+sphinx_rtd_theme = "*"
+sphinxcontrib-bibtex = "*"
+yapf = "*"
+
+
+[dev-packages]
+
