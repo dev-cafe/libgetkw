@@ -4,7 +4,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/CXXFlags.cmake)
 
 add_library(getkw
   Getkw.cpp
-  GetkwError.cpp
   Section.cpp
   messages.cpp
   )

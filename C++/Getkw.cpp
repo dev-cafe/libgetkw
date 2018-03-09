@@ -47,7 +47,7 @@ Getkw::Getkw(const string file, bool _verbose, bool _strict)
       std::cout << "Opening input file, '" << file << "'" << std::endl;
     ifstream fis(fname);
     if (not fis) {
-      THROW_GETKW("Open failed: " + file);
+      GETKW_ERROR("Open failed: " + file);
     }
     toplevel = readSect(fis);
   }
@@ -105,7 +105,7 @@ ostream & Getkw::repr(ostream & o) const {
 
 template <class T> const T & Getkw::get(const string & path) const {
   if (cur == 0) {
-    THROW_GETKW("Getkw has not been initialized!");
+    GETKW_ERROR("Getkw has not been initialized!");
   }
   const Keyword<T> & key = cur->getKey<T>(path);
   return key.get();
@@ -113,31 +113,25 @@ template <class T> const T & Getkw::get(const string & path) const {
 
 template <class T> const Keyword<T> & Getkw::getKeyword(const string & path) const {
   if (cur == 0) {
-    THROW_GETKW("Getkw has not been initialized!");
+    GETKW_ERROR("Getkw has not been initialized!");
   }
   return cur->getKey<T>(path);
 }
 
 const Section & Getkw::getSect(const string & path) const {
   if (cur == 0) {
-    THROW_GETKW("Getkw has not been initialized!");
+    GETKW_ERROR("Getkw has not been initialized!");
   }
   return cur->getSect(path);
 }
 
 void Getkw::pushSection(const string & path) {
   if (cur == 0) {
-    THROW_GETKW("Getkw has not been initialized!");
+    GETKW_ERROR("Getkw has not been initialized!");
   }
   sstack.push(cur);
-  try {
-    const Section & newsec = cur->getSect(path);
-    cur = &newsec;
-  } catch (string err) {
-    std::cout << err;
-    if (strict)
-      exit(1);
-  }
+  const Section & newsec = cur->getSect(path);
+  cur = &newsec;
 }
 
 void Getkw::popSection() {
@@ -285,7 +279,7 @@ bool Getkw::readKey(Section * sect, istream & fis) {
       sect->addKey(new Keyword<vector<string> >(name, sv, setf));
       break;
     default:
-      THROW_GETKW("Unknown keyword type: " + name + " <> " + type);
+      GETKW_ERROR("Unknown keyword type: " + name + " <> " + type);
   }
   return true;
 }

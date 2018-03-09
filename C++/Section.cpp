@@ -123,7 +123,7 @@ Section::~Section() {
       delete key;
       continue;
     }
-    THROW_GETKW("Error! Unknown key type!");
+    GETKW_ERROR("Error! Unknown key type!");
   }
 }
 
@@ -183,7 +183,7 @@ void Section::copyKeys(const Section & s) {
       keys[iter->first] = boost::any(new const Keyword<vector<string> >(*key));
       continue;
     }
-    THROW_GETKW("Error! Unknown key type!");
+    GETKW_ERROR("Error! Unknown key type!");
   }
 }
 
@@ -202,7 +202,7 @@ const Keyword<T> & Section::getKey(const string & pathspec) const {
   string name = path.back();
   const Section * sect = traversePath(path, pathspec);
   if (!sect->has_key(name)) {
-    THROW_GETKW("Invalid keyword, " + pathspec);
+    GETKW_ERROR("Invalid keyword, " + pathspec);
   }
   map<string, boost::any>::const_iterator iter = sect->keys.find(name);
   return *ANY_TO_CONST_KEY_PTR(iter->second, T);
@@ -223,7 +223,7 @@ Section * Section::readSect(ifstream & /* fis */) { return 0; }
 void Section::addSect(Section * sect) {
   string name = sect->name + "<" + sect->tag + ">";
   if (has_key(name)) {
-    THROW_GETKW("Section::add: Section already defined, " + name);
+    GETKW_ERROR("Section::add: Section already defined, " + name);
   }
 
   sects[name] = sect;
@@ -234,7 +234,7 @@ void Section::addSect(Section * sect) {
 void Section::addSect(Section & sect) {
   string name = sect.name + "<" + sect.tag + ">";
   if (has_key(name)) {
-    THROW_GETKW("Section::add: Section already defined, " + name);
+    GETKW_ERROR("Section::add: Section already defined, " + name);
   }
 
   sects[name] = new Section(sect);
@@ -246,7 +246,7 @@ template <class T> void Section::addKey(const Keyword<T> * key) {
   const string & name = key->getName();
 
   if (has_key(name)) {
-    THROW_GETKW("Section::add: Key already defined, " + name);
+    GETKW_ERROR("Section::add: Key already defined, " + name);
   }
 
   keys[name] = boost::any(key);
@@ -258,7 +258,7 @@ template <class T> void Section::addKey(const Keyword<T> & key) {
   string name = key.getName();
 
   if (has_key(name)) {
-    THROW_GETKW("Section::add: Key already defined, " + name);
+    GETKW_ERROR("Section::add: Key already defined, " + name);
   }
 
   keys[name] = boost::any(new Keyword<T>(key));
@@ -279,13 +279,13 @@ const Section * Section::traversePath(vector<string> & path,
       map<string, Section *>::const_iterator iter = sects.find(cur);
       return iter->second;
     }
-    THROW_GETKW("traversePath: Invalid path, " + pathspec);
+    GETKW_ERROR("traversePath: Invalid path, " + pathspec);
   }
 
   if (!has_sect(cur))
     cur = cur + "<" + cur + ">";
   if (!has_sect(cur)) {
-    THROW_GETKW("traversePath: Invalid path, " + pathspec);
+    GETKW_ERROR("traversePath: Invalid path, " + pathspec);
   }
 
   path.erase(path.begin());
@@ -383,7 +383,7 @@ ostream & Section::repr(ostream & o) const {
       o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<string>) << std::endl;
       continue;
     }
-    THROW_GETKW("Unknown key type!");
+    GETKW_ERROR("Unknown key type!");
   }
 
   map<string, Section *>::const_iterator s_it;
