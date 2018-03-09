@@ -45,7 +45,7 @@ enum KeyKinds {
 };
 };
 
-template <typename T> class Keyword {
+template <typename T> class Keyword final {
 public:
   Keyword(const std::string _name, const T & _val, bool _isDefd = false)
       : name(_name), val(_val), isDefd(_isDefd) {

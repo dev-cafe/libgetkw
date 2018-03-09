@@ -31,13 +31,13 @@
 class Section;
 template <typename T> class Keyword;
 
-class Getkw {
+class Getkw final {
 public:
   Getkw(std::string file, bool _verbose = false, bool _strict = false);
   Getkw(const Getkw & kw);
   Getkw & operator=(const Getkw & kw);
   Getkw();
-  virtual ~Getkw();
+  ~Getkw();
   void setStrict(bool flag);
   void setVerbose(bool flag);
   void pushSection(const std::string & path);

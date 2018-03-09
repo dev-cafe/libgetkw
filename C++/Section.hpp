@@ -32,7 +32,7 @@
 
 template <typename T> class Keyword;
 
-class Section {
+class Section final {
 public:
   Section(const std::string & name, const std::string & tag = "");
   Section(const Section & s);
