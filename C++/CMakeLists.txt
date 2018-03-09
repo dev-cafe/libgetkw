@@ -5,7 +5,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/CXXFlags.cmake)
 add_library(getkw
   Getkw.cpp
   Section.cpp
-  messages.cpp
   )
 set_target_properties(getkw
   PROPERTIES
