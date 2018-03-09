@@ -21,8 +21,7 @@
  * \brief
  */
 
-#ifndef GETKW_H_
-#define GETKW_H_
+#pragma once
 
 #include <fstream>
 #include <iostream>
@@ -93,5 +92,3 @@ private:
   const Section * cur;
   std::stack<const Section *> sstack;
 };
-
-#endif /* GETKW_H_ */

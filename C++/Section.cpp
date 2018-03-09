@@ -340,47 +340,47 @@ bool Section::has_tag(const string & b) const {
   return true;
 }
 
-void Section::print() const { cout << &repr(cout) << endl; }
+void Section::print() const { std::cout << &repr(std::cout) << std::endl; }
 
 ostream & Section::repr(ostream & o) const {
-  o << endl << name;
+  o << std::endl << name;
   if (name.compare(tag) != 0) {
     o << "<" + tag + ">";
   }
-  o << " {" << endl;
+  o << " {" << std::endl;
 
   map<string, boost::any>::const_iterator iter;
   for (iter = keys.begin(); iter != keys.end(); ++iter) {
     IF_ANY_KEYTYPE_IS(iter->second, int) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, int) << endl;
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, int) << std::endl;
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, bool) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, bool) << endl;
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, bool) << std::endl;
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, double) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, double) << endl;
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, double) << std::endl;
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, string) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, string) << endl;
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, string) << std::endl;
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, vector<int>) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<int>) << endl;
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<int>) << std::endl;
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, vector<bool>) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<bool>) << endl;
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<bool>) << std::endl;
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, vector<double>) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<double>) << endl;
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<double>) << std::endl;
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, vector<string>) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<string>) << endl;
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<string>) << std::endl;
       continue;
     }
     THROW_GETKW("Unknown key type!");
@@ -388,7 +388,7 @@ ostream & Section::repr(ostream & o) const {
 
   map<string, Section *>::const_iterator s_it;
   for (s_it = sects.begin(); s_it != sects.end(); ++s_it) {
-    o << *s_it->second << endl;
+    o << *s_it->second << std::endl;
   }
 
   o << "}";

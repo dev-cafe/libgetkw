@@ -29,23 +29,23 @@ bool GetkwError::verbose = true;
 
 GetkwError::GetkwError() {}
 
-GetkwError::GetkwError(const string & err) : msg(err) {
+GetkwError::GetkwError(const std::string & err) : msg(err) {
   if (verbose or strict) {
-    cout << "Error: " << msg << endl;
+    std::cout << "Error: " << msg << std::endl;
   }
   if (strict) {
-    cout << "Exiting..." << endl;
+    std::cout << "Exiting..." << std::endl;
     exit(1);
   }
 }
 
-GetkwError::GetkwError(ostringstream & err) {
+GetkwError::GetkwError(std::ostringstream & err) {
   this->msg = err.str();
   if (verbose or strict) {
-    cout << "Error: " << msg << endl;
+    std::cout << "Error: " << msg << std::endl;
   }
   if (strict) {
-    cout << "Exiting..." << endl;
+    std::cout << "Exiting..." << std::endl;
     exit(1);
   }
 }
@@ -53,13 +53,13 @@ GetkwError::~GetkwError() throw() {
   // TODO Auto-generated destructor stub
 }
 
-void GetkwError::trigger(const string & err) {
+void GetkwError::trigger(const std::string & err) {
   msg = err;
   if (verbose or strict) {
-    cout << "Error: " << msg << endl;
+    std::cout << "Error: " << msg << std::endl;
   }
   if (strict) {
-    cout << "Exiting..." << endl;
+    std::cout << "Exiting..." << std::endl;
     exit(1);
   }
   throw *this;

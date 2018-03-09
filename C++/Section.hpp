@@ -21,8 +21,7 @@
  * \brief Container for Sections and Keywords
  */
 
-#ifndef SECTION_H_
-#define SECTION_H_
+#pragma once
 
 #include <fstream>
 #include <map>
@@ -30,8 +29,6 @@
 #include <vector>
 
 #include <boost/any.hpp>
-
-using namespace std;
 
 #include "GetkwError.hpp"
 #include "Keyword.hpp"
@@ -111,5 +108,3 @@ protected:
   bool has_sect(const std::string & name) const;
   bool has_tag(const std::string & name) const;
 };
-
-#endif /* SECTION_H_ */

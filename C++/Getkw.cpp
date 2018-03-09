@@ -27,7 +27,7 @@ using namespace std;
 
 #define TEST_ARRAY                                                                  \
   if (len > 1)                                                                      \
-    cout << "Warning, invalid length of 1 for " << name << endl;
+    std::cout << "Warning, invalid length of 1 for " << name << std::endl;
 
 using namespace std;
 
@@ -38,13 +38,13 @@ Getkw::Getkw(const string file, bool _verbose, bool _strict)
   if (file.empty() != 0 || file.compare("stdin") == 0 ||
       file.compare("STDIN") == 0) {
     if (verbose) {
-      cout << "Reading input from stdin " << endl;
+      std::cout << "Reading input from stdin " << std::endl;
     }
     toplevel = readSect(cin);
   } else {
     const char * fname = file.data();
     if (verbose)
-      cout << "Opening input file, '" << file << "'" << endl;
+      std::cout << "Opening input file, '" << file << "'" << std::endl;
     ifstream fis(fname);
     if (not fis) {
       THROW_GETKW("Open failed: " + file);
@@ -92,11 +92,11 @@ void Getkw::setStrict(bool flag) { strict = flag; }
 
 void Getkw::setVerbose(bool flag) { verbose = flag; }
 
-void Getkw::print() const { cout << &repr(cout) << endl; }
+void Getkw::print() const { std::cout << &repr(std::cout) << std::endl; }
 
 ostream & Getkw::repr(ostream & o) const {
   if (toplevel == 0) {
-    o << "Getkw not yet initialized" << endl;
+    o << "Getkw not yet initialized" << std::endl;
   } else {
     o << *toplevel;
   }
@@ -134,7 +134,7 @@ void Getkw::pushSection(const string & path) {
     const Section & newsec = cur->getSect(path);
     cur = &newsec;
   } catch (string err) {
-    cout << err;
+    std::cout << err;
     if (strict)
       exit(1);
   }
@@ -142,7 +142,7 @@ void Getkw::pushSection(const string & path) {
 
 void Getkw::popSection() {
   if (sstack.empty()) {
-    cout << "Error! Getkw stack is empty!" << endl;
+    std::cout << "Error! Getkw stack is empty!" << std::endl;
     if (strict)
       exit(1);
   }

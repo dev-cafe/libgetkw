@@ -21,8 +21,7 @@
  * \brief
  */
 
-#ifndef KEYWORD_H_
-#define KEYWORD_H_
+#pragma once
 
 #include <fstream>
 #include <string>
@@ -193,5 +192,3 @@ protected:
     return false;
   }
 };
-
-#endif /* KEYWORD_H_ */
