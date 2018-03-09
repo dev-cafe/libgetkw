@@ -13,7 +13,7 @@
  */
 
 /*
- * \file GetkwError.h
+ * \file GetkwError.hpp
  *
  *  \date Jul 2, 2009
  *  \author Jonas Juselius <jonas.juselius@uit.no> \n

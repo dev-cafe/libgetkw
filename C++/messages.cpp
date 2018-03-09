@@ -22,7 +22,7 @@
  * \breif
  */
 
-#include "messages.h"
+#include "messages.hpp"
 
 int GetkwMessageStream::msg::DebugLevel = 0;
 std::ostream * GetkwMessageStream::msg::out = &std::cout;

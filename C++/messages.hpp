@@ -12,7 +12,7 @@
  * getkw library, see: <http://getkw.readthedocs.io/>
  */
 
-/** @file messages.h
+/** @file messages.hpp
  *
  * @brief Collection of assertions and a standard error/warn/info/debug
  * message interface.
@@ -29,7 +29,7 @@
 #include <sstream>
 #include <string>
 
-#include "GetkwError.h"
+#include "GetkwError.hpp"
 
 namespace GetkwMessageStream {
 struct msg {

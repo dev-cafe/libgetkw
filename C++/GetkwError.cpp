@@ -22,7 +22,7 @@
  * \breif
  */
 
-#include "GetkwError.h"
+#include "GetkwError.hpp"
 
 bool GetkwError::strict = false;
 bool GetkwError::verbose = true;

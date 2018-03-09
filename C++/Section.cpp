@@ -23,8 +23,8 @@
 
 #include <iostream>
 
-#include "GetkwError.h"
-#include "Section.h"
+#include "GetkwError.hpp"
+#include "Section.hpp"
 
 using namespace std;
 
@@ -32,7 +32,7 @@ using namespace std;
 
 #define ANY_TO_CONST_KEY_PTR(A, T) boost::any_cast<const Keyword<T> *>(A)
 
-#define PRINT_FUNC_NAME cout << "@ Section::" << __func__ << endl;
+#define PRINT_FUNC_NAME std::cout << "@ Section::" << __func__ << std::endl;
 
 using namespace std;
 
@@ -213,7 +213,7 @@ template <class T> const T & Section::get(const string & path) const {
   return key.get();
 }
 
-Section * Section::readSect(ifstream & fis) { return 0; }
+Section * Section::readSect(ifstream & /* fis */) { return 0; }
 
 /* Sections can be multiply defined, provided they have different tags.
  * The first section section is added to the box, as well as to the tags
@@ -340,7 +340,7 @@ bool Section::has_tag(const string & b) const {
   return true;
 }
 
-void Section::print() const { cout << repr(cout) << endl; }
+void Section::print() const { cout << &repr(cout) << endl; }
 
 ostream & Section::repr(ostream & o) const {
   o << endl << name;

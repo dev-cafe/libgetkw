@@ -12,7 +12,7 @@
  * getkw library, see: <http://getkw.readthedocs.io/>
  */
 
-/** \file Getkw.h
+/** \file Getkw.hpp
  *
  * \date Jun 3, 2009
  * \author Jonas Juselius <jonas.juselius@uit.no> \n
@@ -24,15 +24,16 @@
 #ifndef GETKW_H_
 #define GETKW_H_
 
-#include <boost/any.hpp>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <stack>
 
-#include "GetkwError.h"
-#include "Keyword.h"
-#include "Section.h"
+#include <boost/any.hpp>
+
+#include "GetkwError.hpp"
+#include "Keyword.hpp"
+#include "Section.hpp"
 
 class Getkw {
 public:

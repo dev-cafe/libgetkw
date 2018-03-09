@@ -12,7 +12,7 @@
  * getkw library, see: <http://getkw.readthedocs.io/>
  */
 
-/** \file Section.h
+/** \file Section.hpp
  *
  * \date Jun 3, 2009
  * \author Jonas Juselius <jonas.juselius@uit.no> \n
@@ -24,16 +24,17 @@
 #ifndef SECTION_H_
 #define SECTION_H_
 
-#include <boost/any.hpp>
 #include <fstream>
 #include <map>
 #include <string>
 #include <vector>
 
+#include <boost/any.hpp>
+
 using namespace std;
 
-#include "GetkwError.h"
-#include "Keyword.h"
+#include "GetkwError.hpp"
+#include "Keyword.hpp"
 
 class Section {
 public:
