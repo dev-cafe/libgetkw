@@ -45,7 +45,7 @@ enum KeyKinds {
 };
 };
 
-template <class T> class Keyword {
+template <typename T> class Keyword {
 public:
   Keyword(const std::string _name, const T & _val, bool _isDefd = false)
       : name(_name), val(_val), isDefd(_isDefd) {
@@ -54,7 +54,7 @@ public:
     }
   }
 
-  virtual ~Keyword() {}
+  ~Keyword() {}
 
   const T & get() const { return val; }
   void set(T & t) { val = t; }
@@ -101,7 +101,7 @@ public:
     return key.repr(o, key.get());
   }
 
-  virtual void print() const { std::cout << &repr(std::cout, val) << std::endl; }
+  void print() const { std::cout << &repr(std::cout, val) << std::endl; }
 
   static const std::string & getNamedKind(int i) {
     static const std::string INT = "Int";

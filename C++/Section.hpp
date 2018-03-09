@@ -23,29 +23,28 @@
 
 #pragma once
 
-#include <fstream>
+#include <iosfwd>
 #include <map>
 #include <string>
 #include <vector>
 
 #include <boost/any.hpp>
 
-#include "GetkwError.hpp"
-#include "Keyword.hpp"
+template <typename T> class Keyword;
 
 class Section {
 public:
   Section(const std::string & name, const std::string & tag = "");
   Section(const Section & s);
   Section & operator=(const Section & s);
-  virtual ~Section();
+  ~Section();
   const Section & getSect(const std::string & path) const;
-  template <class T> const Keyword<T> & getKey(const std::string & path) const;
-  template <class T> const T & get(const std::string & path) const;
+  template <typename T> const Keyword<T> & getKey(const std::string & path) const;
+  template <typename T> const T & get(const std::string & path) const;
   void addSect(Section & sect);
   void addSect(Section *);
-  template <class T> void addKey(const Keyword<T> & key);
-  template <class T> void addKey(const Keyword<T> * key);
+  template <typename T> void addKey(const Keyword<T> & key);
+  template <typename T> void addKey(const Keyword<T> * key);
   static Section * readSect(std::ifstream & fis);
   void print() const;
   std::ostream & repr(std::ostream & o) const;
