@@ -1,0 +1,47 @@
+# See http://msdn.microsoft.com/en-us/library/ms164311.aspx for
+# command-line options to MSBuild.
+
+# Speeding up a Visual Studio build.
+# http://blogs.msdn.com/b/vcblog/archive/2011/01/05/damn-my-vc-project-is-building-slower-in-vs2010-what-do-i-do-now-a-step-by-step-guide.aspx
+version: 'build_{build}-{branch}'
+
+platform: x86
+
+build:
+  parallel: true
+
+environment:
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      GENERATOR: "MinGW Makefiles"
+      BUILDFLAGS: "VERBOSE=1"
+      CMAKARGS: ""
+
+init:
+  # Workaround for CMake not wanting sh.exe on PATH for MinGW
+  - set PATH=%PATH:C:\Program Files (x86)\Git\bin;=%
+  - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+  - IF "%GENERATOR%"=="MinGW Makefiles" set PATH=C:\MinGW\bin;%PATH%
+  - set PATH=C:\Libraries\boost_1_59_0;%PATH%
+  - mkdir C:\projects\deps
+
+install:
+  # Install GFortran
+  - mingw-get install fortran
+  - set PYTHONIOENCODING=utf-8
+  - pip install --disable-pip-version-check --upgrade pip
+  - pip install --upgrade pipenv
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - pipenv install
+  - pipenv run python --version
+
+before_build:
+  - cmake --version
+
+build_script:
+  - pipenv run python setup --cxx=g++ --generator="%GENERATOR%"
+  - cd build
+  - cmake --build . -- "%BUILDFLAGS%"
+  - ctest --parallel 2 --output-on-failure --verbose
+
+deploy: off
