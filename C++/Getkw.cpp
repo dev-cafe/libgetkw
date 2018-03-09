@@ -243,7 +243,7 @@ bool Getkw::readKey(Section * sect, istream & fis) {
         isi >> ival;
         iv.push_back(ival);
       }
-      sect->addKey(new Keyword<vector<int> >(name, iv, setf));
+      sect->addKey(new Keyword<vector<int>>(name, iv, setf));
       break;
     case KeyType::DblArray:
       if (len == 0)
@@ -254,7 +254,7 @@ bool Getkw::readKey(Section * sect, istream & fis) {
         isi >> dval;
         dv.push_back(dval);
       }
-      sect->addKey(new Keyword<vector<double> >(name, dv, setf));
+      sect->addKey(new Keyword<vector<double>>(name, dv, setf));
       break;
     case KeyType::BoolArray:
       if (len == 0)
@@ -266,7 +266,7 @@ bool Getkw::readKey(Section * sect, istream & fis) {
         bval = convBool(ss);
         bv.push_back(bval);
       }
-      sect->addKey(new Keyword<vector<bool> >(name, bv, setf));
+      sect->addKey(new Keyword<vector<bool>>(name, bv, setf));
       break;
     case KeyType::StrArray:
     case KeyType::Data:
@@ -276,7 +276,7 @@ bool Getkw::readKey(Section * sect, istream & fis) {
         getline(fis, ss);
         sv.push_back(ss);
       }
-      sect->addKey(new Keyword<vector<string> >(name, sv, setf));
+      sect->addKey(new Keyword<vector<string>>(name, sv, setf));
       break;
     default:
       GETKW_ERROR("Unknown keyword type: " + name + " <> " + type);
@@ -333,7 +333,7 @@ template const int & Getkw::get<int>(const string &) const;
 template const bool & Getkw::get<bool>(const string &) const;
 template const double & Getkw::get<double>(const string &) const;
 template const string & Getkw::get<string>(const string &) const;
-template const vector<int> & Getkw::get<vector<int> >(const string &) const;
-template const vector<double> & Getkw::get<vector<double> >(const string &) const;
-template const vector<bool> & Getkw::get<vector<bool> >(const string &) const;
-template const vector<string> & Getkw::get<vector<string> >(const string &) const;
+template const vector<int> & Getkw::get<vector<int>>(const string &) const;
+template const vector<double> & Getkw::get<vector<double>>(const string &) const;
+template const vector<bool> & Getkw::get<vector<bool>>(const string &) const;
+template const vector<string> & Getkw::get<vector<string>>(const string &) const;

@@ -56,16 +56,16 @@ public:
     return get<std::string>(path);
   }
   const std::vector<int> getIntVec(const std::string & path) const {
-    return get<std::vector<int> >(path);
+    return get<std::vector<int>>(path);
   }
   const std::vector<double> getDblVec(const std::string & path) const {
-    return get<std::vector<double> >(path);
+    return get<std::vector<double>>(path);
   }
   const std::vector<bool> getBoolVec(const std::string & path) const {
-    return get<std::vector<bool> >(path);
+    return get<std::vector<bool>>(path);
   }
   const std::vector<std::string> getStrVec(const std::string & path) const {
-    return get<std::vector<std::string> >(path);
+    return get<std::vector<std::string>>(path);
   }
   const std::vector<std::string> getData(const std::string & path) const {
     return getStrVec(path);

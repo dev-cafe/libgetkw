@@ -100,25 +100,25 @@ Section::~Section() {
       continue;
     }
     IF_ANY_KEYTYPE_IS(kit->second, vector<int>) {
-      const Keyword<vector<int> > * key =
+      const Keyword<vector<int>> * key =
           ANY_TO_CONST_KEY_PTR(kit->second, vector<int>);
       delete key;
       continue;
     }
     IF_ANY_KEYTYPE_IS(kit->second, vector<bool>) {
-      const Keyword<vector<bool> > * key =
+      const Keyword<vector<bool>> * key =
           ANY_TO_CONST_KEY_PTR(kit->second, vector<bool>);
       delete key;
       continue;
     }
     IF_ANY_KEYTYPE_IS(kit->second, vector<double>) {
-      const Keyword<vector<double> > * key =
+      const Keyword<vector<double>> * key =
           ANY_TO_CONST_KEY_PTR(kit->second, vector<double>);
       delete key;
       continue;
     }
     IF_ANY_KEYTYPE_IS(kit->second, vector<string>) {
-      const Keyword<vector<string> > * key =
+      const Keyword<vector<string>> * key =
           ANY_TO_CONST_KEY_PTR(kit->second, vector<string>);
       delete key;
       continue;
@@ -160,27 +160,27 @@ void Section::copyKeys(const Section & s) {
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, vector<int>) {
-      const Keyword<vector<int> > * key =
+      const Keyword<vector<int>> * key =
           ANY_TO_CONST_KEY_PTR(iter->second, vector<int>);
-      keys[iter->first] = boost::any(new const Keyword<vector<int> >(*key));
+      keys[iter->first] = boost::any(new const Keyword<vector<int>>(*key));
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, vector<bool>) {
-      const Keyword<vector<bool> > * key =
+      const Keyword<vector<bool>> * key =
           ANY_TO_CONST_KEY_PTR(iter->second, vector<bool>);
-      keys[iter->first] = boost::any(new const Keyword<vector<bool> >(*key));
+      keys[iter->first] = boost::any(new const Keyword<vector<bool>>(*key));
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, vector<double>) {
-      const Keyword<vector<double> > * key =
+      const Keyword<vector<double>> * key =
           ANY_TO_CONST_KEY_PTR(iter->second, vector<double>);
-      keys[iter->first] = boost::any(new const Keyword<vector<double> >(*key));
+      keys[iter->first] = boost::any(new const Keyword<vector<double>>(*key));
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, vector<string>) {
-      const Keyword<vector<string> > * key =
+      const Keyword<vector<string>> * key =
           ANY_TO_CONST_KEY_PTR(iter->second, vector<string>);
-      keys[iter->first] = boost::any(new const Keyword<vector<string> >(*key));
+      keys[iter->first] = boost::any(new const Keyword<vector<string>>(*key));
       continue;
     }
     GETKW_ERROR("Error! Unknown key type!");
@@ -399,34 +399,34 @@ template void Section::addKey(const Keyword<int> *);
 template void Section::addKey(const Keyword<double> *);
 template void Section::addKey(const Keyword<bool> *);
 template void Section::addKey(const Keyword<string> *);
-template void Section::addKey(const Keyword<vector<int> > *);
-template void Section::addKey(const Keyword<vector<double> > *);
-template void Section::addKey(const Keyword<vector<bool> > *);
-template void Section::addKey(const Keyword<vector<string> > *);
+template void Section::addKey(const Keyword<vector<int>> *);
+template void Section::addKey(const Keyword<vector<double>> *);
+template void Section::addKey(const Keyword<vector<bool>> *);
+template void Section::addKey(const Keyword<vector<string>> *);
 
 template void Section::addKey(const Keyword<int> &);
 template void Section::addKey(const Keyword<double> &);
 template void Section::addKey(const Keyword<bool> &);
 template void Section::addKey(const Keyword<string> &);
-template void Section::addKey(const Keyword<vector<int> > &);
-template void Section::addKey(const Keyword<vector<double> > &);
-template void Section::addKey(const Keyword<vector<bool> > &);
-template void Section::addKey(const Keyword<vector<string> > &);
+template void Section::addKey(const Keyword<vector<int>> &);
+template void Section::addKey(const Keyword<vector<double>> &);
+template void Section::addKey(const Keyword<vector<bool>> &);
+template void Section::addKey(const Keyword<vector<string>> &);
 
 template const Keyword<int> & Section::getKey(const string &) const;
 template const Keyword<double> & Section::getKey(const string &) const;
 template const Keyword<bool> & Section::getKey(const string &) const;
 template const Keyword<string> & Section::getKey(const string &) const;
-template const Keyword<vector<int> > & Section::getKey(const string &) const;
-template const Keyword<vector<double> > & Section::getKey(const string &) const;
-template const Keyword<vector<bool> > & Section::getKey(const string &) const;
-template const Keyword<vector<string> > & Section::getKey(const string &) const;
+template const Keyword<vector<int>> & Section::getKey(const string &) const;
+template const Keyword<vector<double>> & Section::getKey(const string &) const;
+template const Keyword<vector<bool>> & Section::getKey(const string &) const;
+template const Keyword<vector<string>> & Section::getKey(const string &) const;
 
 template const int & Section::get<int>(const string &) const;
 template const bool & Section::get<bool>(const string &) const;
 template const double & Section::get<double>(const string &) const;
 template const string & Section::get<string>(const string &) const;
-template const vector<int> & Section::get<vector<int> >(const string &) const;
-template const vector<double> & Section::get<vector<double> >(const string &) const;
-template const vector<bool> & Section::get<vector<bool> >(const string &) const;
-template const vector<string> & Section::get<vector<string> >(const string &) const;
+template const vector<int> & Section::get<vector<int>>(const string &) const;
+template const vector<double> & Section::get<vector<double>>(const string &) const;
+template const vector<bool> & Section::get<vector<bool>>(const string &) const;
+template const vector<string> & Section::get<vector<string>>(const string &) const;
