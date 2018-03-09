@@ -25,6 +25,8 @@
 #pragma once
 
 #include <cassert>
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -121,7 +123,7 @@ struct msg {
     *GetkwMessageStream::msg::out << "Error: " << __FILE__ << ": " << __func__      \
                                   << "(), line " << __LINE__ << ": " << X           \
                                   << std::endl;                                     \
-    abort();                                                                        \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 
 #define MSG_INVALID_ARG(X)                                                          \
@@ -134,20 +136,20 @@ struct msg {
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Error, invalid argument passed: " << __func__ \
                                   << "(), line " << __LINE__ << std::endl;          \
-    abort();                                                                        \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 #define NOT_REACHED_ABORT                                                           \
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Error, should not be reached: " << __func__   \
                                   << "(), line " << __LINE__ << std::endl;          \
-    abort();                                                                        \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 #define INTERNAL_INCONSISTENCY                                                      \
   {                                                                                 \
     *GetkwMessageStream::msg::out                                                   \
         << "Internal inconsistency! You have found a bug: " << __func__             \
         << "(), line " << __LINE__ << std::endl;                                    \
-    abort();                                                                        \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 
 #define NEEDS_TESTING                                                               \
@@ -167,7 +169,7 @@ struct msg {
       *GetkwMessageStream::msg::out << "Error: " << __func__ << "(), line "         \
                                     << __LINE__ << ": No such file, " << B          \
                                     << std::endl;                                   \
-      abort();                                                                      \
+      std::exit(EXIT_FAILURE);                                                      \
     }                                                                               \
   }
 
@@ -176,7 +178,7 @@ struct msg {
     *GetkwMessageStream::msg::out << "Error: Not implemented, " << __FILE__ ", "    \
                                   << __func__ << "(), line " << __LINE__            \
                                   << std::endl;                                     \
-    abort();                                                                        \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 
 #define NOTE(X)                                                                     \
@@ -206,7 +208,7 @@ struct msg {
     *GetkwMessageStream::msg::out << "WRONG: " << __FILE__ << ", " << __func__      \
                                   << "(), line " << __LINE__ << ": " << X           \
                                   << std::endl;                                     \
-    abort();                                                                        \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 
 #define STR_DEBUG(S, X)                                                             \
@@ -237,25 +239,3 @@ struct msg {
          << ": " << X << std::endl;                                                 \
     S = _str.str();                                                                 \
   }
-
-/* The quiet versions...
- #define SET_DEBUG_LEVEL(a)
- #define SET_MESSAGE_STREAM(s)
- #define DEBUG_LEVEL
-
- #define MSG_DEBUG(X)
- #define MSG_INFO(X)
- #define MSG_WARN(X)
- #define MSG_ERROR(X)
- #define MSG_FATAL(X) abort();
-
-
- #define MSG_INVALID_ARG
- #define INVALID_ARG_ABORT abort();
- #define NOT_REACHED_ABORT abort();
-
- #define NEEDS_TESTING
-
- #define ASSERT_FILE(A,B)
- #define NOT_IMPLEMENTED_ABORT abort();
- */

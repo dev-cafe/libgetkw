@@ -19,7 +19,7 @@
  *  \author Jonas Juselius <jonas.juselius@uit.no> \n
  *          CTCC, University of Tromsø
  *
- * \breif
+ * \brief
  */
 
 #include "messages.hpp"

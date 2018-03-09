@@ -12,7 +12,7 @@
  * getkw library, see: <http://getkw.readthedocs.io/>
  */
 
-/** \file Section.hpp
+/*! \file Section.hpp
  *
  * \date Jun 3, 2009
  * \author Jonas Juselius <jonas.juselius@uit.no> \n
