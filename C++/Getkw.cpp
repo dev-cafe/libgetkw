@@ -205,7 +205,7 @@ bool Getkw::readKey(Section * sect, std::istream & fis) {
   std::vector<std::string> sv;
 
   switch (kind) {
-    case KeyType::Int:
+    case KeyKinds::Int:
       TEST_ARRAY;
       if (len == 0)
         return false;
@@ -214,7 +214,7 @@ bool Getkw::readKey(Section * sect, std::istream & fis) {
       isi >> is;
       sect->addKey(new Keyword<int>(name, is, setf));
       break;
-    case KeyType::Dbl:
+    case KeyKinds::Dbl:
       TEST_ARRAY;
       if (len == 0)
         return false;
@@ -223,7 +223,7 @@ bool Getkw::readKey(Section * sect, std::istream & fis) {
       isi >> ds;
       sect->addKey(new Keyword<double>(name, ds, setf));
       break;
-    case KeyType::Bool:
+    case KeyKinds::Bool:
       TEST_ARRAY;
       if (len == 0)
         return false;
@@ -233,14 +233,14 @@ bool Getkw::readKey(Section * sect, std::istream & fis) {
       bs = convBool(ss);
       sect->addKey(new Keyword<bool>(name, bs, setf));
       break;
-    case KeyType::Str:
+    case KeyKinds::Str:
       TEST_ARRAY;
       if (len == 0)
         return false;
       getline(fis, ss);
       sect->addKey(new Keyword<std::string>(name, ss, setf));
       break;
-    case KeyType::IntArray:
+    case KeyKinds::IntArray:
       if (len == 0)
         return false;
       int ival;
@@ -251,7 +251,7 @@ bool Getkw::readKey(Section * sect, std::istream & fis) {
       }
       sect->addKey(new Keyword<std::vector<int>>(name, iv, setf));
       break;
-    case KeyType::DblArray:
+    case KeyKinds::DblArray:
       if (len == 0)
         return false;
       double dval;
@@ -262,7 +262,7 @@ bool Getkw::readKey(Section * sect, std::istream & fis) {
       }
       sect->addKey(new Keyword<std::vector<double>>(name, dv, setf));
       break;
-    case KeyType::BoolArray:
+    case KeyKinds::BoolArray:
       if (len == 0)
         return false;
       bool bval;
@@ -274,8 +274,8 @@ bool Getkw::readKey(Section * sect, std::istream & fis) {
       }
       sect->addKey(new Keyword<std::vector<bool>>(name, bv, setf));
       break;
-    case KeyType::StrArray:
-    case KeyType::Data:
+    case KeyKinds::StrArray:
+    case KeyKinds::Data:
       if (len == 0)
         return false;
       for (int i = 0; i < len; i++) {
@@ -315,23 +315,23 @@ int Getkw::convKind(const std::string & typ) {
   static const std::string STR_ARRAY = "STR_ARRAY";
 
   if (typ.compare(INT) == 0)
-    return KeyType::Int;
+    return KeyKinds::Int;
   if (typ.compare(DBL) == 0)
-    return KeyType::Dbl;
+    return KeyKinds::Dbl;
   if (typ.compare(BOOL) == 0)
-    return KeyType::Bool;
+    return KeyKinds::Bool;
   if (typ.compare(STR) == 0)
-    return KeyType::Str;
+    return KeyKinds::Str;
   if (typ.compare(DATA) == 0)
-    return KeyType::Data;
+    return KeyKinds::Data;
   if (typ.compare(INT_ARRAY) == 0)
-    return KeyType::IntArray;
+    return KeyKinds::IntArray;
   if (typ.compare(DBL_ARRAY) == 0)
-    return KeyType::DblArray;
+    return KeyKinds::DblArray;
   if (typ.compare(BOOL_ARRAY) == 0)
-    return KeyType::BoolArray;
+    return KeyKinds::BoolArray;
   if (typ.compare(STR_ARRAY) == 0)
-    return KeyType::StrArray;
+    return KeyKinds::StrArray;
   return -1;
 }
 
