@@ -23,15 +23,20 @@
 
 #include "Getkw.hpp"
 
-using namespace std;
+#include <iostream>
+#include <stack>
+#include <string>
+#include <vector>
+
+#include "GetkwError.hpp"
+#include "Keyword.hpp"
+#include "Section.hpp"
 
 #define TEST_ARRAY                                                                  \
   if (len > 1)                                                                      \
     std::cout << "Warning, invalid length of 1 for " << name << std::endl;
 
-using namespace std;
-
-Getkw::Getkw(const string file, bool _verbose, bool _strict)
+Getkw::Getkw(const std::string file, bool _verbose, bool _strict)
     : verbose(_verbose), strict(_strict) {
 
   toplevel = 0;
@@ -40,12 +45,12 @@ Getkw::Getkw(const string file, bool _verbose, bool _strict)
     if (verbose) {
       std::cout << "Reading input from stdin " << std::endl;
     }
-    toplevel = readSect(cin);
+    toplevel = readSect(std::cin);
   } else {
     const char * fname = file.data();
     if (verbose)
       std::cout << "Opening input file, '" << file << "'" << std::endl;
-    ifstream fis(fname);
+    std::ifstream fis(fname);
     if (not fis) {
       GETKW_ERROR("Open failed: " + file);
     }
@@ -82,7 +87,7 @@ Getkw & Getkw::operator=(const Getkw & kw) {
     *toplevel = *kw.toplevel;
   }
   cur = toplevel;
-  sstack = stack<const Section *>();
+  sstack = std::stack<const Section *>();
   return *this;
 }
 
@@ -94,7 +99,7 @@ void Getkw::setVerbose(bool flag) { verbose = flag; }
 
 void Getkw::print() const { std::cout << &repr(std::cout) << std::endl; }
 
-ostream & Getkw::repr(ostream & o) const {
+std::ostream & Getkw::repr(std::ostream & o) const {
   if (toplevel == 0) {
     o << "Getkw not yet initialized" << std::endl;
   } else {
@@ -103,7 +108,7 @@ ostream & Getkw::repr(ostream & o) const {
   return o;
 }
 
-template <class T> const T & Getkw::get(const string & path) const {
+template <typename T> const T & Getkw::get(const std::string & path) const {
   if (cur == 0) {
     GETKW_ERROR("Getkw has not been initialized!");
   }
@@ -111,21 +116,22 @@ template <class T> const T & Getkw::get(const string & path) const {
   return key.get();
 }
 
-template <class T> const Keyword<T> & Getkw::getKeyword(const string & path) const {
+template <typename T>
+const Keyword<T> & Getkw::getKeyword(const std::string & path) const {
   if (cur == 0) {
     GETKW_ERROR("Getkw has not been initialized!");
   }
   return cur->getKey<T>(path);
 }
 
-const Section & Getkw::getSect(const string & path) const {
+const Section & Getkw::getSect(const std::string & path) const {
   if (cur == 0) {
     GETKW_ERROR("Getkw has not been initialized!");
   }
   return cur->getSect(path);
 }
 
-void Getkw::pushSection(const string & path) {
+void Getkw::pushSection(const std::string & path) {
   if (cur == 0) {
     GETKW_ERROR("Getkw has not been initialized!");
   }
@@ -144,12 +150,12 @@ void Getkw::popSection() {
   sstack.pop();
 }
 
-Section * Getkw::readSect(istream & fis) {
-  istringstream isi;
-  string name;
-  string tag;
-  string dum1, dum2;
-  string set;
+Section * Getkw::readSect(std::istream & fis) {
+  std::istringstream isi;
+  std::string name;
+  std::string tag;
+  std::string dum1, dum2;
+  std::string set;
   int nsect, nkeys, i;
   bool isSet, hasTag;
 
@@ -181,9 +187,9 @@ Section * Getkw::readSect(istream & fis) {
   return thissect;
 }
 
-bool Getkw::readKey(Section * sect, istream & fis) {
-  istringstream isi;
-  string type, name, set;
+bool Getkw::readKey(Section * sect, std::istream & fis) {
+  std::istringstream isi;
+  std::string type, name, set;
   int len;
 
   readline(fis, isi);
@@ -192,11 +198,11 @@ bool Getkw::readKey(Section * sect, istream & fis) {
   bool setf = convBool(set);
   int kind = convKind(type);
 
-  string ss;
-  vector<int> iv;
-  vector<double> dv;
-  vector<bool> bv;
-  vector<string> sv;
+  std::string ss;
+  std::vector<int> iv;
+  std::vector<double> dv;
+  std::vector<bool> bv;
+  std::vector<std::string> sv;
 
   switch (kind) {
     case KeyType::Int:
@@ -232,7 +238,7 @@ bool Getkw::readKey(Section * sect, istream & fis) {
       if (len == 0)
         return false;
       getline(fis, ss);
-      sect->addKey(new Keyword<string>(name, ss, setf));
+      sect->addKey(new Keyword<std::string>(name, ss, setf));
       break;
     case KeyType::IntArray:
       if (len == 0)
@@ -243,7 +249,7 @@ bool Getkw::readKey(Section * sect, istream & fis) {
         isi >> ival;
         iv.push_back(ival);
       }
-      sect->addKey(new Keyword<vector<int>>(name, iv, setf));
+      sect->addKey(new Keyword<std::vector<int>>(name, iv, setf));
       break;
     case KeyType::DblArray:
       if (len == 0)
@@ -254,7 +260,7 @@ bool Getkw::readKey(Section * sect, istream & fis) {
         isi >> dval;
         dv.push_back(dval);
       }
-      sect->addKey(new Keyword<vector<double>>(name, dv, setf));
+      sect->addKey(new Keyword<std::vector<double>>(name, dv, setf));
       break;
     case KeyType::BoolArray:
       if (len == 0)
@@ -266,7 +272,7 @@ bool Getkw::readKey(Section * sect, istream & fis) {
         bval = convBool(ss);
         bv.push_back(bval);
       }
-      sect->addKey(new Keyword<vector<bool>>(name, bv, setf));
+      sect->addKey(new Keyword<std::vector<bool>>(name, bv, setf));
       break;
     case KeyType::StrArray:
     case KeyType::Data:
@@ -276,7 +282,7 @@ bool Getkw::readKey(Section * sect, istream & fis) {
         getline(fis, ss);
         sv.push_back(ss);
       }
-      sect->addKey(new Keyword<vector<string>>(name, sv, setf));
+      sect->addKey(new Keyword<std::vector<std::string>>(name, sv, setf));
       break;
     default:
       GETKW_ERROR("Unknown keyword type: " + name + " <> " + type);
@@ -284,29 +290,29 @@ bool Getkw::readKey(Section * sect, istream & fis) {
   return true;
 }
 
-void Getkw::readline(istream & fis, istringstream & isi) {
-  static string buf;
+void Getkw::readline(std::istream & fis, std::istringstream & isi) {
+  static std::string buf;
   getline(fis, buf);
   isi.clear();
   isi.str(buf);
 }
 
-bool Getkw::convBool(const string & val) {
+bool Getkw::convBool(const std::string & val) {
   if (val[0] == 'T' or val[0] == 't')
     return true;
   return false;
 }
 
-int Getkw::convKind(const string & typ) {
-  static const string INT = "INT";
-  static const string DBL = "DBL";
-  static const string BOOL = "BOOL";
-  static const string STR = "STR";
-  static const string DATA = "DATA";
-  static const string INT_ARRAY = "INT_ARRAY";
-  static const string DBL_ARRAY = "DBL_ARRAY";
-  static const string BOOL_ARRAY = "BOOL_ARRAY";
-  static const string STR_ARRAY = "STR_ARRAY";
+int Getkw::convKind(const std::string & typ) {
+  static const std::string INT = "INT";
+  static const std::string DBL = "DBL";
+  static const std::string BOOL = "BOOL";
+  static const std::string STR = "STR";
+  static const std::string DATA = "DATA";
+  static const std::string INT_ARRAY = "INT_ARRAY";
+  static const std::string DBL_ARRAY = "DBL_ARRAY";
+  static const std::string BOOL_ARRAY = "BOOL_ARRAY";
+  static const std::string STR_ARRAY = "STR_ARRAY";
 
   if (typ.compare(INT) == 0)
     return KeyType::Int;
@@ -329,11 +335,15 @@ int Getkw::convKind(const string & typ) {
   return -1;
 }
 
-template const int & Getkw::get<int>(const string &) const;
-template const bool & Getkw::get<bool>(const string &) const;
-template const double & Getkw::get<double>(const string &) const;
-template const string & Getkw::get<string>(const string &) const;
-template const vector<int> & Getkw::get<vector<int>>(const string &) const;
-template const vector<double> & Getkw::get<vector<double>>(const string &) const;
-template const vector<bool> & Getkw::get<vector<bool>>(const string &) const;
-template const vector<string> & Getkw::get<vector<string>>(const string &) const;
+template const int & Getkw::get<int>(const std::string &) const;
+template const bool & Getkw::get<bool>(const std::string &) const;
+template const double & Getkw::get<double>(const std::string &) const;
+template const std::string & Getkw::get<std::string>(const std::string &) const;
+template const std::vector<int> & Getkw::get<std::vector<int>>(
+    const std::string &) const;
+template const std::vector<double> & Getkw::get<std::vector<double>>(
+    const std::string &) const;
+template const std::vector<bool> & Getkw::get<std::vector<bool>>(
+    const std::string &) const;
+template const std::vector<std::string> & Getkw::get<std::vector<std::string>>(
+    const std::string &) const;

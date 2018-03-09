@@ -23,16 +23,13 @@
 
 #pragma once
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
+#include <iosfwd>
 #include <stack>
+#include <string>
+#include <vector>
 
-#include <boost/any.hpp>
-
-#include "GetkwError.hpp"
-#include "Keyword.hpp"
-#include "Section.hpp"
+class Section;
+template <typename T> class Keyword;
 
 class Getkw {
 public:
@@ -46,8 +43,9 @@ public:
   void pushSection(const std::string & path);
   void popSection();
   const Section & getSect(const std::string & path) const;
-  template <class T> const Keyword<T> & getKeyword(const std::string & path) const;
-  template <class T> const T & get(const std::string & path) const;
+  template <typename T>
+  const Keyword<T> & getKeyword(const std::string & path) const;
+  template <typename T> const T & get(const std::string & path) const;
 
   int getInt(const std::string & path) const { return get<int>(path); }
   double getDbl(const std::string & path) const { return get<double>(path); }
