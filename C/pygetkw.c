@@ -22,9 +22,11 @@
 
 #define PYTHON_EXTMOD
 
-#include <Python.h>
 #include <assert.h>
-#include <getkw.h>
+
+#include <Python.h>
+
+#include "getkw.h"
 
 #define ASSERT_VAL(val)                                                             \
   if (val == NULL) {                                                                \

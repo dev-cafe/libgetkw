@@ -12,7 +12,7 @@
  * getkw library, see: <http://getkw.readthedocs.io/>
  */
 
-/** \file Keyword.h
+/** \file Keyword.hpp
  *
  * \date Jun 3, 2009
  * \author Jonas Juselius <jonas.juselius@uit.no> \n
@@ -28,7 +28,7 @@
 #include <string>
 #include <vector>
 
-#include "GetkwError.h"
+#include "GetkwError.hpp"
 
 namespace KeyType {
 enum KeyKinds {
@@ -67,9 +67,9 @@ public:
   int getKind() const { return kind; }
   void setDefined(bool _isDefd) { isDefd = _isDefd; }
 
-  void setName(const std::string & _name) { name = name; }
+  void setName(const std::string & _name) { name = _name; }
 
-  template <typename X> std::ostream & repr(std::ostream & o, X v) const {
+  template <typename X> std::ostream & repr(std::ostream & o, X /* v */) const {
     if (kind == KeyType::Str) {
       o << "  " + name << " = "
         << "\"" << val << "\"";
@@ -102,7 +102,7 @@ public:
     return key.repr(o, key.get());
   }
 
-  virtual void print() const { std::cout << repr(std::cout, val) << std::endl; }
+  virtual void print() const { std::cout << &repr(std::cout, val) << std::endl; }
 
   static const std::string & getNamedKind(int i) {
     static const std::string INT = "Int";
@@ -146,43 +146,43 @@ protected:
   bool isArray;
   int kind;
 
-  bool setKind(int t) {
+  bool setKind(int /* t */) {
     isArray = false;
     kind = KeyType::Int;
     return true;
   }
-  bool setKind(double t) {
+  bool setKind(double /* t */) {
     isArray = false;
     kind = KeyType::Dbl;
     return true;
   }
-  bool setKind(bool t) {
+  bool setKind(bool /* t */) {
     isArray = false;
     kind = KeyType::Bool;
     return true;
   }
-  bool setKind(const std::string & t) {
+  bool setKind(const std::string & /* t */) {
     isArray = false;
     kind = KeyType::Str;
     return true;
   }
 
-  bool setKind(const std::vector<int> & t) {
+  bool setKind(const std::vector<int> & /* t */) {
     isArray = true;
     kind = KeyType::IntArray;
     return true;
   }
-  bool setKind(const std::vector<double> & t) {
+  bool setKind(const std::vector<double> & /* t */) {
     isArray = true;
     kind = KeyType::DblArray;
     return true;
   }
-  bool setKind(const std::vector<bool> & t) {
+  bool setKind(const std::vector<bool> & /* t */) {
     isArray = true;
     kind = KeyType::BoolArray;
     return true;
   }
-  bool setKind(const std::vector<std::string> & t) {
+  bool setKind(const std::vector<std::string> & /* t */) {
     isArray = true;
     kind = KeyType::StrArray;
     return true;

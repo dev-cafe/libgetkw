@@ -1,0 +1,23 @@
+name: getkw
+min_cmake_version: 3.5
+setup_script: setup
+url_root: https://github.com/coderefinery/autocmake/raw/master/
+default_build_type: release
+language:
+  - CXX
+
+modules:
+  - compilers:
+    - source:
+      - '%(url_root)modules/cxx.cmake'
+  - plugins:
+    - source:
+      - '%(url_root)modules/custom_color_messages.cmake'
+      - '%(url_root)modules/default_build_paths.cmake'
+      - '%(url_root)modules/definitions.cmake'
+      - '%(url_root)modules/python_interpreter.cmake'
+      - '%(url_root)modules/python_libs.cmake'
+      - '%(url_root)modules/safeguards.cmake'
+  - custom:
+    - source:
+      - 'custom/getkw.cmake'

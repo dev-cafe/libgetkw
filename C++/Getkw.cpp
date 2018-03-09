@@ -21,7 +21,7 @@
  * \brief
  */
 
-#include "Getkw.h"
+#include "Getkw.hpp"
 
 using namespace std;
 
@@ -92,7 +92,7 @@ void Getkw::setStrict(bool flag) { strict = flag; }
 
 void Getkw::setVerbose(bool flag) { verbose = flag; }
 
-void Getkw::print() const { cout << repr(cout) << endl; }
+void Getkw::print() const { cout << &repr(cout) << endl; }
 
 ostream & Getkw::repr(ostream & o) const {
   if (toplevel == 0) {
