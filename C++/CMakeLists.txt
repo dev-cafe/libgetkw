@@ -1,5 +1,8 @@
 find_package(Boost REQUIRED)
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/CXXFlags.cmake)
 
 add_library(getkw
@@ -14,10 +17,11 @@ set_target_properties(getkw
     POSITION_INDEPENDENT_CODE 1
   )
 target_compile_options(getkw
-  PRIVATE
+  PUBLIC
     "${GETKW_CXX_FLAGS}"
-    "$<$<CONFIG:DEBUG>:${GETKW_CXX_FLAGS_DEBUG}>"
     "$<$<CONFIG:RELEASE>:${GETKW_CXX_FLAGS_RELEASE}>"
+  PRIVATE
+    "$<$<CONFIG:DEBUG>:${GETKW_CXX_FLAGS_DEBUG}>"
   )
 target_link_libraries(getkw
   PUBLIC

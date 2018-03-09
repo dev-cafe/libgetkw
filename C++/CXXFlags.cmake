@@ -1,5 +1,5 @@
 list(APPEND GETKW_CXX_FLAGS
-  "-fno-exceptions"
+  #"-fno-exceptions"
   #"-fno-rtti"
   )
 

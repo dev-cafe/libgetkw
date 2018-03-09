@@ -23,7 +23,7 @@ target_compile_options(cgetkw
     "$<$<CONFIG:RELEASE>:${GETKW_C_FLAGS_RELEASE}>"
   )
 target_include_directories(cgetkw
-  PUBLIC
+  SYSTEM PUBLIC
     ${PYTHON_INLCUDE_DIRS}
   )
 target_link_libraries(cgetkw
