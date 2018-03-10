@@ -28,6 +28,7 @@
 #include <string>
 #include <vector>
 
+enum class KeyKinds;
 class Section;
 template <typename T> class Keyword;
 
@@ -80,7 +81,7 @@ protected:
   static bool readKey(Section * sect, std::istream & fis);
   static void readline(std::istream & fis, std::istringstream & isi);
   static bool convBool(const std::string & val);
-  static int convKind(const std::string & typ);
+  static KeyKinds convKind(const std::string & typ);
 
 private:
   bool verbose;

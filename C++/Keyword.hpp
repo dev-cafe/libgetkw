@@ -29,7 +29,7 @@
 
 #include "GetkwError.hpp"
 
-enum KeyKinds : int {
+enum class KeyKinds {
   Unknown = -1,
   Undefined,
   Int,
@@ -101,7 +101,7 @@ public:
 
   void print() const { std::cout << &repr(std::cout, val) << std::endl; }
 
-  static const std::string & getNamedKind(int i) {
+  static const std::string & getNamedKind(KeyKinds i) {
     static const std::string INT = "Int";
     static const std::string DBL = "Dbl";
     static const std::string BOOL = "Bool";
@@ -141,7 +141,7 @@ protected:
   T val;
   bool isDefd;
   bool isArray;
-  int kind;
+  KeyKinds kind;
 
   bool setKind(int /* t */) {
     isArray = false;

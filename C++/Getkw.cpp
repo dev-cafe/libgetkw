@@ -197,7 +197,7 @@ bool Getkw::readKey(Section * sect, std::istream & fis) {
   isi >> type >> name >> len >> set;
 
   bool setf = convBool(set);
-  int kind = convKind(type);
+  KeyKinds kind = convKind(type);
 
   std::string ss;
   std::vector<int> iv;
@@ -304,7 +304,7 @@ bool Getkw::convBool(const std::string & val) {
   return false;
 }
 
-int Getkw::convKind(const std::string & typ) {
+KeyKinds Getkw::convKind(const std::string & typ) {
   static const std::string INT = "INT";
   static const std::string DBL = "DBL";
   static const std::string BOOL = "BOOL";
@@ -333,7 +333,7 @@ int Getkw::convKind(const std::string & typ) {
     return KeyKinds::BoolArray;
   if (typ.compare(STR_ARRAY) == 0)
     return KeyKinds::StrArray;
-  return -1;
+  return KeyKinds::Unknown;
 }
 
 template const int & Getkw::get<int>(const std::string &) const;
