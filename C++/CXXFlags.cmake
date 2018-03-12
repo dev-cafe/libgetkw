@@ -1,6 +1,6 @@
 list(APPEND GETKW_CXX_FLAGS
-  #"-fno-rtti"
   #"-fno-exceptions"
+  #"-fno-rtti"
   )
 
 list(APPEND GETKW_CXX_FLAGS_DEBUG

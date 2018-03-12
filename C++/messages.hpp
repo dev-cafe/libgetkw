@@ -21,10 +21,12 @@
  * CTCC, University of Tromsø, July 2009
  *
  */
-#ifndef MESSAGES_H
-#define MESSAGES_H
+
+#pragma once
 
 #include <cassert>
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -44,28 +46,28 @@ struct msg {
   {                                                                                 \
     std::ostringstream _str;                                                        \
     _str << "Debug: " << __func__ << ",  line " << __LINE__ << " in  " << __FILE__  \
-         << ": " << X << endl;                                                      \
+         << ": " << X << std::endl;                                                 \
     S = _str.str();                                                                 \
   }
 #define STR_INFO(S, X)                                                              \
   {                                                                                 \
     std::ostringstream _str;                                                        \
     _str << "Info: " << __func__ << ",  line " << __LINE__ << " in  " << __FILE__   \
-         << ": " << X << endl;                                                      \
+         << ": " << X << std::endl;                                                 \
     S = _str.str();                                                                 \
   }
 #define STR_WARN(S, X)                                                              \
   {                                                                                 \
     std::ostringstream _str;                                                        \
     _str << "Warning: " << __func__ << ",  line " << __LINE__ << " in  "            \
-         << __FILE__ << ": " << X << endl;                                          \
+         << __FILE__ << ": " << X << std::endl;                                     \
     S = _str.str();                                                                 \
   }
 #define STR_ERROR(S, X)                                                             \
   {                                                                                 \
     std::ostringstream _str;                                                        \
     _str << "Error: " << __func__ << ",  line " << __LINE__ << " in  " << __FILE__  \
-         << ": " << X << endl;                                                      \
+         << ": " << X << std::endl;                                                 \
     S = _str.str();                                                                 \
   }
 
@@ -92,58 +94,62 @@ struct msg {
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Debug: " << __func__ << "(), line "           \
                                   << __LINE__ << "in " << __FILE__ << ": " << X     \
-                                  << endl;                                          \
+                                  << std::endl;                                     \
   }
 #define MSG_INFO(X)                                                                 \
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Info: " << __FILE__ << ": " << __func__       \
-                                  << "(), line " << __LINE__ << ": " << X << endl;  \
+                                  << "(), line " << __LINE__ << ": " << X           \
+                                  << std::endl;                                     \
   }
 #define MSG_NOTE(X)                                                                 \
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Note: " << __FILE__ << ": " << __func__       \
-                                  << "(), line " << __LINE__ << ": " << X << endl;  \
+                                  << "(), line " << __LINE__ << ": " << X           \
+                                  << std::endl;                                     \
   }
 #define MSG_WARN(X)                                                                 \
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Warning: " << __func__ << "(), line "         \
-                                  << __LINE__ << ": " << X << endl;                 \
+                                  << __LINE__ << ": " << X << std::endl;            \
   }
 #define MSG_ERROR(X)                                                                \
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Error: " << __func__ << "(), line "           \
-                                  << __LINE__ << ": " << X << endl;                 \
+                                  << __LINE__ << ": " << X << std::endl;            \
   }
 #define MSG_FATAL(X)                                                                \
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Error: " << __FILE__ << ": " << __func__      \
-                                  << "(), line " << __LINE__ << ": " << X << endl;  \
-    abort();                                                                        \
+                                  << "(), line " << __LINE__ << ": " << X           \
+                                  << std::endl;                                     \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 
 #define MSG_INVALID_ARG(X)                                                          \
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Error, invalid argument passed: " << __func__ \
-                                  << "(), line " << __LINE__ << ": " << X << endl;  \
+                                  << "(), line " << __LINE__ << ": " << X           \
+                                  << std::endl;                                     \
   }
 #define INVALID_ARG_ABORT                                                           \
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Error, invalid argument passed: " << __func__ \
-                                  << "(), line " << __LINE__ << endl;               \
-    abort();                                                                        \
+                                  << "(), line " << __LINE__ << std::endl;          \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 #define NOT_REACHED_ABORT                                                           \
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Error, should not be reached: " << __func__   \
-                                  << "(), line " << __LINE__ << endl;               \
-    abort();                                                                        \
+                                  << "(), line " << __LINE__ << std::endl;          \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 #define INTERNAL_INCONSISTENCY                                                      \
   {                                                                                 \
     *GetkwMessageStream::msg::out                                                   \
         << "Internal inconsistency! You have found a bug: " << __func__             \
-        << "(), line " << __LINE__ << endl;                                         \
-    abort();                                                                        \
+        << "(), line " << __LINE__ << std::endl;                                    \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 
 #define NEEDS_TESTING                                                               \
@@ -152,7 +158,8 @@ struct msg {
     if (__once) {                                                                   \
       __once = false;                                                               \
       *GetkwMessageStream::msg::out << "NEEDS TESTING: " << __FILE__ << ", "        \
-                                    << __func__ << "(), line " << __LINE__ << endl; \
+                                    << __func__ << "(), line " << __LINE__          \
+                                    << std::endl;                                   \
     }                                                                               \
   }
 
@@ -160,16 +167,18 @@ struct msg {
   {                                                                                 \
     if (A == NULL) {                                                                \
       *GetkwMessageStream::msg::out << "Error: " << __func__ << "(), line "         \
-                                    << __LINE__ << ": No such file, " << B << endl; \
-      abort();                                                                      \
+                                    << __LINE__ << ": No such file, " << B          \
+                                    << std::endl;                                   \
+      std::exit(EXIT_FAILURE);                                                      \
     }                                                                               \
   }
 
 #define NOT_IMPLEMENTED_ABORT                                                       \
   {                                                                                 \
     *GetkwMessageStream::msg::out << "Error: Not implemented, " << __FILE__ ", "    \
-                                  << __func__ << "(), line " << __LINE__ << endl;   \
-    abort();                                                                        \
+                                  << __func__ << "(), line " << __LINE__            \
+                                  << std::endl;                                     \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 
 #define NOTE(X)                                                                     \
@@ -179,7 +188,7 @@ struct msg {
       __once = false;                                                               \
       *GetkwMessageStream::msg::out << "NOTE: " << __FILE__ << ", " << __func__     \
                                     << "(), line " << __LINE__ << ": " << X         \
-                                    << endl;                                        \
+                                    << std::endl;                                   \
     }                                                                               \
   }
 
@@ -190,65 +199,43 @@ struct msg {
       __once = false;                                                               \
       *GetkwMessageStream::msg::out << "NEEDS FIX: " << __FILE__ << ", "            \
                                     << __func__ << "(), line " << __LINE__ << ": "  \
-                                    << X << endl;                                   \
+                                    << X << std::endl;                              \
     }                                                                               \
   }
 
 #define WRONG(X)                                                                    \
   {                                                                                 \
     *GetkwMessageStream::msg::out << "WRONG: " << __FILE__ << ", " << __func__      \
-                                  << "(), line " << __LINE__ << ": " << X << endl;  \
-    abort();                                                                        \
+                                  << "(), line " << __LINE__ << ": " << X           \
+                                  << std::endl;                                     \
+    std::exit(EXIT_FAILURE);                                                        \
   }
 
 #define STR_DEBUG(S, X)                                                             \
   {                                                                                 \
     std::ostringstream _str;                                                        \
     _str << "Debug: " << __func__ << ",  line " << __LINE__ << " in  " << __FILE__  \
-         << ": " << X << endl;                                                      \
+         << ": " << X << std::endl;                                                 \
     S = _str.str();                                                                 \
   }
 #define STR_INFO(S, X)                                                              \
   {                                                                                 \
     std::ostringstream _str;                                                        \
     _str << "Info: " << __func__ << ",  line " << __LINE__ << " in  " << __FILE__   \
-         << ": " << X << endl;                                                      \
+         << ": " << X << std::endl;                                                 \
     S = _str.str();                                                                 \
   }
 #define STR_WARN(S, X)                                                              \
   {                                                                                 \
     std::ostringstream _str;                                                        \
     _str << "Warning: " << __func__ << ",  line " << __LINE__ << " in  "            \
-         << __FILE__ << ": " << X << endl;                                          \
+         << __FILE__ << ": " << X << std::endl;                                     \
     S = _str.str();                                                                 \
   }
 #define STR_ERROR(S, X)                                                             \
   {                                                                                 \
     std::ostringstream _str;                                                        \
     _str << "Error: " << __func__ << ",  line " << __LINE__ << " in  " << __FILE__  \
-         << ": " << X << endl;                                                      \
+         << ": " << X << std::endl;                                                 \
     S = _str.str();                                                                 \
   }
-
-/* The quiet versions...
- #define SET_DEBUG_LEVEL(a)
- #define SET_MESSAGE_STREAM(s)
- #define DEBUG_LEVEL
-
- #define MSG_DEBUG(X)
- #define MSG_INFO(X)
- #define MSG_WARN(X)
- #define MSG_ERROR(X)
- #define MSG_FATAL(X) abort();
-
-
- #define MSG_INVALID_ARG
- #define INVALID_ARG_ABORT abort();
- #define NOT_REACHED_ABORT abort();
-
- #define NEEDS_TESTING
-
- #define ASSERT_FILE(A,B)
- #define NOT_IMPLEMENTED_ABORT abort();
- */
-#endif

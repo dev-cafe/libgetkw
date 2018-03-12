@@ -6,10 +6,17 @@
 # C++ files
 C++/*.hpp licensefile=.githooks/LICENSE-C++
 C++/*.cpp licensefile=.githooks/LICENSE-C++
+
 # C files
 C/*.h licensefile=.githooks/LICENSE-C
 C/*.c licensefile=.githooks/LICENSE-C
+
 # Fortran files
 Fortran/*.f90 licensefile=.githooks/LICENSE-Fortran
+
 # Python files
 Python/*.py licensefile=.githooks/LICENSE-Python
+
+# Tests
+tests/*.hpp licensefile=.githooks/LICENSE-C++
+tests/*.cpp licensefile=.githooks/LICENSE-C++

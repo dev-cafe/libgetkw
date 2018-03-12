@@ -21,12 +21,15 @@
  * \brief  Container for Sections and Keywords
  */
 
-#include <iostream>
-
-#include "GetkwError.hpp"
 #include "Section.hpp"
 
-using namespace std;
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+
+#include "GetkwError.hpp"
+#include "Keyword.hpp"
 
 #define IF_ANY_KEYTYPE_IS(A, T) if (A.type() == typeid(const Keyword<T> *))
 
@@ -36,7 +39,7 @@ using namespace std;
 
 using namespace std;
 
-Section::Section(const string & _name, const string & _tag) : name(_name) {
+Section::Section(const std::string & _name, const std::string & _tag) : name(_name) {
   isDefd = false;
   nsect = 0;
   nkeys = 0;
@@ -72,8 +75,8 @@ Section & Section::operator=(const Section & s) {
 }
 
 Section::~Section() {
-  map<string, Section *>::iterator sit;
-  map<string, boost::any>::iterator kit;
+  std::map<std::string, Section *>::iterator sit;
+  std::map<std::string, boost::any>::iterator kit;
   for (sit = sects.begin(); sit != sects.end(); ++sit) {
     delete sects[sit->first];
   }
@@ -94,41 +97,42 @@ Section::~Section() {
       delete key;
       continue;
     }
-    IF_ANY_KEYTYPE_IS(kit->second, string) {
-      const Keyword<string> * key = ANY_TO_CONST_KEY_PTR(kit->second, string);
+    IF_ANY_KEYTYPE_IS(kit->second, std::string) {
+      const Keyword<std::string> * key =
+          ANY_TO_CONST_KEY_PTR(kit->second, std::string);
       delete key;
       continue;
     }
-    IF_ANY_KEYTYPE_IS(kit->second, vector<int>) {
-      const Keyword<vector<int> > * key =
-          ANY_TO_CONST_KEY_PTR(kit->second, vector<int>);
+    IF_ANY_KEYTYPE_IS(kit->second, std::vector<int>) {
+      const Keyword<std::vector<int>> * key =
+          ANY_TO_CONST_KEY_PTR(kit->second, std::vector<int>);
       delete key;
       continue;
     }
-    IF_ANY_KEYTYPE_IS(kit->second, vector<bool>) {
-      const Keyword<vector<bool> > * key =
-          ANY_TO_CONST_KEY_PTR(kit->second, vector<bool>);
+    IF_ANY_KEYTYPE_IS(kit->second, std::vector<bool>) {
+      const Keyword<std::vector<bool>> * key =
+          ANY_TO_CONST_KEY_PTR(kit->second, std::vector<bool>);
       delete key;
       continue;
     }
-    IF_ANY_KEYTYPE_IS(kit->second, vector<double>) {
-      const Keyword<vector<double> > * key =
-          ANY_TO_CONST_KEY_PTR(kit->second, vector<double>);
+    IF_ANY_KEYTYPE_IS(kit->second, std::vector<double>) {
+      const Keyword<std::vector<double>> * key =
+          ANY_TO_CONST_KEY_PTR(kit->second, std::vector<double>);
       delete key;
       continue;
     }
-    IF_ANY_KEYTYPE_IS(kit->second, vector<string>) {
-      const Keyword<vector<string> > * key =
-          ANY_TO_CONST_KEY_PTR(kit->second, vector<string>);
+    IF_ANY_KEYTYPE_IS(kit->second, std::vector<std::string>) {
+      const Keyword<std::vector<std::string>> * key =
+          ANY_TO_CONST_KEY_PTR(kit->second, std::vector<std::string>);
       delete key;
       continue;
     }
-    THROW_GETKW("Error! Unknown key type!");
+    GETKW_ERROR("Error! Unknown key type!");
   }
 }
 
 void Section::copySects(const Section & s) {
-  map<string, Section *>::const_iterator iter;
+  std::map<std::string, Section *>::const_iterator iter;
   for (iter = s.sects.begin(); iter != s.sects.end(); ++iter) {
     sects[iter->first] = new Section(*iter->second);
     tags[(*iter->second).tag] = sects[iter->first];
@@ -136,7 +140,7 @@ void Section::copySects(const Section & s) {
 }
 
 void Section::copyKeys(const Section & s) {
-  map<string, boost::any>::const_iterator iter;
+  std::map<std::string, boost::any>::const_iterator iter;
 
   for (iter = s.keys.begin(); iter != s.keys.end(); ++iter) {
     IF_ANY_KEYTYPE_IS(iter->second, int) {
@@ -154,66 +158,68 @@ void Section::copyKeys(const Section & s) {
       keys[iter->first] = boost::any(new const Keyword<double>(*key));
       continue;
     }
-    IF_ANY_KEYTYPE_IS(iter->second, string) {
-      const Keyword<string> * key = ANY_TO_CONST_KEY_PTR(iter->second, string);
-      keys[iter->first] = boost::any(new const Keyword<string>(*key));
+    IF_ANY_KEYTYPE_IS(iter->second, std::string) {
+      const Keyword<std::string> * key =
+          ANY_TO_CONST_KEY_PTR(iter->second, std::string);
+      keys[iter->first] = boost::any(new const Keyword<std::string>(*key));
       continue;
     }
-    IF_ANY_KEYTYPE_IS(iter->second, vector<int>) {
-      const Keyword<vector<int> > * key =
-          ANY_TO_CONST_KEY_PTR(iter->second, vector<int>);
-      keys[iter->first] = boost::any(new const Keyword<vector<int> >(*key));
+    IF_ANY_KEYTYPE_IS(iter->second, std::vector<int>) {
+      const Keyword<std::vector<int>> * key =
+          ANY_TO_CONST_KEY_PTR(iter->second, std::vector<int>);
+      keys[iter->first] = boost::any(new const Keyword<std::vector<int>>(*key));
       continue;
     }
-    IF_ANY_KEYTYPE_IS(iter->second, vector<bool>) {
-      const Keyword<vector<bool> > * key =
-          ANY_TO_CONST_KEY_PTR(iter->second, vector<bool>);
-      keys[iter->first] = boost::any(new const Keyword<vector<bool> >(*key));
+    IF_ANY_KEYTYPE_IS(iter->second, std::vector<bool>) {
+      const Keyword<std::vector<bool>> * key =
+          ANY_TO_CONST_KEY_PTR(iter->second, std::vector<bool>);
+      keys[iter->first] = boost::any(new const Keyword<std::vector<bool>>(*key));
       continue;
     }
-    IF_ANY_KEYTYPE_IS(iter->second, vector<double>) {
-      const Keyword<vector<double> > * key =
-          ANY_TO_CONST_KEY_PTR(iter->second, vector<double>);
-      keys[iter->first] = boost::any(new const Keyword<vector<double> >(*key));
+    IF_ANY_KEYTYPE_IS(iter->second, std::vector<double>) {
+      const Keyword<std::vector<double>> * key =
+          ANY_TO_CONST_KEY_PTR(iter->second, std::vector<double>);
+      keys[iter->first] = boost::any(new const Keyword<std::vector<double>>(*key));
       continue;
     }
-    IF_ANY_KEYTYPE_IS(iter->second, vector<string>) {
-      const Keyword<vector<string> > * key =
-          ANY_TO_CONST_KEY_PTR(iter->second, vector<string>);
-      keys[iter->first] = boost::any(new const Keyword<vector<string> >(*key));
+    IF_ANY_KEYTYPE_IS(iter->second, std::vector<std::string>) {
+      const Keyword<std::vector<std::string>> * key =
+          ANY_TO_CONST_KEY_PTR(iter->second, std::vector<std::string>);
+      keys[iter->first] =
+          boost::any(new const Keyword<std::vector<std::string>>(*key));
       continue;
     }
-    THROW_GETKW("Error! Unknown key type!");
+    GETKW_ERROR("Error! Unknown key type!");
   }
 }
 
-const Section & Section::getSect(const string & pathspec) const {
-  vector<string> path;
+const Section & Section::getSect(const std::string & pathspec) const {
+  std::vector<std::string> path;
   splitPath(pathspec, path);
   const Section * sect = traversePath(path, pathspec);
   return *sect;
 }
 
 template <typename T>
-const Keyword<T> & Section::getKey(const string & pathspec) const {
-  vector<string> path;
+const Keyword<T> & Section::getKey(const std::string & pathspec) const {
+  std::vector<std::string> path;
   splitPath(pathspec, path);
 
-  string name = path.back();
+  std::string name = path.back();
   const Section * sect = traversePath(path, pathspec);
   if (!sect->has_key(name)) {
-    THROW_GETKW("Invalid keyword, " + pathspec);
+    GETKW_ERROR("Invalid keyword, " + pathspec);
   }
-  map<string, boost::any>::const_iterator iter = sect->keys.find(name);
+  std::map<std::string, boost::any>::const_iterator iter = sect->keys.find(name);
   return *ANY_TO_CONST_KEY_PTR(iter->second, T);
 }
 
-template <class T> const T & Section::get(const string & path) const {
+template <class T> const T & Section::get(const std::string & path) const {
   const Keyword<T> & key = this->getKey<T>(path);
   return key.get();
 }
 
-Section * Section::readSect(ifstream & /* fis */) { return 0; }
+Section * Section::readSect(std::ifstream & /* fis */) { return 0; }
 
 /* Sections can be multiply defined, provided they have different tags.
  * The first section section is added to the box, as well as to the tags
@@ -221,9 +227,9 @@ Section * Section::readSect(ifstream & /* fis */) { return 0; }
  * to the tags map.
  */
 void Section::addSect(Section * sect) {
-  string name = sect->name + "<" + sect->tag + ">";
+  std::string name = sect->name + "<" + sect->tag + ">";
   if (has_key(name)) {
-    THROW_GETKW("Section::add: Section already defined, " + name);
+    GETKW_ERROR("Section::add: Section already defined, " + name);
   }
 
   sects[name] = sect;
@@ -232,9 +238,9 @@ void Section::addSect(Section * sect) {
 }
 
 void Section::addSect(Section & sect) {
-  string name = sect.name + "<" + sect.tag + ">";
+  std::string name = sect.name + "<" + sect.tag + ">";
   if (has_key(name)) {
-    THROW_GETKW("Section::add: Section already defined, " + name);
+    GETKW_ERROR("Section::add: Section already defined, " + name);
   }
 
   sects[name] = new Section(sect);
@@ -243,10 +249,10 @@ void Section::addSect(Section & sect) {
 }
 //! Add an allocated key to a section
 template <class T> void Section::addKey(const Keyword<T> * key) {
-  const string & name = key->getName();
+  const std::string & name = key->getName();
 
   if (has_key(name)) {
-    THROW_GETKW("Section::add: Key already defined, " + name);
+    GETKW_ERROR("Section::add: Key already defined, " + name);
   }
 
   keys[name] = boost::any(key);
@@ -255,19 +261,19 @@ template <class T> void Section::addKey(const Keyword<T> * key) {
 
 //! Copy and and add a keyword to a section
 template <class T> void Section::addKey(const Keyword<T> & key) {
-  string name = key.getName();
+  std::string name = key.getName();
 
   if (has_key(name)) {
-    THROW_GETKW("Section::add: Key already defined, " + name);
+    GETKW_ERROR("Section::add: Key already defined, " + name);
   }
 
   keys[name] = boost::any(new Keyword<T>(key));
   nkeys++;
 }
 
-const Section * Section::traversePath(vector<string> & path,
-                                      const string & pathspec) const {
-  string cur = path[0];
+const Section * Section::traversePath(std::vector<std::string> & path,
+                                      const std::string & pathspec) const {
+  std::string cur = path[0];
 
   if (path.size() == 1) {
     if (has_key(cur))
@@ -276,29 +282,30 @@ const Section * Section::traversePath(vector<string> & path,
       cur = cur + "<" + cur + ">";
     }
     if (has_sect(cur)) {
-      map<string, Section *>::const_iterator iter = sects.find(cur);
+      std::map<std::string, Section *>::const_iterator iter = sects.find(cur);
       return iter->second;
     }
-    THROW_GETKW("traversePath: Invalid path, " + pathspec);
+    GETKW_ERROR("traversePath: Invalid path, " + pathspec);
   }
 
   if (!has_sect(cur))
     cur = cur + "<" + cur + ">";
   if (!has_sect(cur)) {
-    THROW_GETKW("traversePath: Invalid path, " + pathspec);
+    GETKW_ERROR("traversePath: Invalid path, " + pathspec);
   }
 
   path.erase(path.begin());
-  map<string, Section *>::const_iterator iter = sects.find(cur);
+  std::map<std::string, Section *>::const_iterator iter = sects.find(cur);
   return iter->second->traversePath(path, pathspec);
 }
 
-void Section::splitPath(const string & pathspec, vector<string> & path) const {
-  string str = pathspec;
-  string::size_type m = 0;
+void Section::splitPath(const std::string & pathspec,
+                        std::vector<std::string> & path) const {
+  std::string str = pathspec;
+  std::string::size_type m = 0;
   while (true) {
     m = str.find('.', m);
-    if (m == string::npos) {
+    if (m == std::string::npos) {
       path.push_back(str);
       break;
     } else {
@@ -309,86 +316,87 @@ void Section::splitPath(const string & pathspec, vector<string> & path) const {
   }
 }
 
-int Section::splitTag(const string & path, string & tag) const {
-  string::size_type m, n = 0;
+int Section::splitTag(const std::string & path, std::string & tag) const {
+  std::string::size_type m, n = 0;
   m = path.find('<');
-  if (m == string::npos)
+  if (m == std::string::npos)
     return 0;
   n = path.find('>');
-  if (n == string::npos or n - m - 1 < 1)
+  if (n == std::string::npos or n - m - 1 < 1)
     return 0;
   tag.clear();
   tag.append(path.substr(m + 1, n - m - 1));
   return m;
 }
 
-bool Section::has_key(const string & b) const {
+bool Section::has_key(const std::string & b) const {
   if (keys.find(b) == keys.end())
     return false;
   return true;
 }
 
-bool Section::has_sect(const string & b) const {
+bool Section::has_sect(const std::string & b) const {
   if (sects.find(b) == sects.end())
     return false;
   return true;
 }
 
-bool Section::has_tag(const string & b) const {
+bool Section::has_tag(const std::string & b) const {
   if (tags.find(b) == tags.end())
     return false;
   return true;
 }
 
-void Section::print() const { cout << &repr(cout) << endl; }
+void Section::print() const { std::cout << &repr(std::cout) << std::endl; }
 
-ostream & Section::repr(ostream & o) const {
-  o << endl << name;
+std::ostream & Section::repr(std::ostream & o) const {
+  o << std::endl << name;
   if (name.compare(tag) != 0) {
     o << "<" + tag + ">";
   }
-  o << " {" << endl;
+  o << " {" << std::endl;
 
-  map<string, boost::any>::const_iterator iter;
+  std::map<std::string, boost::any>::const_iterator iter;
   for (iter = keys.begin(); iter != keys.end(); ++iter) {
     IF_ANY_KEYTYPE_IS(iter->second, int) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, int) << endl;
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, int) << std::endl;
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, bool) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, bool) << endl;
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, bool) << std::endl;
       continue;
     }
     IF_ANY_KEYTYPE_IS(iter->second, double) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, double) << endl;
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, double) << std::endl;
       continue;
     }
-    IF_ANY_KEYTYPE_IS(iter->second, string) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, string) << endl;
+    IF_ANY_KEYTYPE_IS(iter->second, std::string) {
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, std::string) << std::endl;
       continue;
     }
-    IF_ANY_KEYTYPE_IS(iter->second, vector<int>) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<int>) << endl;
+    IF_ANY_KEYTYPE_IS(iter->second, std::vector<int>) {
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, std::vector<int>) << std::endl;
       continue;
     }
-    IF_ANY_KEYTYPE_IS(iter->second, vector<bool>) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<bool>) << endl;
+    IF_ANY_KEYTYPE_IS(iter->second, std::vector<bool>) {
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, std::vector<bool>) << std::endl;
       continue;
     }
-    IF_ANY_KEYTYPE_IS(iter->second, vector<double>) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<double>) << endl;
+    IF_ANY_KEYTYPE_IS(iter->second, std::vector<double>) {
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, std::vector<double>) << std::endl;
       continue;
     }
-    IF_ANY_KEYTYPE_IS(iter->second, vector<string>) {
-      o << *ANY_TO_CONST_KEY_PTR(iter->second, vector<string>) << endl;
+    IF_ANY_KEYTYPE_IS(iter->second, std::vector<std::string>) {
+      o << *ANY_TO_CONST_KEY_PTR(iter->second, std::vector<std::string>)
+        << std::endl;
       continue;
     }
-    THROW_GETKW("Unknown key type!");
+    GETKW_ERROR("Unknown key type!");
   }
 
-  map<string, Section *>::const_iterator s_it;
+  std::map<std::string, Section *>::const_iterator s_it;
   for (s_it = sects.begin(); s_it != sects.end(); ++s_it) {
-    o << *s_it->second << endl;
+    o << *s_it->second << std::endl;
   }
 
   o << "}";
@@ -398,35 +406,43 @@ ostream & Section::repr(ostream & o) const {
 template void Section::addKey(const Keyword<int> *);
 template void Section::addKey(const Keyword<double> *);
 template void Section::addKey(const Keyword<bool> *);
-template void Section::addKey(const Keyword<string> *);
-template void Section::addKey(const Keyword<vector<int> > *);
-template void Section::addKey(const Keyword<vector<double> > *);
-template void Section::addKey(const Keyword<vector<bool> > *);
-template void Section::addKey(const Keyword<vector<string> > *);
+template void Section::addKey(const Keyword<std::string> *);
+template void Section::addKey(const Keyword<std::vector<int>> *);
+template void Section::addKey(const Keyword<std::vector<double>> *);
+template void Section::addKey(const Keyword<std::vector<bool>> *);
+template void Section::addKey(const Keyword<std::vector<std::string>> *);
 
 template void Section::addKey(const Keyword<int> &);
 template void Section::addKey(const Keyword<double> &);
 template void Section::addKey(const Keyword<bool> &);
-template void Section::addKey(const Keyword<string> &);
-template void Section::addKey(const Keyword<vector<int> > &);
-template void Section::addKey(const Keyword<vector<double> > &);
-template void Section::addKey(const Keyword<vector<bool> > &);
-template void Section::addKey(const Keyword<vector<string> > &);
+template void Section::addKey(const Keyword<std::string> &);
+template void Section::addKey(const Keyword<std::vector<int>> &);
+template void Section::addKey(const Keyword<std::vector<double>> &);
+template void Section::addKey(const Keyword<std::vector<bool>> &);
+template void Section::addKey(const Keyword<std::vector<std::string>> &);
 
-template const Keyword<int> & Section::getKey(const string &) const;
-template const Keyword<double> & Section::getKey(const string &) const;
-template const Keyword<bool> & Section::getKey(const string &) const;
-template const Keyword<string> & Section::getKey(const string &) const;
-template const Keyword<vector<int> > & Section::getKey(const string &) const;
-template const Keyword<vector<double> > & Section::getKey(const string &) const;
-template const Keyword<vector<bool> > & Section::getKey(const string &) const;
-template const Keyword<vector<string> > & Section::getKey(const string &) const;
+template const Keyword<int> & Section::getKey(const std::string &) const;
+template const Keyword<double> & Section::getKey(const std::string &) const;
+template const Keyword<bool> & Section::getKey(const std::string &) const;
+template const Keyword<std::string> & Section::getKey(const std::string &) const;
+template const Keyword<std::vector<int>> & Section::getKey(
+    const std::string &) const;
+template const Keyword<std::vector<double>> & Section::getKey(
+    const std::string &) const;
+template const Keyword<std::vector<bool>> & Section::getKey(
+    const std::string &) const;
+template const Keyword<std::vector<std::string>> & Section::getKey(
+    const std::string &) const;
 
-template const int & Section::get<int>(const string &) const;
-template const bool & Section::get<bool>(const string &) const;
-template const double & Section::get<double>(const string &) const;
-template const string & Section::get<string>(const string &) const;
-template const vector<int> & Section::get<vector<int> >(const string &) const;
-template const vector<double> & Section::get<vector<double> >(const string &) const;
-template const vector<bool> & Section::get<vector<bool> >(const string &) const;
-template const vector<string> & Section::get<vector<string> >(const string &) const;
+template const int & Section::get<int>(const std::string &) const;
+template const bool & Section::get<bool>(const std::string &) const;
+template const double & Section::get<double>(const std::string &) const;
+template const std::string & Section::get<std::string>(const std::string &) const;
+template const std::vector<int> & Section::get<std::vector<int>>(
+    const std::string &) const;
+template const std::vector<double> & Section::get<std::vector<double>>(
+    const std::string &) const;
+template const std::vector<bool> & Section::get<std::vector<bool>>(
+    const std::string &) const;
+template const std::vector<std::string> & Section::get<std::vector<std::string>>(
+    const std::string &) const;

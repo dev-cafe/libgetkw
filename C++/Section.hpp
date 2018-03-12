@@ -12,7 +12,7 @@
  * getkw library, see: <http://getkw.readthedocs.io/>
  */
 
-/** \file Section.hpp
+/*! \file Section.hpp
  *
  * \date Jun 3, 2009
  * \author Jonas Juselius <jonas.juselius@uit.no> \n
@@ -21,34 +21,30 @@
  * \brief Container for Sections and Keywords
  */
 
-#ifndef SECTION_H_
-#define SECTION_H_
+#pragma once
 
-#include <fstream>
+#include <iosfwd>
 #include <map>
 #include <string>
 #include <vector>
 
 #include <boost/any.hpp>
 
-using namespace std;
+template <typename T> class Keyword;
 
-#include "GetkwError.hpp"
-#include "Keyword.hpp"
-
-class Section {
+class Section final {
 public:
   Section(const std::string & name, const std::string & tag = "");
   Section(const Section & s);
   Section & operator=(const Section & s);
-  virtual ~Section();
+  ~Section();
   const Section & getSect(const std::string & path) const;
-  template <class T> const Keyword<T> & getKey(const std::string & path) const;
-  template <class T> const T & get(const std::string & path) const;
+  template <typename T> const Keyword<T> & getKey(const std::string & path) const;
+  template <typename T> const T & get(const std::string & path) const;
   void addSect(Section & sect);
   void addSect(Section *);
-  template <class T> void addKey(const Keyword<T> & key);
-  template <class T> void addKey(const Keyword<T> * key);
+  template <typename T> void addKey(const Keyword<T> & key);
+  template <typename T> void addKey(const Keyword<T> * key);
   static Section * readSect(std::ifstream & fis);
   void print() const;
   std::ostream & repr(std::ostream & o) const;
@@ -74,16 +70,16 @@ public:
     return get<std::string>(path);
   }
   const std::vector<int> getIntVec(const std::string & path) const {
-    return get<std::vector<int> >(path);
+    return get<std::vector<int>>(path);
   }
   const std::vector<double> getDblVec(const std::string & path) const {
-    return get<std::vector<double> >(path);
+    return get<std::vector<double>>(path);
   }
   const std::vector<bool> getBoolVec(const std::string & path) const {
-    return get<std::vector<bool> >(path);
+    return get<std::vector<bool>>(path);
   }
   const std::vector<std::string> getStrVec(const std::string & path) const {
-    return get<std::vector<std::string> >(path);
+    return get<std::vector<std::string>>(path);
   }
   const std::vector<std::string> getData(const std::string & path) const {
     return getStrVec(path);
@@ -111,5 +107,3 @@ protected:
   bool has_sect(const std::string & name) const;
   bool has_tag(const std::string & name) const;
 };
-
-#endif /* SECTION_H_ */
