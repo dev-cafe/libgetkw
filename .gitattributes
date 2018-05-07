@@ -16,6 +16,7 @@ Fortran/*.f90 licensefile=.githooks/LICENSE-Fortran
 
 # Python files
 Python/*.py licensefile=.githooks/LICENSE-Python
+examples/Example.py licensefile=.githooks/LICENSE-Python
 
 # Tests
 tests/*.hpp licensefile=.githooks/LICENSE-C++
