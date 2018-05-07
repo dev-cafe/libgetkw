@@ -36,9 +36,12 @@ def main():
     global topsect
     usage = "usage: %prog [options] [config] inpfile"
     cmdln = optparse.OptionParser(usage=usage)
-    cmdln.add_option('-V', '--version', action='store', dest='version', help='print version')
-    cmdln.add_option('-v', '--verbose', action='store', dest='verbose', help='be verbose')
-    cmdln.add_option('-d', '--debug', action='store', dest='debug', help='debug level')
+    cmdln.add_option(
+        '-V', '--version', action='store', dest='version', help='print version')
+    cmdln.add_option(
+        '-v', '--verbose', action='store', dest='verbose', help='be verbose')
+    cmdln.add_option(
+        '-d', '--debug', action='store', dest='debug', help='debug level')
     (opts, args) = cmdln.parse_args()
 
     if (len(args) == 0):

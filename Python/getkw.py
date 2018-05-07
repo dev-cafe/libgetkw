@@ -20,8 +20,10 @@ import string
 import sys
 from copy import deepcopy
 
-from pyparsing import (Combine, Forward, Group, Literal, ParseException, Regex, SkipTo, StringEnd, Word, ZeroOrMore,
-                       alphanums, alphas, delimitedList, line, lineno, pythonStyleComment, quotedString, removeQuotes)
+from pyparsing import (Combine, Forward, Group, Literal, ParseException, Regex,
+                       SkipTo, StringEnd, Word, ZeroOrMore, alphanums, alphas,
+                       delimitedList, line, lineno, pythonStyleComment,
+                       quotedString, removeQuotes)
 
 verbose = True
 strict = True
@@ -101,7 +103,8 @@ class Section:
         s = self.sect
         if sect.name in s:
             if sect.tag in s[sect.name]:
-                print('Error: Section "{}" already defined!'.format(sect.fullname))
+                print('Error: Section "{}" already defined!'.format(
+                    sect.fullname))
                 sys.exit(1)
             s[sect.name][sect.tag] = sect
         else:
@@ -112,13 +115,15 @@ class Section:
         if kw.name not in self.kw:
             self.kw[kw.name] = kw
         else:
-            print('Error: Keyword "{}.{}" already defined!'.format(self.name, kw.name))
+            print('Error: Keyword "{}.{}" already defined!'.format(
+                self.name, kw.name))
             sys.exit(1)
         kw.isset = set
 
     def add_kw(self, name, typ, arg=None, req=False, set=False, callback=None):
         if name in self.kw:
-            print('Error: Keyword "{}.{}" already defined!'.format(self.name, kw.name))
+            print('Error: Keyword "{}.{}" already defined!'.format(
+                self.name, kw.name))
             sys.exit(1)
         kw = Keyword(name, typ, arg, req, callback)
         kw.isset = set
@@ -354,7 +359,8 @@ class Keyword:
 
         if self.is_array and self.nargs > 0:
             if len(arg) != self.nargs:
-                print("Keyword length mismatch {0}({1:d}): {2:d}".format(self.name, self.nargs, len(arg)))
+                print("Keyword length mismatch {0}({1:d}): {2:d}".format(
+                    self.name, self.nargs, len(arg)))
                 sys.exit(1)
             self.arg = arg
         else:
@@ -407,7 +413,8 @@ class Keyword:
         if templ.nargs > -1:  #  < 0 == unlimited arg length
             if templ.nargs != len(self.arg):
                 print('>>> Invalid data length in: {}'.format(path))
-                print(' -> wanted {:d}, got {:d}'.format(templ.nargs, len(self.arg)))
+                print(' -> wanted {:d}, got {:d}'.format(
+                    templ.nargs, len(self.arg)))
                 sys.exit(1)
         return True
 
@@ -426,7 +433,8 @@ class Keyword:
                 if type(self.arg[i]) == int:
                     self.arg[i] = float(self.arg[i])
                 if not type(self.arg[i]) == float:
-                    print('getkw: Not a real: {} = {}'.format(self.name, self.arg[i]))
+                    print('getkw: Not a real: {} = {}'.format(
+                        self.name, self.arg[i]))
                     raise TypeError
         elif (self.type == 'BOOL' or self.type == 'BOOL_ARRAY'):
             for i in self.arg:
@@ -470,7 +478,8 @@ class Keyword:
             tmp = ''
             for i in self.arg:
                 tmp = tmp + str(i) + '\n'
-                s = "{} {} {:d} {}\n".format(self.type, self.name, nargs, self.isset)
+                s = "{} {} {:d} {}\n".format(self.type, self.name, nargs,
+                                             self.isset)
         return s + tmp
 
 
@@ -613,7 +622,8 @@ class GetkwParser:
         else:
             k = self.path[-1].fetch_kw(name)
             if k is None:
-                print("Unknown keyword '{}' line: {:d}".format(name, lineno(self.loc, self.strg)))
+                print("Unknown keyword '{}' line: {:d}".format(
+                    name, lineno(self.loc, self.strg)))
                 if strict:
                     sys.exit(1)
                 argt = None
@@ -636,7 +646,8 @@ class GetkwParser:
         else:
             k = self.path[-1].fetch_kw(name)
             if k is None:
-                print("Unknown keyword '{}', line: {:d}".format(name, lineno(self.loc, self.strg)))
+                print("Unknown keyword '{}', line: {:d}".format(
+                    name, lineno(self.loc, self.strg)))
                 if strict:
                     sys.exit(1)
                 argt = None
@@ -645,8 +656,10 @@ class GetkwParser:
                     pass
                 elif len(arg) != k.nargs:
                     print("Invalid number of elements for key '{}',\
-                           line: {:d}".format(name, lineno(self.loc, self.strg)))
-                    print("  -> {:d} required, {:d} given.".format(k.nargs, len(arg)))
+                           line: {:d}".format(name, lineno(self.loc,
+                                                           self.strg)))
+                    print("  -> {:d} required, {:d} given.".format(
+                        k.nargs, len(arg)))
                     if strict:
                         sys.exit(1)
                 argt = self.check_type(arg, k.type)
@@ -776,7 +789,8 @@ class GetkwParser:
 
 
 def parse_error(s, t, d, err):
-    print("Parse error, line {:d}: {}".format(lineno(err.loc, err.pstr), line(err.loc, err.pstr)))
+    print("Parse error, line {:d}: {}".format(
+        lineno(err.loc, err.pstr), line(err.loc, err.pstr)))
     sys.exit(1)
 
 
