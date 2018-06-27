@@ -65,20 +65,20 @@ endmacro()
 macro(option_with_print variable msge default)
   print_option(${variable} ${default})
   option(${variable} ${msge} ${default})
-endmacro(option_with_print)
+endmacro()
 
 # Wraps an option with a default other than ON/OFF and prints it
 # Written by Lori A. Burns (@loriab) and Ryan M. Richard (@ryanmrichard)
-# NOTE: Can\'t combine with above b/c CMake handles ON/OFF options specially
+# NOTE: Can't combine with above b/c CMake handles ON/OFF options specially
 # NOTE2: CMake variables are always defined so need to further check for if
-#       they are the NULL string. This is also why weneed the force
+#       they are the NULL string. This is also why we need the force
 # Syntax: option_with_default(<option name> <description> <default value>)
 macro(option_with_default variable msge default)
   print_option(${variable} "${default}")
   if(NOT DEFINED ${variable} OR "${${variable}}" STREQUAL "")
     set(${variable} "${default}" CACHE STRING ${msge} FORCE)
   endif()
-endmacro(option_with_default)"""
+endmacro()"""
     return s
 
 
@@ -169,7 +169,7 @@ def gen_cmakelists(project_name, project_language, min_cmake_version, default_bu
     s.append('cmake_minimum_required(VERSION {0} FATAL_ERROR)'.format(min_cmake_version))
 
     s.append('\n# project name')
-    s.append('project({0} {1})'.format(project_name, project_language))
+    s.append('project({0} LANGUAGES {1})'.format(project_name, project_language))
 
     s.append('\n# do not rebuild if rules (compiler flags) change')
     s.append('set(CMAKE_SKIP_RULE_DEPENDENCY TRUE)')
@@ -198,7 +198,7 @@ def gen_cmakelists(project_name, project_language, min_cmake_version, default_bu
         rel_cmake_module_path = os.path.join(relative_path, directory)
         # on windows cmake corrects this so we have to make it wrong again
         rel_cmake_module_path = rel_cmake_module_path.replace('\\', '/')
-        s.append('set(CMAKE_MODULE_PATH ${{CMAKE_MODULE_PATH}} ${{PROJECT_SOURCE_DIR}}/{0})'.format(rel_cmake_module_path))
+        s.append('list(APPEND CMAKE_MODULE_PATH ${{PROJECT_SOURCE_DIR}}/{0})'.format(rel_cmake_module_path))
 
     if len(modules) > 0:
         s.append('\n# included cmake modules')

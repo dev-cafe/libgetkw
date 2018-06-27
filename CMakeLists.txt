@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 # project name
-project(getkw CXX)
+project(getkw LANGUAGES CXX)
 
 # do not rebuild if rules (compiler flags) change
 set(CMAKE_SKIP_RULE_DEPENDENCY TRUE)
@@ -34,24 +34,24 @@ endmacro()
 macro(option_with_print variable msge default)
   print_option(${variable} ${default})
   option(${variable} ${msge} ${default})
-endmacro(option_with_print)
+endmacro()
 
 # Wraps an option with a default other than ON/OFF and prints it
 # Written by Lori A. Burns (@loriab) and Ryan M. Richard (@ryanmrichard)
 # NOTE: Can't combine with above b/c CMake handles ON/OFF options specially
 # NOTE2: CMake variables are always defined so need to further check for if
-#       they are the NULL string. This is also why weneed the force
+#       they are the NULL string. This is also why we need the force
 # Syntax: option_with_default(<option name> <description> <default value>)
 macro(option_with_default variable msge default)
   print_option(${variable} "${default}")
   if(NOT DEFINED ${variable} OR "${${variable}}" STREQUAL "")
     set(${variable} "${default}" CACHE STRING ${msge} FORCE)
   endif()
-endmacro(option_with_default)
+endmacro()
 
 # directories which hold included cmake modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/custom)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/downloaded)
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/custom)
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/downloaded)
 
 # included cmake modules
 include(autocmake_cxx)
