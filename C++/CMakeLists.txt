@@ -2,25 +2,27 @@ find_package(Boost REQUIRED)
 
 include(${CMAKE_CURRENT_LIST_DIR}/CXXFlags.cmake)
 
-add_library(getkw "")
+add_library(getkw STATIC "")
+
+list(APPEND _public_headers
+   Getkw.hpp
+   GetkwError.hpp
+   Keyword.hpp
+   Section.hpp
+   messages.hpp
+  )
 
 target_sources(getkw
   PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/Getkw.cpp
     ${CMAKE_CURRENT_LIST_DIR}/Section.cpp
   PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/Getkw.hpp>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/GetkwError.hpp>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/Keyword.hpp>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/Section.hpp>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/messages.hpp>
-    # FIXME Are these needed?
-    $<INSTALL_INTERFACE:${INSTALL_INCLUDEDIR}/Getkw/Getkw.hpp>
-    $<INSTALL_INTERFACE:${INSTALL_INCLUDEDIR}/Getkw/Getkw.hpp>
-    $<INSTALL_INTERFACE:${INSTALL_INCLUDEDIR}/Getkw/GetkwError.hpp>
-    $<INSTALL_INTERFACE:${INSTALL_INCLUDEDIR}/Getkw/Keyword.hpp>
-    $<INSTALL_INTERFACE:${INSTALL_INCLUDEDIR}/Getkw/Section.hpp>
-    $<INSTALL_INTERFACE:${INSTALL_INCLUDEDIR}/Getkw/messages.hpp>
+    $<BUILD_INTERFACE:$<JOIN:${CMAKE_CURRENT_LIST_DIR}/,${_public_headers}>>
+  )
+
+target_compile_definitions(getkw
+  INTERFACE
+    $<INSTALL_INTERFACE:USING_getkw>
   )
 
 target_compile_options(getkw
@@ -49,14 +51,14 @@ set_target_properties(getkw
     CXX_STANDARD_REQUIRED ON
     POSITION_INDEPENDENT_CODE 1
     MACOSX_RPATH ON
-    PUBLIC_HEADER "Getkw.hpp;GetkwError.hpp;Keyword.hpp;Section.hpp;messages.hpp"
+    PUBLIC_HEADER "${_public_headers}"
   )
 
 install(
   TARGETS
     getkw
   EXPORT
-    GetkwTargets
+    getkwTargets
   ARCHIVE
     DESTINATION ${INSTALL_LIBDIR}
     COMPONENT lib
@@ -67,15 +69,15 @@ install(
     DESTINATION ${INSTALL_LIBDIR}
     COMPONENT lib
   PUBLIC_HEADER
-    DESTINATION ${INSTALL_INCLUDEDIR}/Getkw
+    DESTINATION ${INSTALL_INCLUDEDIR}/getkw
     COMPONENT dev
   )
 
 install(
   EXPORT
-    GetkwTargets
+    getkwTargets
   NAMESPACE
-    "Getkw::"
+    "getkw::"
   DESTINATION
     ${INSTALL_CMAKEDIR}
   COMPONENT
@@ -84,21 +86,21 @@ install(
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-  ${CMAKE_CURRENT_BINARY_DIR}/GetkwConfigVersion.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/getkwConfigVersion.cmake
   VERSION ${PROJECT_VERSION}
   COMPATIBILITY SameMajorVersion
   )
 
 configure_package_config_file(
-  ${PROJECT_SOURCE_DIR}/cmake/GetkwConfig.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/GetkwConfig.cmake
+  ${PROJECT_SOURCE_DIR}/cmake/getkwConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/getkwConfig.cmake
   INSTALL_DESTINATION ${INSTALL_CMAKEDIR}
   )
 
 install(
   FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/GetkwConfig.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/GetkwConfigVersion.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/getkwConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/getkwConfigVersion.cmake
   DESTINATION
     ${INSTALL_CMAKEDIR}
   )

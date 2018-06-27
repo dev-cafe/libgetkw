@@ -18,13 +18,11 @@ target_compile_definitions(cxx_test
     BOOST_NO_EXCEPTIONS
   )
 
-file(COPY @pcmsolver.inp DESTINATION ${getkw_BINARY_DIR}/${INSTALL_BINDIR})
-
 add_test(
   NAME
     read_parsed
   COMMAND
     $<TARGET_FILE:cxx_test>
   WORKING_DIRECTORY
-    ${getkw_BINARY_DIR}/bin
+    ${CMAKE_CURRENT_LIST_DIR}
   )
