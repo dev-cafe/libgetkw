@@ -68,6 +68,7 @@ install:
   - pipenv $PYTHON install
   - pipenv run python --version
 before_script:
+  - source $(pipenv --venv)/bin/activate
   - cd $TRAVIS_BUILD_DIR
   - echo 'Build set up summary'
   - |
@@ -80,9 +81,9 @@ script:
       BUNDLE_GEMFILE=.ci/Gemfile bundle exec danger --dangerfile=.ci/Dangerfile --verbose
     fi
   - |
-    pipenv run python setup --cxx=$CXX_COMPILER $COVERAGE
+    pipenv run python setup --cxx=$CXX_COMPILER $COVERAGE --prefix=$HOME/getkw
   - cd build
-  - cmake --build . -- jobs=2 VERBOSE=1
+  - cmake --build . --target install -- jobs=2 VERBOSE=1
   - ctest --output-on-failure --verbose --parallel 2
 after_success:
   - |

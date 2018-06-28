@@ -18,14 +18,21 @@ environment:
       MSYSTEM: MINGW64
       GENERATOR: "MSYS Makefiles"
 
+matrix:
+  fast_finish: true
+
 init:
   - set PATH=C:\msys64\%MSYSTEM%\bin;C:\msys64\usr\bin;%PATH%
-  - set PATH=C:\Libraries\boost_1_59_0;%PATH%
+
+cache:
+  - c:\msys64\var\cache\pacman\pkg
+  - c:\tools\vcpkg\installed\
 
 install:
   - pacman -S --needed --noconfirm pacman-mirrors
   - pacman -Syuu --needed --noconfirm --ask=127
-  - pip install pipenv
+  - pacman -S --noconfirm mingw64/mingw-w64-x86_64-boost
+  - python -m pip install pipenv
   - pipenv install
 
 before_build:
@@ -33,9 +40,9 @@ before_build:
   - pipenv --version
 
 build_script:
-  - pipenv run python setup --cxx=g++ --generator="%GENERATOR%"
+  - pipenv run python setup --cxx=g++ --generator="%GENERATOR%" --prefix="C:\Software\getkw"
   - cd build
-  - cmake --build .
+  - cmake --build . --target install
   - ctest --parallel 2 --output-on-failure --verbose
 
 deploy: off
