@@ -1,5 +1,8 @@
 install(
-  FILES getkw.py
+  FILES
+    getkw.py
   DESTINATION
-  ${CMAKE_INSTALL_LIBDIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages
+    ${INSTALL_PYMODDIR}
+  COMPONENT
+    bin
   )

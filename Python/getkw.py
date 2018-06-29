@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# vim:syntax=python
 #
 ## @package getkw.py
 ## @brief getkw -- a simple input parser for Fortran 95
@@ -16,16 +15,15 @@
 # Known bugs: names with '-' mess things up...
 #
 
-import sys, os, inspect
-import re, string
+import re
+import string
+import sys
 from copy import deepcopy
-from types import *
-from pyparsing import \
- Literal, Word, ZeroOrMore, Group, Dict, Optional, removeQuotes, \
- printables, ParseException, restOfLine, alphas, alphanums, nums, \
- pythonStyleComment, oneOf, quotedString, SkipTo, Forward, \
- commaSeparatedList, OneOrMore, Combine, srange, delimitedList, \
- downcaseTokens, line, lineno, StringEnd, Regex
+
+from pyparsing import (Combine, Forward, Group, Literal, ParseException, Regex,
+                       SkipTo, StringEnd, Word, ZeroOrMore, alphanums, alphas,
+                       delimitedList, line, lineno, pythonStyleComment,
+                       quotedString, removeQuotes)
 
 verbose = True
 strict = True
@@ -34,8 +32,8 @@ strict = True
 class Section:
     """Section class
 
-	Placehoder for section objects
-	"""
+    Placehoder for section objects
+    """
 
     def __init__(self, name, tag=None, req=False, callback=None):
         self.name = name
@@ -53,9 +51,9 @@ class Section:
         return cmp(self.name, other.name)
 
     def __getitem__(self, key):
-        if self.sect.has_key(key):
+        if key in self.sect:
             foo = self.sect
-        elif self.kw.has_key(key):
+        elif key in self.kw:
             foo = self.kw
         else:
             return None
@@ -67,7 +65,7 @@ class Section:
         elif isinstance(val, Keyword):
             self.kw[k] = val
         else:
-            raise TypeError, 'Not a Section or Keyword'
+            raise TypeError('Not a Section or Keyword')
 
     def get(self, k):
         return self.__getitem__(k)
@@ -76,26 +74,26 @@ class Section:
         self.__setitem__(k, val)
 
     def _split_tag(self, key):
-        i = string.find(key, '<')
+        i = key.find('<')
         if i == -1:
             return (key, None)
-        j = string.rfind(key, '>')
+        j = key.rfind('>')
         if j == -1:
-            raise KeyError, 'faulty tag spec'
+            raise KeyError('faulty tag spec')
         return (key[0:i], key[i + 1:j])
 
     def is_set(self, key=None):
         if key is None:
             return self.isset
-        if self.kw.has_key(key):
+        if key in self.kw:
             return self.kw[key].is_set()
         (key, tag) = self._split_tag(key)
-        if self.sect.has_key(key):
+        if key in self.sect:
             sects = self.sect[key]
-            if sects.has_key(tag):
+            if tag in sects:
                 return sects[tag].is_set()
             else:
-                raise KeyError, 'missing key'
+                raise KeyError('missing key')
         return None
 
     def is_required(self):
@@ -103,10 +101,10 @@ class Section:
 
     def add_sect(self, sect, set=False):
         s = self.sect
-        if s.has_key(sect.name):
-            if s[sect.name].has_key(sect.tag):
-                print 'Error: Section "%s" already defined!' % \
-                  (sect.fullname)
+        if sect.name in s:
+            if sect.tag in s[sect.name]:
+                print('Error: Section "{}" already defined!'.format(
+                    sect.fullname))
                 sys.exit(1)
             s[sect.name][sect.tag] = sect
         else:
@@ -114,25 +112,25 @@ class Section:
         sect.isset = set
 
     def add_kwkw(self, kw, set=False):
-        if not self.kw.has_key(kw.name):
+        if kw.name not in self.kw:
             self.kw[kw.name] = kw
         else:
-            print 'Error: Keyword "%s.%s" already defined!' % \
-              (self.name, kw.name)
+            print('Error: Keyword "{}.{}" already defined!'.format(
+                self.name, kw.name))
             sys.exit(1)
         kw.isset = set
 
     def add_kw(self, name, typ, arg=None, req=False, set=False, callback=None):
-        if self.kw.has_key(name):
-            print 'Error: Keyword "%s.%s" already defined!' % \
-              (self.name, kw.name)
+        if name in self.kw:
+            print('Error: Keyword "{}.{}" already defined!'.format(
+                self.name, kw.name))
             sys.exit(1)
         kw = Keyword(name, typ, arg, req, callback)
         kw.isset = set
         self.kw[name] = kw
 
     def fetch_kw(self, name):
-        if self.kw.has_key(name):
+        if name in self.kw:
             return self.kw[name]
         return None
 
@@ -148,7 +146,7 @@ class Section:
             try:
                 s = s[name]
             except:
-                print 'Invalid section: ', pname
+                print('Invalid section: {}'.format(pname))
                 return None
             else:
                 pname = pname + '.'
@@ -169,32 +167,30 @@ class Section:
                 try:
                     s = s[name]
                 except:
-                    str = 'Invalid section: ' + pname
-                    raise AttributeError, str
+                    raise AttributeError('Invalid section: {}'.format(pname))
                 else:
                     pname = pname + '.'
             pname = pname + path[-1:][0]
             i = path[-1:][0]
             k = s[tag].kw
-        if k.has_key(i):
+        if i in k:
             return k[i]
-        str = 'No such key: ' + pname
-        raise AttributeError, str
+        raise AttributeError('No such key: {}'.format(pname))
 
     def getkw(self, path):
         kw = self.get_keyword(path)
         return kw.arg
 
     def setkw(self, name, arg):
-        if self.kw.has_key(name):
+        if name in self.kw:
             self.kw[name].setkw(arg)
         else:
-            print 'Error: invalid kw: ', name
+            print('Error: invalid kw: {}'.format(name))
 
     def fetch_sect(self, name):
         (key, tag) = self._split_tag(name)
-        if self.sect.has_key(key):
-            if self.sect[key].has_key(tag):
+        if key in self.sect:
+            if tag in self.sect[key]:
                 return self.sect[key][tag]
         return None
 
@@ -220,10 +216,10 @@ class Section:
     # add missing keys
     def equalize(self, templ):
         for i in templ.kw:
-            if not self.kw.has_key(i):
+            if i not in self.kw:
                 self.kw[i] = deepcopy(templ.kw[i])
         for i in templ.sect:
-            if not self.sect.has_key(i):
+            if i not in self.sect:
                 self.sect[i] = {None: deepcopy(templ.sect[i][None])}
             for tag in self.sect[i]:
                 self.sect[i][tag].equalize(templ.sect[i][None])
@@ -250,7 +246,7 @@ class Section:
             path = path + dlm + self.name
             dlm = '.'
         if self.req and not self.isset:
-            print '>>> Required section not set: %s \n' % (path)
+            print('>>> Required section not set: {} \n'.format(path))
             sys.exit(0)
         for i in self.kw:
             i.sanity_check(path)
@@ -267,18 +263,18 @@ class Section:
             path = path + dlm + self.name
             dlm = '.'
         if templ.req and not self.isset:
-            print '>>> Required section not set: %s \n' % path
+            print('>>> Required section not set: {} \n'.format(path))
             sys.exit(1)
         for i in self.kw:
             j = templ.fetch_kw(i)
             if j is None:
-                print '>>> Invalid keyword: %s ' % (path + dlm + i)
+                print('>>> Invalid keyword: {} '.format(path + dlm + i))
                 sys.exit(1)
             self.kw[i].xvalidate(j, path)
         for i in self.sect:
             j = templ.fetch_sect(i)
             if j is None:
-                print '>>> Invalid section: %s ' % (path + dlm + i)
+                print('>>> Invalid section: {} '.format(path + dlm + i))
                 sys.exit(1)
             for tag in self.sect[i]:
                 self.sect[i][tag].xvalidate(j, path)
@@ -292,18 +288,18 @@ class Section:
         for i in self.kw:
             nkw = nkw + 1
 
-        s = "SECT %s %d %s\n" % (self.name, nsect, self.isset)
+        s = "SECT {0} {1:d} {2}\n".format(self.name, nsect, self.isset)
         if self.tag is not None:
-            s = s + "TAG T KW %d\n" % (nkw)
-            s = s + self.tag + '\n'
+            s += "TAG T KW {:d}\n".format(nkw)
+            s += self.tag + '\n'
         else:
-            s = s + "TAG F KW %d\n" % (nkw)
+            s += "TAG F KW {:d}\n".format(nkw)
 
         for i in self.kw:
-            s = s + str(self.kw[i])
+            s += str(self.kw[i])
         for i in self.sect:
             for tag in self.sect[i]:
-                s = s + str(self.sect[i][tag])
+                s += str(self.sect[i][tag])
         return s
 
     def check_key(self, key):
@@ -311,7 +307,7 @@ class Section:
         try:
             k = self.sect[name][tag]
         except:
-            print 'No such key: ', key
+            print('No such key: {}'.format(key))
             sys.exit(1)
         if k is not None:
             if k.is_set():
@@ -321,7 +317,7 @@ class Section:
 
 class Keyword:
     """Placehoder for keyword objects
-	"""
+    """
 
     def __init__(self, name, typ, arg=None, req=False, callback=None):
         self.name = name
@@ -363,7 +359,8 @@ class Keyword:
 
         if self.is_array and self.nargs > 0:
             if len(arg) != self.nargs:
-                print "keyword lenght mismatsh %s(%i): %i" % (self.name, self.nargs, len(arg))
+                print("Keyword length mismatch {0}({1:d}): {2:d}".format(
+                    self.name, self.nargs, len(arg)))
                 sys.exit(1)
             self.arg = arg
         else:
@@ -371,7 +368,7 @@ class Keyword:
         try:
             self.typecheck()
         except TypeError:
-            print 'Invalid argument:', arg
+            print('Invalid argument: {}'.format(arg))
             sys.exit(1)
         self.isset = True
 
@@ -390,7 +387,7 @@ class Keyword:
         else:
             path = path + '.' + self.name
         if self.req and not self.isset:
-            print '>>> Required key not set: %s' % (path)
+            print('>>> Required key not set: {}'.format(path))
             if strict:
                 sys.exit(1)
 
@@ -400,23 +397,24 @@ class Keyword:
         else:
             path = path + '.' + self.name
         if templ.req and not self.isset:
-            print '>>> Required key not set: %s' % (path)
+            print('>>> Required key not set: {}'.format(path))
             sys.exit(1)
         if templ.type != self.type:
             if self.type == 'INT':
-                self.arg = map(float, self.arg)
+                self.arg = list(map(float, self.arg))
                 self.type = 'DBL'
             elif self.type == 'INT_ARRAY':
-                self.arg = map(float, self.arg)
+                self.arg = list(map(float, self.arg))
                 self.type = 'DBL_ARRAY'
             else:
-                print '>>> Invalid data type in: %s' % (path)
-                print ' -> wanted %s, got %s' % (templ.type, self.type)
+                print('>>> Invalid data type in: {}'.format(path))
+                print(' -> wanted {}, got {}'.format(templ.type, self.type))
                 sys.exit(1)
         if templ.nargs > -1:  #  < 0 == unlimited arg length
             if templ.nargs != len(self.arg):
-                print '>>> Invalid data length in: %s' % (path)
-                print ' -> wanted %d, got %d' % (templ.nargs, len(self.arg))
+                print('>>> Invalid data length in: {}'.format(path))
+                print(' -> wanted {:d}, got {:d}'.format(
+                    templ.nargs, len(self.arg)))
                 sys.exit(1)
         return True
 
@@ -427,27 +425,28 @@ class Keyword:
             return True
         if (self.type == 'INT' or self.type == 'INT_ARRAY'):
             for i in self.arg:
-                if not type(i) == IntType:
-                    print 'getkw: Not an integer: ', self.name, '=', i
+                if not type(i) == int:
+                    print(('getkw: Not an integer: ', self.name, '=', i))
                     raise TypeError
         elif (self.type == 'DBL' or self.type == 'DBL_ARRAY'):
             for i in range(len(self.arg)):
-                if type(self.arg[i]) == IntType:
+                if type(self.arg[i]) == int:
                     self.arg[i] = float(self.arg[i])
-                if not type(self.arg[i]) == FloatType:
-                    print 'getkw: Not a real: ', self.name, '=', self.arg[i]
+                if not type(self.arg[i]) == float:
+                    print('getkw: Not a real: {} = {}'.format(
+                        self.name, self.arg[i]))
                     raise TypeError
         elif (self.type == 'BOOL' or self.type == 'BOOL_ARRAY'):
             for i in self.arg:
-                if not type(i) == BooleanType:
-                    print 'getkw: Not a bool: ', self.name, '=', i
+                if not type(i) == bool:
+                    print('getkw: Not a bool: {} = {}'.format(self.name, i))
                     raise TypeError
         elif self.type == 'STR' or self.type == 'STR_ARRAY':
             return True
         elif self.type == 'DATA':
             return True
         else:
-            print 'getkw: Unknown type: ', self.name, '=', self.type
+            print('getkw: Unknown type: {} = {}'.format(self.name, self.type))
             raise TypeError
         return True
 
@@ -479,14 +478,15 @@ class Keyword:
             tmp = ''
             for i in self.arg:
                 tmp = tmp + str(i) + '\n'
-        s = "%s %s %d %s\n" % (self.type, self.name, nargs, self.isset)
+                s = "{} {} {:d} {}\n".format(self.type, self.name, nargs,
+                                             self.isset)
         return s + tmp
 
 
 class Getkw:
     """Unified interface to sections and keywords.
-	Implements a path stack.
-	"""
+    Implements a path stack.
+    """
 
     def __init__(self, top):
         self.top = top
@@ -537,9 +537,9 @@ class Getkw:
 
 class GetkwParser:
     """Implements a class to do the actual parsing of input files and store
-	the results in Sections and Keywords. The parseFile() method returns a
-	Getkw object.
-	"""
+    the results in Sections and Keywords. The parseFile() method returns a
+    Getkw object.
+    """
     bnf = None
     caseless = False
     yes = re.compile(r'(1|yes|true|on)$', re.I)
@@ -598,7 +598,8 @@ class GetkwParser:
         if self.templ is not None:
             x = self.path[-1].fetch_sect(k.name)
             if x is None:
-                print "Invalid section on line %d: \n%s" % (lineno(self.loc, self.strg), line(self.loc, self.strg))
+                print("Invalid section on line {:d}: \n{}".format(
+                    lineno(self.loc, self.strg), line(self.loc, self.strg)))
                 sys.exit(1)
             self.path.append(x)
 
@@ -621,7 +622,8 @@ class GetkwParser:
         else:
             k = self.path[-1].fetch_kw(name)
             if k is None:
-                print "Unknown keyword '%s' line: %d" % (name, lineno(self.loc, self.strg))
+                print("Unknown keyword '{}' line: {:d}".format(
+                    name, lineno(self.loc, self.strg)))
                 if strict:
                     sys.exit(1)
                 argt = None
@@ -644,7 +646,8 @@ class GetkwParser:
         else:
             k = self.path[-1].fetch_kw(name)
             if k is None:
-                print "Unknown keyword '%s', line: %d" % (name, lineno(self.loc, self.strg))
+                print("Unknown keyword '{}', line: {:d}".format(
+                    name, lineno(self.loc, self.strg)))
                 if strict:
                     sys.exit(1)
                 argt = None
@@ -652,9 +655,11 @@ class GetkwParser:
                 if k.nargs == -1:
                     pass
                 elif len(arg) != k.nargs:
-                    print "Invalid number of elements for key '%s',\
-line: %d" % (name, lineno(self.loc, self.strg))
-                    print "  -> %d required, %d given." % (k.nargs, len(arg))
+                    print("Invalid number of elements for key '{}',\
+                           line: {:d}".format(name, lineno(self.loc,
+                                                           self.strg)))
+                    print("  -> {:d} required, {:d} given.".format(
+                        k.nargs, len(arg)))
                     if strict:
                         sys.exit(1)
                 argt = self.check_type(arg, k.type)
@@ -676,7 +681,7 @@ line: %d" % (name, lineno(self.loc, self.strg))
         self.cur.add_kwkw(k, set=True)
 
     def check_type(self, arg, argt):
-        print "You hit a bug! Yipeee!"
+        print("You hit a bug! Yipeee!")
         sys.exit(1)
         if (isinstance(arg, tuple) or isinstance(arg, list)):
             argt = re.sub('_ARRAY', '', argt)
@@ -685,22 +690,26 @@ line: %d" % (name, lineno(self.loc, self.strg))
 
         if argt == 'INT':
             if not ival.match(arg):
-                print 'Invalid type on line %d: Not an int: \n -> %s' % (lineno(self.loc, self.strg),
-                                                                         line(self.loc, self.strg).strip())
+                print('Invalid type on line {:d}: Not an int: \n -> {}'.format(
+                    lineno(self.loc, self.strg),
+                    line(self.loc, self.strg).strip()))
                 sys.exit(1)
         elif argt == 'DBL':
             if not dval.match(arg):
-                print 'Invalid type on line %d: Not a float: \n -> %s' % (lineno(self.loc, self.strg),
-                                                                          line(self.loc, self.strg).strip())
+                print('Invalid type on line {:d}: Not a float: \n -> {}'.format(
+                    lineno(self.loc, self.strg),
+                    line(self.loc, self.strg).strip()))
                 sys.exit(1)
         elif argt == 'BOOL':
             if not lval.match(arg):
-                print 'Invalid type on line %d: Not a bool: \n -> %s' % (lineno(self.loc, self.strg),
-                                                                         line(self.loc, self.strg).strip())
+                print('Invalid type on line {:d}: Not a bool: \n -> {}'.format(
+                    lineno(self.loc, self.strg),
+                    line(self.loc, self.strg).strip()))
                 sys.exit(1)
         elif argt != 'STR':
-            print 'Invalid type on line %d: Not a %s: \n -> %s' % (lineno(self.loc, self.strg), argt,
-                                                                   line(self.loc, self.strg).strip())
+            print('Invalid type on line {:d}: Not a {}: \n -> {}'.format(
+                lineno(self.loc, self.strg), argt,
+                line(self.loc, self.strg).strip()))
             sys.exit(1)
         return argt
 
@@ -725,7 +734,7 @@ line: %d" % (name, lineno(self.loc, self.strg))
         elif GetkwParser.no.match(toks[0]):
             return False
         else:
-            print "Dynga! Perkele."
+            print("Dynga! Perkele.")
         return False
 
     def getkw_bnf(self):
@@ -739,7 +748,7 @@ line: %d" % (name, lineno(self.loc, self.strg))
         dmark = Literal('$').suppress()
         end_data = Literal('$end').suppress()
         prtable = alphanums + r'!$%&*+-./<>?@^_|~'
-        ival = Word('-' + nums)
+        ival = Regex('[-]?\d+')
         dval = Regex('-?\d+\.\d*([eE]?[+-]?\d+)?')
         lval = Regex('([Yy]es|[Nn]o|[Tt]rue|[Ff]alse|[Oo]n|[Oo]ff)')
 
@@ -752,9 +761,7 @@ line: %d" % (name, lineno(self.loc, self.strg))
           Literal("\n").suppress() ^ \
           quotedString.setParseAction(removeQuotes))+array_end
         sect = name + sect_begin
-        tag_val = name ^ ival
-        tag_def = Group(tag_begin + tag_val + tag_end)
-        tag_sect = name + tag_def + sect_begin
+        tag_sect = name + Group(tag_begin + name + tag_end) + sect_begin
 
         # Grammar
         keyword = name + eql + kstr
@@ -773,7 +780,6 @@ line: %d" % (name, lineno(self.loc, self.strg))
         vector.setParseAction(self.store_vector)
         data.setParseAction(self.store_data)
         sect.setParseAction(self.add_sect)
-        tag_val.setParseAction(lambda x: str(x))
         tag_sect.setParseAction(self.add_sect)
         sect_end.setParseAction(self.pop_sect)
 
@@ -783,7 +789,8 @@ line: %d" % (name, lineno(self.loc, self.strg))
 
 
 def parse_error(s, t, d, err):
-    print "Parse error, line %d: %s" % (lineno(err.loc, err.pstr), line(err.loc, err.pstr))
+    print("Parse error, line {:d}: {}".format(
+        lineno(err.loc, err.pstr), line(err.loc, err.pstr)))
     sys.exit(1)
 
 
@@ -794,7 +801,7 @@ def check_opt(sect, key):
     try:
         k = sect[key]
     except:
-        print 'You have a typo in the code for key', key
+        print('You have a typo in the code for key {}'.format(key))
         sys.exit(1)
     if k is not None:
         if k.is_set():
@@ -803,24 +810,24 @@ def check_opt(sect, key):
 
 
 def check_required(list, sect):
-    err = "Error: Required option '%s' not set in section '%s%s'!"
+    err = "Error: Required option '{}' not set in section '{}{}'!"
     for i in list:
         if not check_opt(sect, i):
             if sect.name == sect.tag or sect.tag is None:
-                print err % (i, sect.name, '')
+                print(err.format(i, sect.name, ''))
             else:
-                print err % (i, sect.name, '<' + sect.tag + '>')
+                print(err.format(i, sect.name, '<' + sect.tag + '>'))
             sys.exit(1)
 
 
 def check_ignored(list, sect):
-    warn = "Warning: The '%s' option will be ignored in section '%s%s'."
+    warn = "Warning: The '{}' option will be ignored in section '{}{}'."
     for i in list:
         if check_opt(sect, i):
             if sect.name == sect.tag:
-                print warn % (i, sect.name, '')
+                print(warn.format(i, sect.name, ''))
             else:
-                print warn % (i, sect.name, '<' + sect.tag + '>')
+                print(warn.format(i, sect.name, '<' + sect.tag + '>'))
 
 
 ####################################################
@@ -830,10 +837,10 @@ def test(strng):
     bnf = GetkwParser()
     try:
         tokens = bnf.parseString(strng)
-    except ParseException, err:
-        print err.line
-        print " " * (err.column - 1) + "^"
-        print err
+    except ParseException as err:
+        print((err.line))
+        print((" " * (err.column - 1) + "^"))
+        print(err)
     return tokens
 
 
@@ -868,15 +875,15 @@ raboof {
     foo=1
     bar=1
 
-	foobar<1>{
-		foo=1
-		bar=2
-	        foobar<gnu>{
-		        foo=1
-		        bar=2
-	        }
+    foobar<1>{
+        foo=1
+        bar=2
+            foobar<gnu>{
+                foo=1
+                bar=2
+            }
 
-	}
+    }
 
     $COORD
       o 0.0 0.0 0.0
@@ -887,6 +894,6 @@ raboof {
 
 """
     ini = test(teststr)
-    print ini.top
+    print((ini.top))
 #    foo=ini.get_keyword('raboof.foo')
 #    print dir(foo)
