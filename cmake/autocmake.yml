@@ -1,5 +1,5 @@
 name: getkw
-min_cmake_version: 3.5
+min_cmake_version: 3.3
 setup_script: setup
 url_root: https://github.com/coderefinery/autocmake/raw/master/
 default_build_type: release
