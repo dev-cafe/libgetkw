@@ -2,9 +2,7 @@ language: cpp
 sudo: false
 dist: trusty
 ruby: 2.2.0
-cache:
-  bundler: true
-  pip: true
+
 env:
   global:
     - USE_CCACHE=1
@@ -17,14 +15,14 @@ env:
     - LANG="en_US.UTF-8"
     - LANGUAGE="en_US.UTF-8"
     - PYTHONIOENCODING=UTF-8
+    - CMAKE_VERSION="3.6.3"
+
 matrix:
   include:
     - os: linux
       addons: &1
         apt:
           packages:
-            - cmake3
-            - cmake3-data
             - g++-4.8
             - gcc-4.8
             - gfortran-4.8
@@ -59,14 +57,30 @@ matrix:
         - Fortran_COMPILER='gfortran-7'
         - BOOST_ROOT='/usr/local/opt/boost@1.59'
         - PYTHON='--two'
+
+cache:
+  timeout: 1000
+  bundler: true
+  pip: true
+  directories:
+    - $HOME/Deps/cmake/$CMAKE_VERSION
+
+before_install:
+  # Dependencies are downloaded in $HOME/Downloads and installed in $HOME/Deps
+  - mkdir -p $HOME/Downloads $HOME/Deps
+
 before_install:
   - test -n $CC && unset CC
   - test -n $CXX && unset CXX
   - test -n $FC && unset FC
+
 install:
-  - ./.ci/install_dependencies.sh
+  - ./.ci/install.sh
+  - ./.ci/cmake.sh
+  - export PATH=$HOME/Deps/cmake/$CMAKE_VERSION/bin${PATH:+:$PATH}
   - pipenv $PYTHON install
   - pipenv run python --version
+
 before_script:
   - source $(pipenv --venv)/bin/activate
   - cd $TRAVIS_BUILD_DIR
@@ -75,6 +89,7 @@ before_script:
     if [[ "$RUN_DANGER" = true ]]; then
       bundle install --gemfile=.ci/Gemfile
     fi
+
 script:
   - |
     if [[ "$RUN_DANGER" = true ]]; then
@@ -85,6 +100,7 @@ script:
   - cd build
   - cmake --build . --target install -- jobs=2 VERBOSE=1
   - ctest --output-on-failure --verbose --parallel 2
+
 after_success:
   - |
     if [[ "$COVERAGE" = "--type=debug --coverage" ]]; then
