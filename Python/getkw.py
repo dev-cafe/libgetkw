@@ -16,7 +16,6 @@
 #
 
 import re
-import string
 import sys
 from copy import deepcopy
 
@@ -135,7 +134,7 @@ class Section:
         return None
 
     def find_sect(self, path):
-        path = string.split(path, '.')
+        path = path.split('.')
         name = None
         tag = None
         s = self.sect
@@ -153,7 +152,7 @@ class Section:
         return s[tag]
 
     def get_keyword(self, path):
-        path = string.split(path, '.')
+        path = path.split('.')
         s = self.sect
         k = self.kw
         pname = ''
@@ -478,8 +477,7 @@ class Keyword:
             tmp = ''
             for i in self.arg:
                 tmp = tmp + str(i) + '\n'
-                s = "{} {} {:d} {}\n".format(self.type, self.name, nargs,
-                                             self.isset)
+        s = "{} {} {:d} {}\n".format(self.type, self.name, nargs, self.isset)
         return s + tmp
 
 
