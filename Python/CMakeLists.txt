@@ -1,6 +1,7 @@
 install(
   FILES
     getkw.py
+    pyparsing.py
   DESTINATION
     ${INSTALL_PYMODDIR}
   COMPONENT

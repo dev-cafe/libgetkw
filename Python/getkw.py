@@ -19,10 +19,17 @@ import re
 import sys
 from copy import deepcopy
 
-from pyparsing import (Combine, Forward, Group, Literal, ParseException, Regex,
-                       SkipTo, StringEnd, Word, ZeroOrMore, alphanums, alphas,
-                       delimitedList, line, lineno, pythonStyleComment,
-                       quotedString, removeQuotes)
+try:
+    from pyparsing import (Combine, Forward, Group, Literal, ParseException,
+                           Regex, SkipTo, StringEnd, Word, ZeroOrMore,
+                           alphanums, alphas, delimitedList, line, lineno,
+                           pythonStyleComment, quotedString, removeQuotes)
+
+except ImportError:
+    from .pyparsing import (Combine, Forward, Group, Literal, ParseException,
+                            Regex, SkipTo, StringEnd, Word, ZeroOrMore,
+                            alphanums, alphas, delimitedList, line, lineno,
+                            pythonStyleComment, quotedString, removeQuotes)
 
 verbose = True
 strict = True
