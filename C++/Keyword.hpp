@@ -47,7 +47,7 @@ template <typename T> class Keyword final {
 public:
   Keyword(const std::string _name, const T & _val, bool _isDefd = false)
       : name(_name), val(_val), isDefd(_isDefd) {
-    if (not setKind(_val)) {
+    if (!setKind(_val)) {
       GETKW_ERROR("Invalid key type!");
     }
   }

@@ -52,7 +52,7 @@ Getkw::Getkw(const std::string file, bool _verbose, bool _strict)
     if (verbose)
       std::cout << "Opening input file, '" << file << "'" << std::endl;
     std::ifstream fis(fname);
-    if (not fis) {
+    if (!fis) {
       GETKW_ERROR("Open failed: " + file);
     }
     toplevel = readSect(fis);
@@ -299,7 +299,7 @@ void Getkw::readline(std::istream & fis, std::istringstream & isi) {
 }
 
 bool Getkw::convBool(const std::string & val) {
-  if (val[0] == 'T' or val[0] == 't')
+  if (val[0] == 'T' || val[0] == 't')
     return true;
   return false;
 }

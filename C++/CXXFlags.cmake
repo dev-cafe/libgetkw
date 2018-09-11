@@ -3,17 +3,24 @@ list(APPEND GETKW_CXX_FLAGS
   #"-fno-rtti"
   )
 
-list(APPEND GETKW_CXX_FLAGS_DEBUG
-  "-Wall"
-  "-Wextra"
-  "-Wpedantic"
-  "-Winit-self"
-  "-Woverloaded-virtual"
-  "-Wuninitialized"
-  "-Wmissing-declarations"
-  "-Wwrite-strings"
-  "-Weffc++"
-  )
+if(CMAKE_CXX_COMPILER_ID MATCHES MSVC)
+  list(APPEND GETKW_CXX_FLAGS_DEBUG
+    "/Wall"
+    )
+else()
+  list(APPEND GETKW_CXX_FLAGS_DEBUG
+    "-Wall"
+    "-Wextra"
+    "-Wpedantic"
+    "-Winit-self"
+    "-Woverloaded-virtual"
+    "-Wuninitialized"
+    "-Wmissing-declarations"
+    "-Wwrite-strings"
+    "-Weffc++"
+    )
+endif()
+
 if(CMAKE_CXX_COMPILER_ID MATCHES Clang)
   list(APPEND GETKW_CXX_FLAGS_DEBUG
     "-Wdocumentation"

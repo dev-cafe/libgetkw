@@ -322,7 +322,7 @@ int Section::splitTag(const std::string & path, std::string & tag) const {
   if (m == std::string::npos)
     return 0;
   n = path.find('>');
-  if (n == std::string::npos or n - m - 1 < 1)
+  if (n == std::string::npos || n - m - 1 < 1)
     return 0;
   tag.clear();
   tag.append(path.substr(m + 1, n - m - 1));
