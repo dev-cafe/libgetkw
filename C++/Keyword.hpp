@@ -29,7 +29,7 @@
 
 #include "GetkwError.hpp"
 
-enum class KeyKinds {
+enum class KeyKinds : int {
   Unknown = -1,
   Undefined,
   Int,
@@ -61,7 +61,7 @@ public:
 
   const std::string & getName() const { return name; }
 
-  int getKind() const { return kind; }
+  int getKind() const { return static_cast<int>(kind); }
   void setDefined(bool _isDefd) { isDefd = _isDefd; }
 
   void setName(const std::string & _name) { name = _name; }
