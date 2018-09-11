@@ -1,48 +1,53 @@
-# See http://msdn.microsoft.com/en-us/library/ms164311.aspx for
-# command-line options to MSBuild.
-
-# Speeding up a Visual Studio build.
-# http://blogs.msdn.com/b/vcblog/archive/2011/01/05/damn-my-vc-project-is-building-slower-in-vs2010-what-do-i-do-now-a-step-by-step-guide.aspx
 version: 'build-{build}-{branch}'
 
-platform: x86
+platform: x64
 
 build:
   parallel: true
 
+cache:
+  - c:\msys64\var\cache\pacman\pkg -> .ci\install.bat
+
+image:
+  - Visual Studio 2017
+
 environment:
   # Create expected SHELL variable for pipenv.
-  SHELL: "windows"
+  SHELL: 'windows'
+  CTEST_OUTPUT_ON_FAILURE: '1'
   matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      MSYSTEM: MINGW64
-      GENERATOR: "MSYS Makefiles"
+    - CMAKE_GENERATOR: 'MSYS Makefiles'
+      BUILDFLAGS: 'VERBOSE=1'
+      TESTTARGET: 'test'
+      CXXFLAGS: ''
+    - CMAKE_GENERATOR: 'Visual Studio 15 2017 Win64'
+      BUILDFLAGS: '/verbosity:normal'
+      TESTTARGET: 'RUN_TESTS'
+      CXXFLAGS: ''
 
 matrix:
   fast_finish: true
 
 init:
-  - set PATH=C:\msys64\%MSYSTEM%\bin;C:\msys64\usr\bin;%PATH%
-
-cache:
-  - c:\msys64\var\cache\pacman\pkg
-  - c:\tools\vcpkg\installed\
+  - set PATH=C:\msys64\MINGW64\bin;C:\msys64\usr\bin;%PATH%
+  - set PATH=C:\Python37-x64;C:\Python37-x64\Scripts;%PATH%
+  # Remove Python 2.7 from path
+  - set PATH=%PATH:C:\Python27;=%
+  - set PATH=%PATH:C:\Python27\Scripts;=%
 
 install:
-  - pacman -S --needed --noconfirm pacman-mirrors
-  - pacman -Syuu --needed --noconfirm --ask=127
-  - pacman -S --noconfirm mingw64/mingw-w64-x86_64-boost
   - python -m pip install pipenv
-  - pipenv install
+  - '%APPVEYOR_BUILD_FOLDER%\.ci\install.bat'
+  - pipenv install --three
 
 before_build:
+  - pipenv run python --version
   - cmake --version
-  - pipenv --version
 
 build_script:
-  - pipenv run python setup --cxx=g++ --generator="%GENERATOR%" --prefix="C:\Software\getkw"
-  - cd build
-  - cmake --build . --target install
-  - ctest --parallel 2 --output-on-failure --verbose
+  - pipenv run python setup --generator="%CMAKE_GENERATOR%" --prefix="C:\Software\getkw"
+  - pipenv run cmake --build build --config Debug -- "%BUILDFLAGS%"
+  - pipenv run cmake --build build --target install --config Debug
+  - pipenv run cmake --build build --target "%TESTTARGET%" --config Debug
 
 deploy: off
