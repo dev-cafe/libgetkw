@@ -10,6 +10,8 @@
 
 # libgetkw: User input parsing and validation library.
 
+![parse-all](https://github.com/dev-cafe/libgetkw/raw/master/assets/parse.jpg "Parse all the inputs!")
+
 Copyright 2015-2018 Jonas Juselius <jonas.juselius@gmail.com>.
 Licensed under [MPL v2.0](LICENSE).
 
