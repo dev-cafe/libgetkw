@@ -1,7 +1,7 @@
 [![License: MPL v2.0](https://img.shields.io/github/license/dev-cafe/libgetkw.svg?style=for-the-badge)](https://github.com/dev-cafe/libgetkw/blob/master/LICENSE)
 
 [![Travis CI](https://img.shields.io/travis/dev-cafe/libgetkw.svg?style=for-the-badge)](https://travis-ci.org/dev-cafe/libgetkw)
-[![AppVeyor CI](https://img.shields.io/appveyor/ci/dev-cafe/libgetkw.svg?style=for-the-badge)](https://ci.appveyor.com/project/dev-cafe/libgetkw)
+[![AppVeyor CI](https://img.shields.io/appveyor/ci/dev-cafe/libgetkw.svg?style=for-the-badge)](https://ci.appveyor.com/project/robertodr/libgetkw)
 [![Codecov](https://img.shields.io/codecov/c/github/dev-cafe/libgetkw.svg?style=for-the-badge)](https://codecov.io/gh/dev-cafe/libgetkw)
 
 [![GitHub issues](https://img.shields.io/github/issues/dev-cafe/libgetkw.svg?style=for-the-badge)](https://github.com/dev-cafe/libgetkw/issues)
