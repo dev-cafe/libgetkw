@@ -18,6 +18,8 @@ Fortran/*.f90 licensefile=.githooks/LICENSE-Fortran
 Python/*.py licensefile=.githooks/LICENSE-Python
 Python/pyparsing.py !licensefile
 examples/Example.py licensefile=.githooks/LICENSE-Python
+cmake/update.py !licensefile
+cmake/autocmake/*.py !licensefile
 
 # Tests
 tests/*.hpp licensefile=.githooks/LICENSE-C++

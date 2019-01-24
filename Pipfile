@@ -7,17 +7,16 @@ name = "pypi"
 
 [packages]
 
-breathe = "*"
 docopt = "*"
-fprettify = "*"
 pyparsing = "*"
-PyYAML = "*"
+
+
+[dev-packages]
+
+breathe = "*"
+fprettify = "*"
 recommonmark = "*"
 Sphinx = "*"
 sphinx_rtd_theme = "*"
 sphinxcontrib-bibtex = "*"
 yapf = "*"
-
-
-[dev-packages]
-

@@ -1,6 +1,6 @@
 /*
  * getkw -- a simple input parser
- * Copyright (C) 2018 Jonas Juselius and contributors.
+ * Copyright (C) 2019 Jonas Juselius and contributors.
  *
  * This file is part of getkw.
 
