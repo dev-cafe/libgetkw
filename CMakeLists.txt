@@ -56,5 +56,6 @@ include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_default_build_paths.cma
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_definitions.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_safeguards.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_code_coverage.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/downloaded/autocmake_python_interpreter.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/custom/getkw.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/custom/tests.cmake)
