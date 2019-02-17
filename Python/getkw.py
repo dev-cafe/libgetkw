@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 ## @package getkw.py
@@ -833,72 +832,3 @@ def check_ignored(list, sect):
                 print(warn.format(i, sect.name, ''))
             else:
                 print(warn.format(i, sect.name, '<' + sect.tag + '>'))
-
-
-####################################################
-
-
-def test(strng):
-    bnf = GetkwParser()
-    try:
-        tokens = bnf.parseString(strng)
-    except ParseException as err:
-        print((err.line))
-        print((" " * (err.column - 1) + "^"))
-        print(err)
-    return tokens
-
-
-if __name__ == '__main__':
-    teststr = """
-title = foo
-string="fooo bar"
-
-defs {
-foo=[1,2,3]
-bar=99.0
-}
-
-defs<apa> {
-foo=[1, 2, 3,
-4,5, 6,7,8,9,
-10]
-bar=22.0
-}
-
-defs<gorilla> {
-foo=[1, 2, 3,
-4,5, 6,7,8,9,
-10]
-bar=22.0
-}
-
-verbose=False #(yes|true|on|1)
-
-
-raboof {
-    foo=1
-    bar=1
-
-    foobar<1>{
-        foo=1
-        bar=2
-            foobar<gnu>{
-                foo=1
-                bar=2
-            }
-
-    }
-
-    $COORD
-      o 0.0 0.0 0.0
-      h 1.0 1.0 0.0
-      h -1.0 1.0 0.0
-    $end
-}
-
-"""
-    ini = test(teststr)
-    print((ini.top))
-#    foo=ini.get_keyword('raboof.foo')
-#    print dir(foo)

@@ -1,17 +1,19 @@
+configure_file(init.py ${PROJECT_BINARY_DIR}/${INSTALL_PYMOD_FULLDIR}/__init__.py COPYONLY)
 file(
   COPY
     ${CMAKE_CURRENT_LIST_DIR}/getkw.py
     ${CMAKE_CURRENT_LIST_DIR}/pyparsing.py
   DESTINATION
-    ${INSTALL_PYMODDIR}
+    ${PROJECT_BINARY_DIR}/${INSTALL_PYMOD_FULLDIR}
   )
 
 install(
   FILES
-    getkw.py
-    pyparsing.py
+    ${PROJECT_BINARY_DIR}/${INSTALL_PYMOD_FULLDIR}/__init__.py
+    ${PROJECT_BINARY_DIR}/${INSTALL_PYMOD_FULLDIR}/getkw.py
+    ${PROJECT_BINARY_DIR}/${INSTALL_PYMOD_FULLDIR}/pyparsing.py
   DESTINATION
-    ${INSTALL_PYMODDIR}
+    ${INSTALL_PYMOD_FULLDIR}
   COMPONENT
     bin
   )

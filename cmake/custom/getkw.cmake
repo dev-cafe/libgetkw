@@ -43,18 +43,21 @@ else()
   set(DEF_INSTALL_CMAKEDIR share/cmake/${PROJECT_NAME})
 endif()
 set(INSTALL_CMAKEDIR ${DEF_INSTALL_CMAKEDIR} CACHE PATH "Installation directory for CMake files")
-set(INSTALL_PYMODDIR ${INSTALL_LIBDIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages CACHE PATH "Installation directory for Python module")
+set(INSTALL_PYMODDIR ${INSTALL_LIBDIR}/python CACHE PATH "Installation directory for Python module")
+file(TO_NATIVE_PATH "${INSTALL_PYMODDIR}/getkw" INSTALL_PYMOD_FULLDIR)
 
 if(GETKW_CXX_INTERFACE)
-  add_subdirectory(C++)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/C++)
 endif ()
 
 if(GETKW_C_INTERFACE)
-  add_subdirectory(C)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/C)
 endif ()
 
 if(GETKW_Fortran_INTERFACE)
-  add_subdirectory(Fortran)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/Fortran)
 endif ()
 
-add_subdirectory(Python)
+add_subdirectory(${PROJECT_SOURCE_DIR}/Python)
+# Exporting this variable when using FetchContent
+set(getkw_PYMOD ${PROJECT_BINARY_DIR}/${INSTALL_PYMODDIR} CACHE PATH "Location of getkw Python files" FORCE)

@@ -112,6 +112,7 @@ public:
     static const std::string STR_ARRAY = "StrArray";
     static const std::string UNDEF = "Undefined";
     static const std::string UNKN = "Unknown";
+    static const std::string DATA = "Data";
 
     switch (i) {
       case (KeyKinds::Int):
@@ -132,8 +133,13 @@ public:
         return STR_ARRAY;
       case (KeyKinds::Undefined):
         return UNDEF;
+      case (KeyKinds::Data):
+        return DATA;
+      case (KeyKinds::Unknown):
+        return UNKN;
+      default:
+        return UNKN;
     }
-    return UNKN;
   }
 
 protected:
